@@ -256,7 +256,7 @@
   .compare-arrow{ color:var(--muted); font-size:20px; padding:0 8px; flex-shrink:0; }
 
   /* -------- Badges / achievements -------- */
-  .badge-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .badge-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
   .badge-item{ display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; padding:10px 4px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); opacity:.4; filter:grayscale(1); transition:transform .2s cubic-bezier(.2,1.4,.4,1), opacity .2s ease, filter .2s ease; }
   .badge-item.earned{ opacity:1; filter:none; background:var(--accent-soft); border-color:var(--accent); box-shadow:0 6px 14px -8px var(--accent); }
   .badge-item:active{ transform:scale(.92); }
@@ -264,7 +264,7 @@
   .badge-lbl{ font-size:9.5px; font-weight:700; line-height:1.25; color:var(--text); }
 
   /* -------- Preset grid (Enfoque) -------- */
-  .preset-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:18px; }
+  .preset-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
   .preset-card{ background:var(--surface); border:1.5px solid var(--line); border-left:5px solid var(--accent); border-radius:16px; padding:14px 15px; text-align:left; display:flex; flex-direction:column; gap:6px; opacity:0; animation:nodeIn .4s ease forwards; animation-delay:var(--d,0ms); transition:transform .15s cubic-bezier(.2,1.4,.4,1); box-shadow:var(--chunky); }
   .preset-card:active{ filter:brightness(.9); transform:scale(.96); }
   .preset-card.preset-disabled{ opacity:.55; border-left-color:var(--line); cursor:default; }
@@ -296,25 +296,52 @@
   @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
   .hidden{ display:none !important; }
 
-  /* -------- Calendar -------- */
-  .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .cal-nav{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); width:32px; height:32px; border-radius:50%; font-size:14px; flex-shrink:0; }
-  .cal-month{ font-weight:700; font-size:14.5px; text-transform:capitalize; }
-  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center; margin-bottom:8px; }
-  .cal-dow{ font-size:10px; color:var(--muted); font-weight:700; padding-bottom:4px; }
-  .cal-day{ aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border-radius:10px; font-size:11.5px; font-weight:600; position:relative; cursor:pointer; background:var(--surface); border:1px solid var(--line); transition:transform .15s ease; }
+  /* -------- Calendar (estilo lead.html) -------- */
+  .cal-card{ padding:14px 12px 12px; overflow:hidden; }
+  .cal-nav-row{ display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:10px; }
+  .cal-nav{ background:none; border:none; color:var(--muted); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:color .15s ease, background .15s ease, transform .12s ease; }
+  .cal-nav svg{ width:20px; height:20px; }
+  .cal-nav:active{ transform:scale(.86); background:var(--surface-2); color:var(--accent); }
+  .cal-month{ font-family:'Fredoka',sans-serif; font-size:23px; font-weight:600; text-align:center; text-transform:capitalize; min-width:0; flex:0 1 190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cal-metrics{ display:flex; justify-content:space-around; text-align:center; margin:0 0 14px; }
+  .cal-metric-num{ font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; line-height:1.1; }
+  .cal-metric-label{ font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:800; margin-top:3px; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+  .cal-dow-row{ margin-bottom:6px; }
+  .cal-dow{ text-align:center; font-size:10px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+  .cal-day{ min-width:0; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; cursor:pointer; background:var(--surface-2); border:1px solid var(--line); transition:border-color .15s ease, transform .12s ease; -webkit-tap-highlight-color:transparent; }
   .cal-day:active{ transform:scale(.9); }
-  .cal-day.empty{ visibility:hidden; cursor:default; }
-  .cal-day.future{ opacity:.35; cursor:default; }
-  .cal-day.today{ border-color:var(--accent); }
-  .cal-day .dot{ width:6px; height:6px; border-radius:50%; background:transparent; }
-  .cal-day[data-fulfill="none"] .dot{ background:var(--line); }
-  .cal-day[data-fulfill="partial"] .dot{ background:var(--accent); opacity:.55; }
-  .cal-day[data-fulfill="full"] .dot{ background:var(--accent); }
-  .cal-day[data-fulfill="full"]{ background:var(--accent-soft); border-color:var(--accent); }
-  .cal-legend{ display:flex; gap:14px; justify-content:center; font-size:10.5px; color:var(--muted); margin-top:10px; }
+  .cal-day.cal-blank{ visibility:hidden; pointer-events:none; }
+  .cal-day.future{ opacity:.5; }
+  .cal-day.future.has-tasks{ opacity:1; border-color:rgba(40,224,200,.45); }
+  .cal-dot{ position:absolute; bottom:4px; left:50%; transform:translateX(-50%); z-index:2; width:6px; height:6px; border-radius:50%; background:var(--pop-cyan); box-shadow:0 0 0 2px rgba(0,0,0,.18); }
+  .cal-dot.all-done{ background:transparent; border:1.5px solid var(--pop-cyan); }
+  .cal-num{ position:relative; z-index:2; font-size:12px; font-weight:700; color:var(--muted); }
+  .cal-fill{ position:absolute; left:0; right:0; bottom:0; background:linear-gradient(0deg,var(--accent),var(--pop-pink)); opacity:.55; z-index:1; }
+  .cal-day.partial .cal-num, .cal-day.full .cal-num{ color:#fff; }
+  .cal-day.full{ border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+  .cal-day.full .cal-fill{ opacity:.8; }
+  .cal-day.today{ border:2px solid var(--accent); background:var(--surface); }
+  .cal-day.today .cal-num{ color:var(--accent); font-weight:800; font-size:13px; }
+  .cal-day.today.partial .cal-num, .cal-day.today.full .cal-num{ color:#fff; }
+  .cal-mark{ position:absolute; top:2px; right:4px; z-index:2; font-size:9px; line-height:1; color:var(--pop-lime); }
+  .cal-legend{ display:flex; flex-wrap:wrap; gap:6px 14px; justify-content:center; font-size:10.5px; color:var(--muted); margin-top:12px; }
   .cal-legend span{ display:inline-flex; align-items:center; gap:5px; }
-  .cal-legend i{ width:7px; height:7px; border-radius:50%; display:inline-block; }
+  .cal-legend .lg-fill{ width:10px; height:10px; border-radius:3px; background:linear-gradient(0deg,var(--accent),var(--pop-pink)); opacity:.8; }
+  .cal-legend .lg-star{ color:var(--pop-lime); font-size:11px; }
+  .cal-legend .lg-dot{ width:7px; height:7px; border-radius:50%; background:var(--pop-cyan); }
+  .cal-legend .lg-today{ width:10px; height:10px; border-radius:3px; border:2px solid var(--accent); }
+  .cal-tip{ text-align:center; font-size:11px; color:var(--muted); margin-top:8px; }
+  .day-section-label{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:16px 0 8px; }
+  .day-section-label:first-child{ margin-top:0; }
+  .due-chip{ font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:99px; background:var(--surface-2); color:var(--muted); white-space:nowrap; flex-shrink:0; }
+  .due-chip.today{ background:rgba(40,224,200,.16); color:var(--pop-cyan); }
+  .due-chip.late{ background:rgba(255,92,157,.16); color:var(--pop-pink); }
+  .todo-upcoming{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:none; border:none; border-top:1px solid var(--line); color:var(--pop-cyan); font-size:12.5px; font-weight:800; padding:12px 4px 8px; }
+  .day-progress{ display:flex; align-items:center; gap:10px; margin:-6px 0 12px; }
+  .day-progress-bar{ flex:1; height:8px; border-radius:99px; background:var(--surface-2); overflow:hidden; }
+  .day-progress-bar i{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--pop-pink)); border-radius:99px; transition:width .3s ease; }
+  .day-progress-txt{ font-size:12px; font-weight:800; color:var(--muted); white-space:nowrap; }
 
   /* -------- Chip row (capture categories) -------- */
   .chip-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:16px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
@@ -343,11 +370,11 @@
   .ob-pillars{ display:flex; justify-content:center; gap:18px; margin-bottom:28px; }
   .ob-pillar{ text-align:center; font-size:11px; color:var(--muted); font-weight:700; }
   .ob-pillar .pic{ font-size:26px; display:block; margin-bottom:5px; }
-  .icon-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
-  .icon-opt{ aspect-ratio:1; border-radius:16px; background:var(--surface); border:2px solid var(--line); font-size:30px; display:flex; align-items:center; justify-content:center; transition:transform .15s ease, border-color .2s ease, box-shadow .2s ease; }
+  .icon-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+  .icon-opt{ aspect-ratio:1; min-width:0; border-radius:16px; background:var(--surface); border:2px solid var(--line); font-size:30px; display:flex; align-items:center; justify-content:center; transition:transform .15s ease, border-color .2s ease, box-shadow .2s ease; }
   .icon-opt.selected{ border-color:var(--accent); background:var(--accent-soft); transform:scale(1.1); box-shadow:0 0 0 5px var(--accent-soft); }
-  .color-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:24px; }
-  .color-opt{ aspect-ratio:1; border-radius:50%; border:4px solid transparent; position:relative; transition:transform .15s ease, border-color .2s ease, box-shadow .2s ease; }
+  .color-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-bottom:24px; }
+  .color-opt{ aspect-ratio:1; min-width:0; border-radius:50%; border:4px solid transparent; position:relative; transition:transform .15s ease, border-color .2s ease, box-shadow .2s ease; }
   .color-opt.selected{ border-color:#fff; transform:scale(1.16); box-shadow:0 0 0 6px var(--accent-soft), 0 10px 22px -8px var(--accent); }
   .color-opt.selected::after{ content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:21px; font-weight:900; text-shadow:0 1px 3px rgba(0,0,0,.5); }
   .ob-nav{ display:flex; gap:10px; }
@@ -470,19 +497,26 @@
     <div class="row-between" style="margin-bottom:10px;margin-top:20px;">
       <div style="font-weight:700;font-size:14.5px;">Calendario mensual</div>
     </div>
-    <div class="card" style="animation:none;opacity:1;">
-      <div class="cal-head">
-        <button class="cal-nav" id="calPrev">‹</button>
+    <div class="card cal-card" style="animation:none;opacity:1;">
+      <div class="cal-nav-row">
+        <button class="cal-nav" id="calPrev" aria-label="Mes anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
         <div class="cal-month" id="calMonthLabel"></div>
-        <button class="cal-nav" id="calNext">›</button>
+        <button class="cal-nav" id="calNext" aria-label="Mes siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
       </div>
-      <div class="cal-grid" id="calDow"></div>
+      <div class="cal-metrics">
+        <div><div class="cal-metric-num" id="calFull">0</div><div class="cal-metric-label">Completos</div></div>
+        <div><div class="cal-metric-num" id="calPartial">0</div><div class="cal-metric-label">Parciales</div></div>
+        <div><div class="cal-metric-num" id="calAvg">0%</div><div class="cal-metric-label">Promedio</div></div>
+      </div>
+      <div class="cal-grid cal-dow-row" id="calDow"></div>
       <div class="cal-grid" id="calGrid"></div>
       <div class="cal-legend">
-        <span><i style="background:var(--line);"></i>Sin cumplir</span>
-        <span><i style="background:var(--accent);opacity:.55;"></i>Parcial</span>
-        <span><i style="background:var(--accent);"></i>Día cumplido</span>
+        <span><i class="lg-fill"></i>Avance del día</span>
+        <span><b class="lg-star">★</b>Día completo</span>
+        <span><i class="lg-dot"></i>Tareas</span>
+        <span><i class="lg-today"></i>Hoy</span>
       </div>
+      <div class="cal-tip">Toca un día pasado para corregir hábitos, o uno futuro para agendar tareas.</div>
     </div>
   </main>
 
@@ -665,7 +699,7 @@
   <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">O crea uno personalizado</div>
   <div class="field">
     <label>Ícono</label>
-    <div class="icon-grid" id="hIconGrid" style="grid-template-columns:repeat(5,1fr);gap:8px;"></div>
+    <div class="icon-grid" id="hIconGrid" style="grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;"></div>
   </div>
   <div class="field">
     <label>Nombre</label>
@@ -693,8 +727,20 @@
   <button class="sheet-close" data-close>×</button>
   <div class="sheet-handle"></div>
   <div class="sheet-title" id="dayTitle">Día</div>
-  <div class="sheet-sub">Lo que cumpliste ese día.</div>
-  <div id="dayList"></div>
+  <div class="sheet-sub" id="daySub">Toca un hábito para marcarlo o desmarcarlo.</div>
+  <div id="dayHabitsWrap">
+    <div class="day-section-label">Hábitos</div>
+    <div class="day-progress" id="dayProgress" style="margin-top:0;"><div class="day-progress-bar"><i id="dayProgressFill" style="width:0%"></i></div><div class="day-progress-txt" id="dayProgressTxt">0/0</div></div>
+    <div id="dayList"></div>
+  </div>
+  <div id="dayTasksWrap">
+    <div class="day-section-label" id="dayTasksLabel">Tareas de este día</div>
+    <div class="field-row" id="dayAddRow" style="margin-bottom:4px;">
+      <div class="field" style="margin-bottom:0;"><input type="text" id="dayTaskInput" maxlength="120" placeholder="Nueva tarea para este día…"></div>
+      <button class="btn btn-primary btn-sm" id="btnAddDayTask" style="flex-shrink:0;">+</button>
+    </div>
+    <div id="dayTaskList"></div>
+  </div>
 </div>
 
 <!-- ============ SHEET: NEW CAPTURE ============ -->
@@ -717,7 +763,7 @@
   <div class="sheet-sub">Para lo que Memoria y Palabras no cubren.</div>
   <div class="field">
     <label>Ícono</label>
-    <div class="icon-grid" id="catIconGrid" style="grid-template-columns:repeat(5,1fr);gap:8px;"></div>
+    <div class="icon-grid" id="catIconGrid" style="grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;"></div>
   </div>
   <div class="field">
     <label>Nombre</label>
@@ -1816,6 +1862,60 @@
     }).join("");
   }
 
+  var DOW_SHORT = ["dom","lun","mar","mié","jue","vie","sáb"];
+  var MON_SHORT = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  function shortDayLabel(key){
+    var d = new Date(key+"T00:00:00");
+    return DOW_SHORT[d.getDay()]+" "+d.getDate()+" "+MON_SHORT[d.getMonth()];
+  }
+  function dueInfo(t){
+    if(!t.dueDate) return null;
+    var today = todayKey();
+    var tm = new Date(); tm.setDate(tm.getDate()+1);
+    if(t.dueDate===today) return { text:"Hoy", cls:"today" };
+    if(t.dueDate===dateKey(tm)) return { text:"Mañana", cls:"" };
+    if(t.dueDate<today && !t.done) return { text:"Venció · "+shortDayLabel(t.dueDate), cls:"late" };
+    return { text:shortDayLabel(t.dueDate), cls:"" };
+  }
+  function todoRowHtml(t, hideChip){
+    var due = hideChip ? null : dueInfo(t);
+    return '<div class="check-item'+(t.done?' done':'')+'" data-tid="'+t.id+'">'+
+      '<div class="check-box">'+(t.done?'✓':'')+'</div>'+
+      '<div class="check-text">'+escapeHtml(t.text)+'</div>'+
+      (due ? '<span class="due-chip '+due.cls+'">'+escapeHtml(due.text)+'</span>' : '')+
+      '<button class="check-del" data-tdel="'+t.id+'">×</button>'+
+    '</div>';
+  }
+  function bindTodoRows(container, after){
+    container.querySelectorAll("[data-tid]").forEach(function(row){
+      row.addEventListener("click", function(e){
+        if(e.target && e.target.hasAttribute("data-tdel")) return;
+        var t = state.todos.filter(function(x){ return x.id===row.getAttribute("data-tid"); })[0];
+        if(!t) return;
+        t.done = !t.done;
+        saveState(); after();
+      });
+    });
+    container.querySelectorAll("[data-tdel]").forEach(function(b){
+      b.addEventListener("click", function(e){
+        e.stopPropagation();
+        var id = b.getAttribute("data-tdel");
+        state.todos = state.todos.filter(function(t){ return t.id!==id; });
+        saveState(); after();
+        showToast("Tarea eliminada", "🗑️");
+      });
+    });
+  }
+  function tasksByDay(){
+    var map = {};
+    state.todos.forEach(function(t){
+      if(!t.dueDate) return;
+      var m = map[t.dueDate] || (map[t.dueDate] = { total:0, pending:0 });
+      m.total++; if(!t.done) m.pending++;
+    });
+    return map;
+  }
+
   function renderHacer(){
     var today = todayKey();
     var frac = activeHabitFraction(today);
@@ -1865,31 +1965,25 @@
       });
     });
 
-    var tHtml = state.todos.slice().sort(function(a,b){ return (a.done?1:0)-(b.done?1:0); }).map(function(t){
-      return '<div class="check-item'+(t.done?' done':'')+'" data-tid="'+t.id+'">'+
-        '<div class="check-box">'+(t.done?'✓':'')+'</div>'+
-        '<div class="check-text">'+escapeHtml(t.text)+'</div>'+
-        '<button class="check-del" data-tdel="'+t.id+'">×</button>'+
-      '</div>';
-    }).join("");
-    document.getElementById("todoList").innerHTML = tHtml || '<div class="empty"><span class="emoji">📋</span>Sin pendientes. Escribe uno arriba.</div>';
-    document.querySelectorAll("#todoList .check-item").forEach(function(row){
-      row.addEventListener("click", function(e){
-        if(e.target && e.target.hasAttribute("data-tdel")) return;
-        var id = row.getAttribute("data-tid");
-        var t = state.todos.filter(function(x){ return x.id===id; })[0];
-        if(!t) return;
-        t.done = !t.done;
-        saveState(); renderHacer();
-      });
-    });
-    document.querySelectorAll("#todoList [data-tdel]").forEach(function(b){
-      b.addEventListener("click", function(e){
-        e.stopPropagation();
-        var id = b.getAttribute("data-tdel");
-        state.todos = state.todos.filter(function(t){ return t.id!==id; });
-        saveState(); renderHacer();
-      });
+    var todayK = todayKey();
+    function todoRank(t){ if(!t.dueDate) return 1; return t.dueDate<=todayK ? 0 : 2; }
+    var visibleTodos = state.todos.filter(function(t){ return !t.dueDate || t.dueDate<=todayK; });
+    var upcoming = state.todos.filter(function(t){ return t.dueDate && t.dueDate>todayK && !t.done; });
+    var tHtml = visibleTodos.slice().sort(function(a,b){
+      if(!!a.done !== !!b.done) return a.done ? 1 : -1;
+      var ra = todoRank(a), rb = todoRank(b);
+      if(ra!==rb) return ra-rb;
+      return (a.dueDate||"").localeCompare(b.dueDate||"");
+    }).map(function(t){ return todoRowHtml(t, false); }).join("");
+    if(upcoming.length){
+      tHtml += '<button class="todo-upcoming" id="btnTodoUpcoming">📅 '+upcoming.length+(upcoming.length===1?' tarea agendada':' tareas agendadas')+' · ver en el calendario</button>';
+    }
+    document.getElementById("todoList").innerHTML = tHtml || '<div class="empty"><span class="emoji">📋</span>Sin pendientes. Escribe uno arriba o toca un día futuro del calendario.</div>';
+    bindTodoRows(document.getElementById("todoList"), function(){ renderHacer(); });
+    var upBtn = document.getElementById("btnTodoUpcoming");
+    if(upBtn) upBtn.addEventListener("click", function(){
+      var cal = document.querySelector(".cal-card");
+      window.scrollTo({ top: cal.getBoundingClientRect().top + window.scrollY - 80, behavior:"smooth" });
     });
 
     renderCalendar();
@@ -1980,31 +2074,48 @@
     document.getElementById("calMonthLabel").textContent = monthNames[calMonth]+" "+calYear;
 
     var first = new Date(calYear, calMonth, 1);
-    var startOffset = (first.getDay()+6)%7; // Monday-first
+    var startOffset = (first.getDay()+6)%7; // lunes primero
     var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-    var now = new Date();
     var todayStr = todayKey();
+    var hasHabits = state.habits.length>0;
+    var taskMap = tasksByDay();
 
+    var fullDays = 0, partialDays = 0, pctSum = 0, elapsed = 0;
     var cells = [];
-    for(var e=0;e<startOffset;e++){ cells.push('<div class="cal-day empty"></div>'); }
+    for(var e=0;e<startOffset;e++){ cells.push('<div class="cal-day cal-blank"></div>'); }
     for(var d=1; d<=daysInMonth; d++){
-      var cellDate = new Date(calYear, calMonth, d);
-      var key = dateKey(cellDate);
-      var isFuture = cellDate > now && key !== todayStr;
+      var key = dateKey(new Date(calYear, calMonth, d));
       var isToday = key === todayStr;
-      var frac = activeHabitFraction(key);
-      var fulfill = "none";
-      if(frac){ fulfill = frac.pct>=1 ? "full" : frac.pct>0 ? "partial" : "none"; }
-      cells.push('<div class="cal-day'+(isFuture?' future':'')+(isToday?' today':'')+'" data-fulfill="'+fulfill+'" data-date="'+key+'" data-future="'+(isFuture?1:0)+'">'+
-        '<span>'+d+'</span><span class="dot"></span>'+
+      var isFuture = key > todayStr;
+      var frac = (!isFuture && hasHabits) ? activeHabitFraction(key) : null;
+      var pct = frac ? frac.pct : 0;
+      var cls = "cal-day";
+      if(isFuture) cls += " future";
+      if(isToday) cls += " today";
+      if(pct>=1) cls += " full"; else if(pct>0) cls += " partial";
+      var tk = taskMap[key];
+      if(tk) cls += " has-tasks";
+      if(!isFuture && hasHabits){
+        elapsed++; pctSum += pct;
+        if(pct>=1) fullDays++; else if(pct>0) partialDays++;
+      }
+      var fillH = pct>0 ? Math.round(18 + pct*82) : 0;
+      cells.push('<div class="'+cls+'" data-date="'+key+'" data-future="'+(isFuture?1:0)+'">'+
+        (fillH ? '<span class="cal-fill" style="height:'+fillH+'%"></span>' : '')+
+        '<span class="cal-num">'+d+'</span>'+
+        (pct>=1 ? '<span class="cal-mark">★</span>' : '')+
+        (tk ? '<span class="cal-dot'+(tk.pending===0?' all-done':'')+'"></span>' : '')+
       '</div>');
     }
     document.getElementById("calGrid").innerHTML = cells.join("");
-    document.querySelectorAll("#calGrid .cal-day:not(.empty)").forEach(function(cell){
-      cell.addEventListener("click", function(){
-        if(cell.getAttribute("data-future")==="1"){ showToast("Ese día todavía no llega", "🕓"); return; }
-        openDaySheet(cell.getAttribute("data-date"));
-      });
+
+    var noData = !hasHabits || elapsed===0;
+    document.getElementById("calFull").textContent = noData ? "—" : fullDays;
+    document.getElementById("calPartial").textContent = noData ? "—" : partialDays;
+    document.getElementById("calAvg").textContent = noData ? "—" : Math.round(pctSum/elapsed*100)+"%";
+
+    document.querySelectorAll("#calGrid .cal-day:not(.cal-blank)").forEach(function(cell){
+      cell.addEventListener("click", function(){ openDaySheet(cell.getAttribute("data-date")); });
     });
   }
 
@@ -2013,19 +2124,80 @@
     var txt = d.toLocaleDateString('es-CO', { weekday:'long', day:'numeric', month:'long' });
     return txt.charAt(0).toUpperCase() + txt.slice(1);
   }
-  function openDaySheet(key){
-    document.getElementById("dayTitle").textContent = formatDayKey(key);
-    if(state.habits.length===0){
-      document.getElementById("dayList").innerHTML = '<div class="empty"><span class="emoji">📅</span>Todavía no tienes hábitos activos.</div>';
-    } else {
-      document.getElementById("dayList").innerHTML = state.habits.map(function(h){
-        var done = h.doneDates.indexOf(key)!==-1;
-        return '<div class="check-item" style="cursor:default;">'+
-          '<div class="check-box" style="'+(done?'background:var(--accent);border-color:var(--accent);color:#fff;':'')+'">'+(done?'✓':'')+'</div>'+
-          '<div class="check-text" style="'+(done?'':'color:var(--muted);')+'">'+escapeHtml(h.name)+'</div>'+
-        '</div>';
-      }).join("");
+  var openDayKey = null;
+  function renderDaySheet(){
+    var key = openDayKey; if(!key) return;
+    var today = todayKey();
+    var isToday = key===today, isFuture = key>today, isPast = key<today;
+    document.getElementById("dayTitle").textContent = (isToday ? "Hoy · " : "") + formatDayKey(key);
+    document.getElementById("daySub").textContent = isFuture
+      ? "Planea este día: agrega lo que quieres hacer y te aparecerá en Pendientes cuando llegue."
+      : isToday ? "Marca tus hábitos y agrega tareas para hoy."
+      : "¿Se te olvidó marcar algo ese día? Toca el hábito para corregirlo.";
+
+    /* Hábitos (solo hoy y días pasados) */
+    var habitsWrap = document.getElementById("dayHabitsWrap");
+    habitsWrap.classList.toggle("hidden", isFuture);
+    if(!isFuture){
+      var frac = activeHabitFraction(key);
+      document.getElementById("dayProgress").classList.toggle("hidden", !frac);
+      if(!frac){
+        document.getElementById("dayList").innerHTML = '<div style="color:var(--muted);font-size:12.5px;padding:4px 0 6px;">Todavía no tienes hábitos activos.</div>';
+      } else {
+        document.getElementById("dayProgressFill").style.width = Math.round(frac.pct*100)+"%";
+        document.getElementById("dayProgressTxt").textContent = frac.doneCount+"/"+frac.total+" · "+Math.round(frac.pct*100)+"%";
+        document.getElementById("dayList").innerHTML = state.habits.map(function(h){
+          var done = h.doneDates.indexOf(key)!==-1;
+          return '<div class="check-item'+(done?' done':'')+'" data-dayhid="'+h.id+'">'+
+            '<div class="check-box">'+(done?'✓':h.icon)+'</div>'+
+            '<div class="check-text">'+escapeHtml(h.name)+'</div>'+
+          '</div>';
+        }).join("");
+        document.querySelectorAll("#dayList [data-dayhid]").forEach(function(row){
+          row.addEventListener("click", function(){
+            var h = state.habits.filter(function(x){ return x.id===row.getAttribute("data-dayhid"); })[0];
+            if(!h) return;
+            var wasAll = activeHabitFraction(key).pct>=1;
+            var pos = h.doneDates.indexOf(key);
+            if(pos===-1){ h.doneDates.push(key); } else { h.doneDates.splice(pos,1); }
+            saveState();
+            renderHacer(); renderProfile(); renderDaySheet();
+            if(!wasAll && activeHabitFraction(key).pct>=1){ showToast("¡Día cumplido!", "🎉"); burstConfetti(row); }
+            announceBadges(checkBadges());
+          });
+        });
+      }
     }
+
+    /* Tareas del día */
+    var dayTasks = state.todos.filter(function(t){ return t.dueDate===key; })
+      .sort(function(a,b){ return (a.done?1:0)-(b.done?1:0); });
+    var tasksWrap = document.getElementById("dayTasksWrap");
+    tasksWrap.classList.toggle("hidden", isPast && dayTasks.length===0);
+    document.getElementById("dayTasksLabel").textContent = isFuture ? "Tareas agendadas" : isToday ? "Tareas de hoy" : "Tareas de ese día";
+    document.getElementById("dayAddRow").classList.toggle("hidden", isPast);
+    var listEl = document.getElementById("dayTaskList");
+    listEl.innerHTML = dayTasks.map(function(t){ return todoRowHtml(t, true); }).join("") ||
+      (isPast ? '' : '<div style="color:var(--muted);font-size:12.5px;padding:8px 0 4px;">Aún no hay tareas para este día.</div>');
+    bindTodoRows(listEl, function(){ renderHacer(); renderDaySheet(); });
+  }
+  function addDayTask(){
+    if(!openDayKey) return;
+    var input = document.getElementById("dayTaskInput");
+    var text = input.value.trim();
+    if(!text){ input.focus(); return; }
+    state.todos.push({ id:uid(), text:text, done:false, createdAt:todayISO(), dueDate:openDayKey });
+    saveState();
+    input.value = "";
+    renderHacer(); renderDaySheet();
+    input.focus();
+  }
+  document.getElementById("btnAddDayTask").addEventListener("click", addDayTask);
+  document.getElementById("dayTaskInput").addEventListener("keydown", function(e){ if(e.key==="Enter") addDayTask(); });
+  function openDaySheet(key){
+    openDayKey = key;
+    document.getElementById("dayTaskInput").value = "";
+    renderDaySheet();
     openSheet(document.getElementById("sheetDay"));
   }
 
