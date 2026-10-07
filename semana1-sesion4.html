@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Proyecto Smart — Semana 1 · Sesión 4 · Del párrafo al micrófono</title>
+<meta name="description" content="Semana 1 · Sesión 4 de Proyecto Smart: Del párrafo al micrófono">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#140F26;
+    --surface:#211A3B;
+    --surface-2:#2E2552;
+    --accent:#8B5CFF;
+    --accent-soft:rgba(139,92,255,.20);
+    --pop-pink:#FF5C9D;
+    --pop-cyan:#28E0C8;
+    --pop-lime:#C6FF4D;
+    --pop-yellow:#FFD23F;
+    --text:#F5F2FF;
+    --muted:#A79FC9;
+    --line:rgba(255,255,255,.11);
+    --radius:22px;
+    --chunky:0 10px 0 -4px rgba(0,0,0,.28), 0 18px 34px -16px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(1000px 520px at 15% -8%, rgba(139,92,255,.28), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(255,92,157,.22), transparent 55%),
+      radial-gradient(800px 600px at 50% 120%, rgba(40,224,200,.14), transparent 60%);
+    background-attachment:fixed;
+    color:var(--text); overflow-x:hidden;
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:600;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fredoka',sans-serif; margin:0; letter-spacing:-.01em;}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* -------- Ambient parallax blobs (same language as smart.html) -------- */
+  .blobfield{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob-outer{ position:absolute; will-change:transform; }
+  .blob{ border-radius:50%; filter:blur(55px); opacity:.42; }
+  .blob-a{ top:-60px; left:-40px; width:300px; height:300px; background:var(--accent); animation:driftA 16s ease-in-out infinite; }
+  .blob-b{ top:36%; right:-80px; width:280px; height:280px; background:var(--pop-pink); opacity:.34; animation:driftB 20s ease-in-out infinite; }
+  .blob-c{ bottom:-100px; left:14%; width:320px; height:320px; background:var(--pop-cyan); opacity:.26; animation:driftC 18s ease-in-out infinite; }
+  @keyframes driftA{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(30px,40px); } }
+  @keyframes driftB{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-25px,30px); } }
+  @keyframes driftC{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(20px,-20px) scale(1.08); } }
+
+  .app{ max-width:480px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:96px; z-index:1; }
+
+  /* -------- Topbar -------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 20px 6px; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{ width:50px; height:50px; border-radius:16px; background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border:none; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 8px 18px -6px var(--accent); }
+  .brand-name{ font-weight:800; font-size:17px; font-family:'Fredoka',sans-serif; }
+  .brand-sub{ font-size:11.5px; color:var(--pop-pink); margin-top:2px; font-weight:800; letter-spacing:.02em; }
+  .back-link{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; text-decoration:none; flex-shrink:0; }
+
+  .main{ padding:6px 20px 8px; animation:viewIn .4s ease; }
+  @keyframes viewIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* -------- Progress -------- */
+  .progress-block{ margin-bottom:22px; }
+  .progress-rows{ display:flex; flex-direction:column; gap:8px; }
+  .progress-row{ display:flex; align-items:center; gap:12px; }
+  .progress-track{ flex:1; height:10px; border-radius:100px; background:var(--surface-2); overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.3); }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--accent), var(--pop-pink) 55%, var(--pop-cyan)); background-size:220% 100%; border-radius:100px; animation:shimmer 2.4s linear infinite; }
+  @keyframes shimmer{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+  .progress-label{ font-size:11.5px; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+  /* -------- Hero -------- */
+  .eyebrow{ font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; margin-bottom:10px; }
+  .hero-title{ font-size:28px; font-weight:600; line-height:1.2; margin-bottom:10px; }
+  .hero-sub{ font-size:13.5px; color:var(--accent); font-weight:700; margin-bottom:10px; }
+  .hero-body{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:26px; }
+
+  /* -------- Card / section -------- */
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:16px; opacity:0; animation:cardIn .45s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--d,0ms); box-shadow:var(--chunky); }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+  .card-label{ font-size:10.5px; font-weight:800; letter-spacing:.08em; color:var(--accent); text-transform:uppercase; margin-bottom:8px; }
+  .card-title{ font-size:16px; font-weight:700; margin-bottom:8px; }
+  .card-text{ font-size:13.5px; line-height:1.6; color:var(--text); }
+  .card-text.muted{ color:var(--muted); }
+  .orient-list{ margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .orient-list li{ font-size:13px; line-height:1.5; padding-left:20px; position:relative; color:var(--muted); }
+  .orient-list li::before{ content:"›"; position:absolute; left:0; color:var(--accent); font-weight:700; }
+  .disclaimer{ font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+
+  /* -------- Form -------- */
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .field input, .field textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px;
+    color:var(--text); font-size:14px;
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:80px; line-height:1.5; }
+  .words-row{ display:flex; gap:8px; }
+  .words-row .field{ flex:1; margin-bottom:0; }
+
+  /* -------- Archetype grid -------- */
+  .arch-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:4px; }
+  .arch-card{ background:var(--surface-2); border:2px solid var(--line); border-radius:16px; padding:13px; text-align:left; display:flex; flex-direction:column; gap:5px; transition:border-color .2s ease, background .2s ease, transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .arch-card:active{ transform:scale(.96); }
+  .arch-ic{ font-size:22px; }
+  .arch-name{ font-weight:800; font-size:13px; font-family:'Fredoka',sans-serif; }
+  .arch-desc{ font-size:11px; color:var(--muted); line-height:1.4; }
+  .arch-card.selected{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--accent-soft); }
+  .arch-card.selected .arch-name{ color:var(--accent); }
+
+  /* -------- Reflection reveal -------- */
+  .reflect-wrap{ max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.2,.8,.2,1); }
+  .reflect-wrap.open{ max-height:420px; }
+  .reflect-inner{ padding-top:2px; }
+  .prompt-list{ margin:0 0 12px; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .prompt-list li{ font-size:12.5px; color:var(--muted); font-style:italic; }
+
+  /* -------- Buttons -------- */
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; font-size:14.5px; font-weight:800; padding:14px 20px; border-radius:100px; border:2px solid transparent; transition:transform .15s cubic-bezier(.2,1.4,.4,1), opacity .15s ease, box-shadow .2s ease; text-decoration:none; font-family:'Nunito',sans-serif; }
+  .btn:active{ transform:scale(.94); }
+  .btn-primary{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 10px 24px -10px var(--accent); }
+  .btn-primary:disabled{ opacity:.35; box-shadow:none; cursor:not-allowed; transform:none; }
+  .btn-outline{ background:transparent; color:var(--accent); border-color:var(--accent); }
+  .btn-block{ width:100%; }
+
+  /* -------- Completion state -------- */
+  .done-card{ text-align:center; padding:34px 20px; }
+  .done-icon{ font-size:42px; margin-bottom:14px; animation:bob 2.4s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  .done-title{ font-size:20px; font-weight:700; margin-bottom:8px; }
+  .done-sub{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:22px; font-style:italic; }
+
+  /* -------- Bottom nav (same language as smart.html) -------- */
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0; max-width:480px; margin:0 auto;
+    background:rgba(33,26,59,.9); backdrop-filter:blur(14px); border-top:1px solid var(--line);
+    display:flex; padding:9px 4px calc(9px + env(safe-area-inset-bottom)); z-index:30;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.7);
+  }
+  .navbtn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--muted); padding:5px 0; border-radius:12px; text-decoration:none; }
+  .navbtn .ic{ font-size:18px; border-radius:12px; padding:4px 12px; }
+  .navbtn.active{ color:var(--text); }
+  .navbtn.active .ic{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); box-shadow:0 6px 14px -5px var(--accent); }
+  .navbtn .lb{ font-size:10px; font-weight:800; }
+
+  /* -------- Toast -------- */
+  .toast{
+    position:fixed; left:50%; bottom:98px; transform:translate(-50%,16px); max-width:88%;
+    background:linear-gradient(135deg,var(--surface-2),var(--surface)); border:1.5px solid var(--accent); color:var(--text); font-size:13px; font-weight:800;
+    padding:13px 20px; border-radius:100px; opacity:0; pointer-events:none; transition:.28s cubic-bezier(.2,.8,.2,1);
+    z-index:220; text-align:center; box-shadow:0 10px 28px -10px rgba(0,0,0,.7);
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* -------- Confetti -------- */
+  .confetti-particle{ position:fixed; z-index:250; pointer-events:none; font-size:18px; animation:floatUp .9s ease-out forwards; }
+  @keyframes floatUp{ from{ transform:translate(0,0) scale(1) rotate(0deg); opacity:1; } to{ transform:translate(var(--tx),var(--ty)) scale(.5) rotate(180deg); opacity:0; } }
+
+  .hidden{ display:none !important; }
+
+  /* -------- Session extras -------- */
+  .seg{ display:flex; gap:5px; background:var(--surface-2); padding:5px; border-radius:16px; border:1px solid var(--line); margin:4px 0 14px; }
+  .seg button{ flex:1; padding:10px 4px; border-radius:12px; border:none; background:transparent; color:var(--muted); font-weight:800; font-size:13px; transition:.2s; }
+  .seg button.active{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 6px 14px -5px var(--accent); }
+  .seg-label{ font-size:11.5px; font-weight:700; color:var(--muted); margin-top:4px; }
+  .big-num{ font-family:'Fredoka',sans-serif; font-size:54px; font-weight:600; text-align:center; margin:6px 0 14px; letter-spacing:.02em; }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ flex:1; }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line); }
+  .lines-grid{ display:flex; flex-direction:column; gap:8px; }
+  .line-row{ display:flex; align-items:center; gap:8px; }
+  .line-n{ width:26px; height:26px; border-radius:8px; background:var(--accent-soft); color:var(--accent); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .line-row input{ flex:1; width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:14px; }
+  .line-row input:focus{ outline:none; border-color:var(--accent); }
+  .counter{ font-size:12px; font-weight:800; color:var(--muted); text-align:right; margin:10px 0 2px; }
+  .counter.ok{ color:var(--pop-lime); }
+  .q-text{ font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; text-align:center; margin:8px 0 16px; }
+  .q-input{ width:100%; background:var(--surface-2); border:2px solid var(--line); border-radius:14px; padding:14px; color:var(--text); font-size:22px; text-align:center; font-family:'Fredoka',sans-serif; }
+  .q-input:focus{ outline:none; border-color:var(--accent); }
+  .feedback{ min-height:22px; text-align:center; font-size:13px; font-weight:800; margin:10px 0; }
+  .feedback.good{ color:var(--pop-lime); }
+  .feedback.bad{ color:var(--pop-pink); }
+  .hintbox{ background:var(--accent-soft); border:1px dashed var(--accent); border-radius:14px; padding:12px; font-size:12.5px; line-height:1.5; margin-bottom:12px; }
+  .ladder{ display:flex; align-items:stretch; gap:8px; margin:10px 0 4px; }
+  .ladder div{ flex:1; border-radius:12px; padding:10px 4px; text-align:center; font-family:'Fredoka',sans-serif; font-weight:600; background:linear-gradient(180deg,var(--accent),var(--pop-pink)); color:#fff; display:flex; flex-direction:column; justify-content:center; line-height:1.15; }
+  .ladder small{ display:block; font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; opacity:.85; }
+  .chip-btn{ border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); border-radius:100px; padding:8px 13px; font-size:12.5px; font-weight:800; transition:transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .chip-btn:active{ transform:scale(.92); }
+  .chip-btn.selected{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
+  .check-list{ list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .check-list li{ font-size:12.5px; color:var(--muted); display:flex; gap:9px; align-items:center; }
+  .check-list li .box{ width:20px; height:20px; border-radius:7px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; transition:.2s; }
+  .check-list li.ok{ color:var(--text); }
+  .check-list li.ok .box{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .own-lines{ margin:8px 0 0; padding:0 0 0 18px; font-size:12.5px; color:var(--muted); line-height:1.55; }
+  .rate{ display:flex; gap:8px; margin:8px 0 4px; }
+  .rate button{ flex:1; padding:12px 0; border-radius:12px; border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; transition:.2s; }
+  .rate button.selected{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border-color:transparent; color:#fff; }
+  .field input[type=text].big{ font-size:15px; font-weight:700; }
+  .reveal{ display:none; }
+  .reveal.open{ display:block; }
+</style>
+</head>
+<body>
+
+<div class="blobfield">
+  <div class="blob-outer" id="blobOuterA" style="left:0;top:0;"><div class="blob blob-a"></div></div>
+  <div class="blob-outer" id="blobOuterB" style="left:0;top:0;"><div class="blob blob-b"></div></div>
+  <div class="blob-outer" id="blobOuterC" style="left:0;top:0;"><div class="blob blob-c"></div></div>
+</div>
+
+<div class="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <a class="back-link" href="smart.html#mapa" title="Volver al mapa">←</a>
+      <div>
+        <div class="brand-name" id="brandName">Proyecto Smart</div>
+        <div class="brand-sub" id="brandSub">Parte 1 · Semana 1</div>
+      </div>
+    </div>
+    <div class="brand-mark" id="avatarMark">🧠</div>
+  </div>
+
+  <main class="main">
+    <div class="progress-block">
+      <div class="progress-rows">
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Semana</span><div class="progress-track"><div class="progress-fill" style="width:12.5%"></div></div><span class="progress-label">1 de 8</span></div>
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Sesión</span><div class="progress-track"><div class="progress-fill" style="width:100%"></div></div><span class="progress-label">4 de 4</span></div>
+      </div>
+    </div>
+
+    <div class="eyebrow">Semana 1 · Sesión 4</div>
+    <h1 class="hero-title">Del párrafo al micrófono</h1>
+    <div class="hero-sub">Reality · Representation · Perception</div>
+    <div class="hero-body">Lo que pasó y cómo lo cuentas no son lo mismo. Un buen párrafo es tu forma de representar lo que entendiste para que otro lo entienda a la primera. Esta sesión toma unos 20 minutos.</div>
+
+    <div class="card" style="--d:40ms;">
+      <div class="card-label">Orientación</div>
+      <ul class="orient-list">
+        <li><b style="color:var(--text);">Qué vas a hacer:</b> convertir tus 10 líneas en un párrafo con título, frase de introducción y conectores, y leerlo en voz alta como si lo hablaras.</li>
+        <li><b style="color:var(--text);">Por qué:</b> la escritura es cómo pegas las ideas. Un mensaje claro no se presta a malentendidos.</li>
+        <li><b style="color:var(--text);">Qué notar:</b> cómo cambian tus ideas cuando las conectas. Hoy no cuentes muletillas: disfruta cómo suena.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="--d:90ms;">
+      <div class="card-label">Tus 10 líneas</div>
+      <div id="ownLinesBox"></div>
+    </div>
+
+    <div class="card" style="--d:140ms;">
+      <div class="card-label">Tu párrafo</div>
+      <div class="field"><label>Título</label><input type="text" class="big" id="pTitle" maxlength="80" placeholder="Que diga de qué trata"></div>
+      <div class="field"><label>Frase de introducción</label><textarea id="pIntro" maxlength="200" rows="2" style="min-height:64px;" placeholder="Una frase que presente la idea principal"></textarea></div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Párrafo</label>
+        <textarea id="pBody" style="min-height:220px;" placeholder="Une tus ideas con conectores."></textarea>
+      </div>
+      <div class="seg-label" style="margin-top:12px;">Toca un conector para insertarlo</div>
+      <div class="chips" id="connChips"></div>
+      <ul class="check-list" id="checkList"></ul>
+      <div class="counter" id="wordCounter">0 palabras</div>
+    </div>
+
+    <div class="card" style="--d:190ms;">
+      <div class="card-label">Léelo como si lo hablaras</div>
+      <div class="card-text muted" style="margin-bottom:10px;">Mírate al leer, no al texto. Habla como si se lo contaras a un amigo.</div>
+      <div class="big-num" id="readClock" style="font-size:42px;">00:00</div>
+      <div class="btn-row"><button class="btn btn-ghost" id="btnRead">Empezar lectura</button></div>
+      <div class="seg-label" style="margin-top:14px;">¿Qué tan natural sonó?</div>
+      <div class="rate" id="rateRow"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    </div>
+
+    <div id="actionArea"><button class="btn btn-primary btn-block" id="btnSave" disabled>Guardar sesión</button></div>
+
+    <div class="card done-card hidden" id="doneCard" style="--d:0ms;">
+      <div class="done-icon">🎤</div>
+      <div class="done-title">Sesión 4 registrada.</div>
+      <div class="done-sub">Terminaste la Semana 1: elegiste, escuchaste, resumiste, escribiste y lo dijiste en voz alta.</div>
+      <a class="btn btn-primary btn-block" href="smart.html#mapa">Volver al mapa →</a>
+    </div>
+</main>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="bottomnav">
+  <a class="navbtn active" href="smart.html#mapa"><span class="ic">🗺️</span><span class="lb">Mapa</span></a>
+  <a class="navbtn" href="smart.html#enfoque"><span class="ic">🎯</span><span class="lb">Enfoque</span></a>
+  <a class="navbtn" href="smart.html#hacer"><span class="ic">✅</span><span class="lb">Hacer</span></a>
+  <a class="navbtn" href="smart.html#capturar"><span class="ic">💡</span><span class="lb">Capturar</span></a>
+  <a class="navbtn" href="smart.html#perfil"><span class="ic">👤</span><span class="lb">Perfil</span></a>
+</nav>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "proyectoSmart.state.v3";
+  var SESSION_ID = "w1s4";
+  var pageStart = Date.now();
+
+  function hexToRgba(hex, a){
+    var r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return "rgba("+r+","+g+","+b+","+a+")";
+  }
+  function applyAccent(hex){
+    document.documentElement.style.setProperty("--accent", hex);
+    document.documentElement.style.setProperty("--accent-soft", hexToRgba(hex,.18));
+  }
+  function readSharedState(){
+    try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+  }
+  function writeSharedState(mutateFn){
+    var current = readSharedState();
+    mutateFn(current);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); }catch(e){}
+  }
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+  function fmtClock(sec){ sec=Math.max(0,Math.round(sec)); var m=Math.floor(sec/60), s=sec%60; return (m<10?"0":"")+m+":"+(s<10?"0":"")+s; }
+  function wordCount(t){ var m = t.trim().match(/\S+/g); return m ? m.length : 0; }
+
+  var shared = readSharedState();
+  if(shared.accent) applyAccent(shared.accent);
+  $("avatarMark").textContent = shared.icon || "🧠";
+  $("brandName").textContent = shared.nickname ? "Hola, " + shared.nickname : "Proyecto Smart";
+  var existing = (shared.weeklySessions && shared.weeklySessions[SESSION_ID]) || null;
+
+  var toastEl = $("toast"), toastTimer = null;
+  function showToast(text, emoji){
+    toastEl.textContent = (emoji?emoji+" ":"") + text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
+  function burstConfetti(xEl){
+    var rect = xEl && xEl.getBoundingClientRect ? xEl.getBoundingClientRect() : { left:innerWidth/2, top:innerHeight/2, width:0, height:0 };
+    var cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    var glyphs = ["✨","⭐","🎉","💫"];
+    for(var i=0;i<14;i++){
+      var s = document.createElement("span");
+      s.className = "confetti-particle";
+      s.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+      s.style.left = cx+"px"; s.style.top = cy+"px";
+      s.style.setProperty("--tx", (Math.random()*140-70)+"px");
+      s.style.setProperty("--ty", (Math.random()*-110-30)+"px");
+      document.body.appendChild(s);
+      setTimeout(function(el){ return function(){ el.remove(); }; }(s), 950);
+    }
+  }
+  var bA=$("blobOuterA"), bB=$("blobOuterB"), bC=$("blobOuterC");
+  window.addEventListener("scroll", function(){
+    var y = window.scrollY || 0;
+    bA.style.transform = "translate3d(0,"+(y*0.12)+"px,0)";
+    bB.style.transform = "translate3d(0,"+(y*-0.08)+"px,0)";
+    bC.style.transform = "translate3d(0,"+(y*0.05)+"px,0)";
+  }, { passive:true });
+
+  function segBind(containerId, onPick){
+    var c = $(containerId);
+    c.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click", function(){
+        c.querySelectorAll("button").forEach(function(x){ x.classList.remove("active"); });
+        b.classList.add("active");
+        onPick(b.getAttribute("data-v"));
+      });
+    });
+  }
+  function finishSession(payload, btn){
+    payload.week = 1; payload.completed = true; payload.date = new Date().toISOString();
+    writeSharedState(function(state){
+      state.weeklySessions = state.weeklySessions || {};
+      state.weeklySessions[SESSION_ID] = payload;
+    });
+    $("actionArea").classList.add("hidden");
+    var done = $("doneCard");
+    done.classList.remove("hidden");
+    window.scrollTo({ top: done.offsetTop - 20, behavior:"smooth" });
+    burstConfetti(done.querySelector(".done-icon"));
+    showToast("Sesión guardada", "✅");
+  }
+
+  var CONNECTORS = ["primero","además","por ejemplo","porque","sin embargo","por eso","aunque","en conclusión"];
+  var prev = shared.weeklySessions && shared.weeklySessions.w1s3;
+  if(prev && prev.lines && prev.lines.length){
+    $("ownLinesBox").innerHTML = '<div class="card-text muted" style="font-size:12px;">'+esc(prev.bookTitle||"")+'</div><ol class="own-lines">'+prev.lines.map(function(l){ return "<li>"+esc(l)+"</li>"; }).join("")+"</ol>";
+  } else {
+    $("ownLinesBox").innerHTML = '<div class="card-text muted">Aún no tienes tus 10 líneas. Puedes hacer la <a href="semana1-sesion3.html" style="color:var(--accent);font-weight:800;">sesión 3</a> primero, o escribir tu párrafo desde cero.</div>';
+  }
+
+  $("connChips").innerHTML = CONNECTORS.map(function(c){ return '<button class="chip-btn" data-c="'+esc(c)+'">'+esc(c)+'</button>'; }).join("");
+  $("connChips").querySelectorAll(".chip-btn").forEach(function(b){
+    b.addEventListener("click", function(){
+      var ta = $("pBody"), c = b.getAttribute("data-c");
+      var s = ta.selectionStart==null ? ta.value.length : ta.selectionStart;
+      var e = ta.selectionEnd==null ? s : ta.selectionEnd;
+      var pre = ta.value.slice(0,s), post = ta.value.slice(e);
+      var startOfSentence = !pre.trim() || /[.!?¡¿:]\s*$/.test(pre);
+      var word = startOfSentence ? c.charAt(0).toUpperCase() + c.slice(1) + (c==="porque"||c==="aunque" ? " " : ", ") : c + " ";
+      var ins = (pre && !/\s$/.test(pre) ? " " : "") + word;
+      ta.value = pre + ins + post;
+      var pos = (pre+ins).length; ta.focus(); ta.setSelectionRange(pos,pos);
+      refresh();
+    });
+  });
+
+  function connectorsUsed(text){
+    var low = " "+text.toLowerCase().replace(/[.,;:!?¿¡()]/g," ")+" ";
+    return CONNECTORS.filter(function(c){ return low.indexOf(" "+c+" ")!==-1; });
+  }
+
+  var rating = 0, readSecs = null, reading = false, readStart = 0, readTimer = null;
+  function refresh(){
+    var title = $("pTitle").value.trim(), intro = $("pIntro").value.trim(), body = $("pBody").value;
+    var words = wordCount(body), conns = connectorsUsed(body);
+    var checks = [
+      { ok: title.length>=3, t:"Título que dice de qué trata" },
+      { ok: intro.length>=8, t:"Frase de introducción" },
+      { ok: conns.length>=3, t:"Al menos 3 conectores distintos ("+conns.length+" usados)" },
+      { ok: words>=50, t:"Párrafo de 50 palabras o más" }
+    ];
+    $("checkList").innerHTML = checks.map(function(c){ return '<li class="'+(c.ok?'ok':'')+'"><span class="box">'+(c.ok?'✓':'')+'</span>'+esc(c.t)+'</li>'; }).join("");
+    $("wordCounter").textContent = words+" palabras";
+    $("wordCounter").classList.toggle("ok", words>=50);
+    $("btnSave").disabled = !(title.length>=3 && intro.length>=8 && words>=30 && rating>0);
+    return { title:title, intro:intro, body:body.trim(), words:words, conns:conns };
+  }
+  ["pTitle","pIntro","pBody"].forEach(function(id){ $(id).addEventListener("input", refresh); });
+
+  $("rateRow").querySelectorAll("button").forEach(function(b){
+    b.addEventListener("click", function(){
+      rating = Number(b.getAttribute("data-v"));
+      $("rateRow").querySelectorAll("button").forEach(function(x){ x.classList.toggle("selected", x===b); });
+      refresh();
+    });
+  });
+
+  $("btnRead").addEventListener("click", function(){
+    if(!reading){
+      reading = true; readStart = Date.now();
+      $("btnRead").textContent = "Terminé de leer";
+      readTimer = setInterval(function(){ $("readClock").textContent = fmtClock((Date.now()-readStart)/1000); }, 250);
+    } else {
+      reading = false; clearInterval(readTimer);
+      readSecs = Math.round((Date.now()-readStart)/1000);
+      $("readClock").textContent = fmtClock(readSecs);
+      $("btnRead").textContent = "Leer otra vez";
+      showToast("Lectura registrada: "+readSecs+" s", "🎤");
+    }
+  });
+
+  if(existing){
+    $("pTitle").value = existing.paragraphTitle || ""; $("pIntro").value = existing.intro || ""; $("pBody").value = existing.paragraph || "";
+    rating = existing.naturalness || 0;
+    $("rateRow").querySelectorAll("button").forEach(function(x){ x.classList.toggle("selected", Number(x.getAttribute("data-v"))===rating); });
+    readSecs = existing.readSecs || null;
+    if(readSecs) $("readClock").textContent = fmtClock(readSecs);
+  }
+  refresh();
+
+  $("btnSave").addEventListener("click", function(){
+    if(reading){ $("btnRead").click(); }
+    var r = refresh();
+    if($("btnSave").disabled) return;
+    var wpm = (readSecs && readSecs>=5 && r.words) ? Math.round(r.words/(readSecs/60)) : null;
+    finishSession({ session:4, title:"Del párrafo al micrófono", paragraphTitle:r.title, intro:r.intro, paragraph:r.body, words:r.words, connectors:r.conns, readSecs:readSecs, wpm:wpm, naturalness:rating });
+  });
+})();
+</script>
+</body>
+</html>
