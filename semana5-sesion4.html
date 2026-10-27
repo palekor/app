@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Proyecto Smart — Semana 5 · Sesión 4 · El porqué y la niebla</title>
+<meta name="description" content="Semana 5 · Sesión 4 de Proyecto Smart: El porqué y la niebla. El Código del Pensador.">
+<meta name="theme-color" content="#140F26">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#140F26;
+    --surface:#211A3B;
+    --surface-2:#2E2552;
+    --accent:#8B5CFF;
+    --accent-soft:rgba(139,92,255,.20);
+    --pop-pink:#FF5C9D;
+    --pop-cyan:#28E0C8;
+    --pop-lime:#C6FF4D;
+    --pop-yellow:#FFD23F;
+    --text:#F5F2FF;
+    --muted:#A79FC9;
+    --line:rgba(255,255,255,.11);
+    --radius:22px;
+    --chunky:0 10px 0 -4px rgba(0,0,0,.28), 0 18px 34px -16px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(1000px 520px at 15% -8%, rgba(139,92,255,.28), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(255,92,157,.22), transparent 55%),
+      radial-gradient(800px 600px at 50% 120%, rgba(40,224,200,.14), transparent 60%);
+    background-attachment:fixed;
+    color:var(--text); overflow-x:hidden;
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:600;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fredoka',sans-serif; margin:0; letter-spacing:-.01em;}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* -------- Ambient parallax blobs (same language as smart.html) -------- */
+  .blobfield{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob-outer{ position:absolute; will-change:transform; }
+  .blob{ border-radius:50%; filter:blur(55px); opacity:.42; }
+  .blob-a{ top:-60px; left:-40px; width:300px; height:300px; background:var(--accent); animation:driftA 16s ease-in-out infinite; }
+  .blob-b{ top:36%; right:-80px; width:280px; height:280px; background:var(--pop-pink); opacity:.34; animation:driftB 20s ease-in-out infinite; }
+  .blob-c{ bottom:-100px; left:14%; width:320px; height:320px; background:var(--pop-cyan); opacity:.26; animation:driftC 18s ease-in-out infinite; }
+  @keyframes driftA{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(30px,40px); } }
+  @keyframes driftB{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-25px,30px); } }
+  @keyframes driftC{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(20px,-20px) scale(1.08); } }
+
+  .app{ max-width:480px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:96px; z-index:1; }
+
+  /* -------- Topbar -------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 20px 6px; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{ width:50px; height:50px; border-radius:16px; background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border:none; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 8px 18px -6px var(--accent); }
+  .brand-name{ font-weight:800; font-size:17px; font-family:'Fredoka',sans-serif; }
+  .brand-sub{ font-size:11.5px; color:var(--pop-pink); margin-top:2px; font-weight:800; letter-spacing:.02em; }
+  .back-link{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; text-decoration:none; flex-shrink:0; }
+
+  .main{ padding:6px 20px 8px; animation:viewIn .4s ease; }
+  @keyframes viewIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* -------- Progress -------- */
+  .progress-block{ margin-bottom:22px; }
+  .progress-rows{ display:flex; flex-direction:column; gap:8px; }
+  .progress-row{ display:flex; align-items:center; gap:12px; }
+  .progress-track{ flex:1; height:10px; border-radius:100px; background:var(--surface-2); overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.3); }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--accent), var(--pop-pink) 55%, var(--pop-cyan)); background-size:220% 100%; border-radius:100px; animation:shimmer 2.4s linear infinite; }
+  @keyframes shimmer{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+  .progress-label{ font-size:11.5px; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+  /* -------- Hero -------- */
+  .eyebrow{ font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; margin-bottom:10px; }
+  .hero-title{ font-size:28px; font-weight:600; line-height:1.2; margin-bottom:10px; }
+  .hero-sub{ font-size:13.5px; color:var(--accent); font-weight:700; margin-bottom:10px; }
+  .hero-body{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:26px; }
+
+  /* -------- Card / section -------- */
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:16px; opacity:0; animation:cardIn .45s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--d,0ms); box-shadow:var(--chunky); }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+  .card-label{ font-size:10.5px; font-weight:800; letter-spacing:.08em; color:var(--accent); text-transform:uppercase; margin-bottom:8px; }
+  .card-title{ font-size:16px; font-weight:700; margin-bottom:8px; }
+  .card-text{ font-size:13.5px; line-height:1.6; color:var(--text); }
+  .card-text.muted{ color:var(--muted); }
+  .orient-list{ margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .orient-list li{ font-size:13px; line-height:1.5; padding-left:20px; position:relative; color:var(--muted); }
+  .orient-list li::before{ content:"›"; position:absolute; left:0; color:var(--accent); font-weight:700; }
+  .disclaimer{ font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+
+  /* -------- Form -------- */
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .field input, .field textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px;
+    color:var(--text); font-size:14px;
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:80px; line-height:1.5; }
+  .words-row{ display:flex; gap:8px; }
+  .words-row .field{ flex:1; margin-bottom:0; }
+
+  /* -------- Archetype grid -------- */
+  .arch-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:4px; }
+  .arch-card{ background:var(--surface-2); border:2px solid var(--line); border-radius:16px; padding:13px; text-align:left; display:flex; flex-direction:column; gap:5px; transition:border-color .2s ease, background .2s ease, transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .arch-card:active{ transform:scale(.96); }
+  .arch-ic{ font-size:22px; }
+  .arch-name{ font-weight:800; font-size:13px; font-family:'Fredoka',sans-serif; }
+  .arch-desc{ font-size:11px; color:var(--muted); line-height:1.4; }
+  .arch-card.selected{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--accent-soft); }
+  .arch-card.selected .arch-name{ color:var(--accent); }
+
+  /* -------- Reflection reveal -------- */
+  .reflect-wrap{ max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.2,.8,.2,1); }
+  .reflect-wrap.open{ max-height:420px; }
+  .reflect-inner{ padding-top:2px; }
+  .prompt-list{ margin:0 0 12px; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .prompt-list li{ font-size:12.5px; color:var(--muted); font-style:italic; }
+
+  /* -------- Buttons -------- */
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; font-size:14.5px; font-weight:800; padding:14px 20px; border-radius:100px; border:2px solid transparent; transition:transform .15s cubic-bezier(.2,1.4,.4,1), opacity .15s ease, box-shadow .2s ease; text-decoration:none; font-family:'Nunito',sans-serif; }
+  .btn:active{ transform:scale(.94); }
+  .btn-primary{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 10px 24px -10px var(--accent); }
+  .btn-primary:disabled{ opacity:.35; box-shadow:none; cursor:not-allowed; transform:none; }
+  .btn-outline{ background:transparent; color:var(--accent); border-color:var(--accent); }
+  .btn-block{ width:100%; }
+
+  /* -------- Completion state -------- */
+  .done-card{ text-align:center; padding:34px 20px; }
+  .done-icon{ font-size:42px; margin-bottom:14px; animation:bob 2.4s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  .done-title{ font-size:20px; font-weight:700; margin-bottom:8px; }
+  .done-sub{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:22px; font-style:italic; }
+
+  /* -------- Bottom nav (same language as smart.html) -------- */
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0; max-width:480px; margin:0 auto;
+    background:rgba(33,26,59,.9); backdrop-filter:blur(14px); border-top:1px solid var(--line);
+    display:flex; padding:9px 4px calc(9px + env(safe-area-inset-bottom)); z-index:30;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.7);
+  }
+  .navbtn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--muted); padding:5px 0; border-radius:12px; text-decoration:none; }
+  .navbtn .ic{ font-size:18px; border-radius:12px; padding:4px 12px; }
+  .navbtn.active{ color:var(--text); }
+  .navbtn.active .ic{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); box-shadow:0 6px 14px -5px var(--accent); }
+  .navbtn .lb{ font-size:10px; font-weight:800; }
+
+  /* -------- Toast -------- */
+  .toast{
+    position:fixed; left:50%; bottom:98px; transform:translate(-50%,16px); max-width:88%;
+    background:linear-gradient(135deg,var(--surface-2),var(--surface)); border:1.5px solid var(--accent); color:var(--text); font-size:13px; font-weight:800;
+    padding:13px 20px; border-radius:100px; opacity:0; pointer-events:none; transition:.28s cubic-bezier(.2,.8,.2,1);
+    z-index:220; text-align:center; box-shadow:0 10px 28px -10px rgba(0,0,0,.7);
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* -------- Confetti -------- */
+  .confetti-particle{ position:fixed; z-index:250; pointer-events:none; font-size:18px; animation:floatUp .9s ease-out forwards; }
+  @keyframes floatUp{ from{ transform:translate(0,0) scale(1) rotate(0deg); opacity:1; } to{ transform:translate(var(--tx),var(--ty)) scale(.5) rotate(180deg); opacity:0; } }
+
+  .hidden{ display:none !important; }
+
+  /* -------- Session extras -------- */
+  .seg{ display:flex; gap:5px; background:var(--surface-2); padding:5px; border-radius:16px; border:1px solid var(--line); margin:4px 0 14px; }
+  .seg button{ flex:1; padding:10px 4px; border-radius:12px; border:none; background:transparent; color:var(--muted); font-weight:800; font-size:13px; transition:.2s; }
+  .seg button.active{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 6px 14px -5px var(--accent); }
+  .seg-label{ font-size:11.5px; font-weight:700; color:var(--muted); margin-top:4px; }
+  .big-num{ font-family:'Fredoka',sans-serif; font-size:54px; font-weight:600; text-align:center; margin:6px 0 14px; letter-spacing:.02em; }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ flex:1; }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line); }
+  .lines-grid{ display:flex; flex-direction:column; gap:8px; }
+  .line-row{ display:flex; align-items:center; gap:8px; }
+  .line-n{ width:26px; height:26px; border-radius:8px; background:var(--accent-soft); color:var(--accent); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .line-row input{ flex:1; width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:14px; }
+  .line-row input:focus{ outline:none; border-color:var(--accent); }
+  .counter{ font-size:12px; font-weight:800; color:var(--muted); text-align:right; margin:10px 0 2px; }
+  .counter.ok{ color:var(--pop-lime); }
+  .q-text{ font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; text-align:center; margin:8px 0 16px; }
+  .q-input{ width:100%; background:var(--surface-2); border:2px solid var(--line); border-radius:14px; padding:14px; color:var(--text); font-size:22px; text-align:center; font-family:'Fredoka',sans-serif; }
+  .q-input:focus{ outline:none; border-color:var(--accent); }
+  .feedback{ min-height:22px; text-align:center; font-size:13px; font-weight:800; margin:10px 0; }
+  .feedback.good{ color:var(--pop-lime); }
+  .feedback.bad{ color:var(--pop-pink); }
+  .hintbox{ background:var(--accent-soft); border:1px dashed var(--accent); border-radius:14px; padding:12px; font-size:12.5px; line-height:1.5; margin-bottom:12px; }
+  .ladder{ display:flex; align-items:stretch; gap:8px; margin:10px 0 4px; }
+  .ladder div{ flex:1; border-radius:12px; padding:10px 4px; text-align:center; font-family:'Fredoka',sans-serif; font-weight:600; background:linear-gradient(180deg,var(--accent),var(--pop-pink)); color:#fff; display:flex; flex-direction:column; justify-content:center; line-height:1.15; }
+  .ladder small{ display:block; font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; opacity:.85; }
+  .chip-btn{ border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); border-radius:100px; padding:8px 13px; font-size:12.5px; font-weight:800; transition:transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .chip-btn:active{ transform:scale(.92); }
+  .chip-btn.selected{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
+  .check-list{ list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .check-list li{ font-size:12.5px; color:var(--muted); display:flex; gap:9px; align-items:center; }
+  .check-list li .box{ width:20px; height:20px; border-radius:7px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; transition:.2s; }
+  .check-list li.ok{ color:var(--text); }
+  .check-list li.ok .box{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .own-lines{ margin:8px 0 0; padding:0 0 0 18px; font-size:12.5px; color:var(--muted); line-height:1.55; }
+  .rate{ display:flex; gap:8px; margin:8px 0 4px; }
+  .rate button{ flex:1; padding:12px 0; border-radius:12px; border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; transition:.2s; }
+  .rate button.selected{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border-color:transparent; color:#fff; }
+  .field input[type=text].big{ font-size:15px; font-weight:700; }
+  .reveal{ display:none; }
+  .reveal.open{ display:block; }
+
+  /* =====================================================
+     CAPA DE LUJO · SEMANA 5 — El Código del Pensador
+     Mismo sistema de smart.html + metal dorado y sellos.
+  ===================================================== */
+  :root{
+    --gold:#FFD23F;
+    --gold-hi:#FFF3C9;
+    --gold-lo:#C38A1C;
+    --ink:#1A1331;
+  }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* -------- Sello (hero) -------- */
+  .hero-seal{ display:flex; justify-content:center; align-items:flex-start; margin:4px 0 24px; position:relative; }
+  .hero-seal::before{
+    content:""; position:absolute; left:50%; top:50%; width:270px; height:270px; transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(255,210,63,.20), rgba(139,92,255,.10) 45%, transparent 68%);
+    pointer-events:none;
+  }
+  .seal{ position:relative; width:212px; height:212px; animation:sealIn 1s cubic-bezier(.2,.9,.25,1) both; }
+  .seal svg{ display:block; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)); }
+  .seal-pair .seal{ width:172px; height:172px; }
+  .seal-pair .seal + .seal{ margin-left:-30px; margin-top:34px; animation-delay:.18s; }
+  @keyframes sealIn{ from{ opacity:0; transform:scale(.84) rotate(-10deg); } to{ opacity:1; transform:none; } }
+  .sheen{ animation:sheen 1.8s .55s cubic-bezier(.3,.6,.2,1) both; }
+  @keyframes sheen{ from{ transform:translateX(0); } to{ transform:translateX(440px); } }
+
+  /* Sello estampado al guardar: el único gran momento de la página */
+  .seal.stamped{ animation:stampBig .8s cubic-bezier(.2,1.35,.4,1) both; }
+  .seal-pair .seal.stamped + .seal.stamped{ animation-delay:.22s; }
+  @keyframes stampBig{
+    0%{ opacity:0; transform:scale(1.9) rotate(-16deg); }
+    55%{ opacity:1; transform:scale(.9) rotate(3deg); }
+    100%{ opacity:1; transform:none; }
+  }
+  .done-seal{ display:flex; justify-content:center; margin:2px 0 18px; }
+  .done-seal .seal{ width:170px; height:170px; }
+  .done-seal.seal-pair .seal{ width:146px; height:146px; }
+
+  /* -------- Códice: los 5 sellos -------- */
+  .codex-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .codex-title{ font-family:'Fredoka',sans-serif; font-size:16px; font-weight:600; }
+  .codex-count{ font-size:11.5px; font-weight:800; color:var(--gold); white-space:nowrap; }
+  .codex{ display:flex; justify-content:space-between; gap:6px; margin-top:14px; }
+  .codex-item{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .codex-item svg{ width:54px; height:54px; display:block; border-radius:50%; }
+  .codex-item .cx-name{ font-size:10.5px; font-weight:800; color:var(--muted); text-align:center; line-height:1.25; hyphens:manual; overflow-wrap:break-word; max-width:100%; }
+  .codex-item.earned .cx-name{ color:var(--gold); }
+  .codex-item.current svg{ box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+  .codex-item.current .cx-name{ color:var(--text); }
+  .codex-item.stamp svg{ animation:stampMini .7s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes stampMini{ 0%{ transform:scale(1.8) rotate(-14deg); opacity:0; } 60%{ transform:scale(.9) rotate(2deg); opacity:1; } 100%{ transform:none; } }
+
+  /* -------- Tarjeta de ley (filo dorado) -------- */
+  .card.law-card{
+    border:1.5px solid transparent;
+    background:
+      linear-gradient(var(--surface),var(--surface)) padding-box,
+      linear-gradient(145deg, rgba(255,210,63,.85), rgba(255,210,63,.10) 32%, rgba(139,92,255,.30) 68%, rgba(255,92,157,.55)) border-box;
+  }
+  .law-head{ display:flex; align-items:center; gap:10px; }
+  .law-num{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:var(--ink);
+    background:linear-gradient(135deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));
+    padding:4px 12px; border-radius:100px; box-shadow:0 4px 12px -4px rgba(255,210,63,.6);
+  }
+  .law-name{ font-size:13px; font-weight:800; color:var(--gold); }
+  .law-maxim{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:24px; line-height:1.2; margin:14px 0 12px; letter-spacing:-.005em;
+    background:linear-gradient(115deg,var(--gold-hi) 0%,var(--gold) 38%,#FFB547 70%,var(--gold-hi) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .law-example{ margin:14px 0 12px; background:var(--ink); border-radius:16px; padding:6px 14px; border:1px solid var(--line); }
+  .ex-row{ display:grid; grid-template-columns:96px 1fr; gap:10px; padding:10px 0; align-items:baseline; }
+  .ex-row + .ex-row{ border-top:1px solid var(--line); }
+  .ex-k{ font-size:11.5px; font-weight:800; color:var(--muted); }
+  .ex-v{ font-size:13.5px; line-height:1.5; }
+  .ex-v.win{ color:var(--pop-lime); }
+  .math{ font-family:'Fredoka',sans-serif; font-weight:500; font-size:17px; letter-spacing:.01em; }
+  .alarm{
+    display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:11px 12px; border-radius:14px;
+    background:rgba(255,92,157,.09); border:1px solid rgba(255,92,157,.32); font-size:12.5px; line-height:1.5;
+  }
+  .alarm b{ color:var(--pop-pink); }
+  .breakers{ display:flex; gap:7px; margin:12px 0 2px; }
+  .breakers span{
+    flex:1; text-align:center; font-family:'Fredoka',sans-serif; font-size:19px; font-weight:600; padding:9px 0; border-radius:12px;
+    background:var(--ink); border:1.5px solid rgba(255,210,63,.45); color:var(--gold);
+  }
+  .steps{ list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; counter-reset:st; }
+  .steps li{ counter-increment:st; display:flex; gap:11px; align-items:flex-start; font-size:13.5px; line-height:1.45; }
+  .steps li::before{
+    content:counter(st); flex-shrink:0; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif; font-size:13px; font-weight:600; color:var(--ink);
+    background:linear-gradient(135deg,var(--gold-hi),var(--gold) 50%,var(--gold-lo));
+  }
+
+  /* -------- Retos de opción múltiple -------- */
+  .q-tag{
+    display:inline-block; font-size:11px; font-weight:800; color:var(--pop-cyan); background:rgba(40,224,200,.10);
+    border:1px solid rgba(40,224,200,.35); padding:4px 10px; border-radius:100px; margin-bottom:12px;
+  }
+  .mc-prompt{ font-size:15px; line-height:1.5; margin-bottom:16px; }
+  .mc-prompt .math-big{ display:block; font-family:'Fredoka',sans-serif; font-size:32px; font-weight:600; text-align:center; margin:2px 0 4px; }
+  .mc-prompt .given{ display:block; background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-bottom:10px; font-size:13.5px; line-height:1.55; }
+  .mc-prompt .given b{ color:var(--gold); font-size:11px; letter-spacing:.02em; }
+  .mc-prompt .concl{ display:block; font-family:'Fredoka',sans-serif; font-size:17px; font-weight:500; line-height:1.35; }
+  .mc-opts{ display:flex; flex-direction:column; gap:9px; }
+  .mc-opts.verdict-row{ flex-direction:row; }
+  .mc-opts.verdict-row .mc-opt{ flex:1; text-align:center; }
+  .mc-opt{
+    text-align:left; background:var(--surface-2); border:2px solid var(--line); color:var(--text);
+    border-radius:16px; padding:13px 14px; font-size:14px; font-weight:700; line-height:1.4;
+    transition:transform .15s cubic-bezier(.2,1.4,.4,1), border-color .2s ease, background .2s ease, opacity .2s ease;
+  }
+  .mc-opt:active{ transform:scale(.97); }
+  .mc-opt.mathy{ font-family:'Fredoka',sans-serif; font-size:19px; font-weight:500; }
+  .mc-opt.right{ border-color:var(--pop-lime); background:rgba(198,255,77,.12); opacity:1; }
+  .mc-opt.wrong{ border-color:var(--pop-pink); background:rgba(255,92,157,.08); opacity:.6; }
+  .mc-opt:disabled{ cursor:default; }
+  .mc-opt:disabled:not(.right):not(.wrong){ opacity:.45; }
+  .shake{ animation:shake .36s ease; }
+  @keyframes shake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+  .why{ background:var(--accent-soft); border:1px dashed var(--accent); border-radius:14px; padding:12px; font-size:13px; line-height:1.55; margin:4px 0 12px; }
+  .score-line{ display:flex; align-items:center; gap:14px; }
+  .score-big{ font-family:'Fredoka',sans-serif; font-size:40px; font-weight:600; line-height:1; color:var(--gold); }
+  .score-txt{ font-size:13px; color:var(--muted); line-height:1.5; }
+  .score-txt b{ color:var(--text); }
+
+  /* -------- Clasificar (Ley II) -------- */
+  .case-name{ font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; margin-bottom:12px; }
+  .stmt{ background:var(--surface-2); border:1.5px solid var(--line); border-radius:16px; padding:12px; margin-bottom:10px; transition:border-color .25s ease; }
+  .stmt-text{ font-size:14px; line-height:1.45; margin-bottom:10px; }
+  .tri{ display:flex; gap:6px; }
+  .tri button{ flex:1; padding:9px 2px; border-radius:100px; border:1.5px solid var(--line); background:transparent; color:var(--muted); font-size:11.5px; font-weight:800; transition:.2s; }
+  .tri button.sel{ border-color:var(--accent); background:var(--accent-soft); color:var(--text); }
+  .stmt.ok{ border-color:var(--pop-lime); }
+  .stmt.no{ border-color:var(--pop-pink); }
+  .stmt .fix{ font-size:12px; font-weight:800; margin-top:9px; color:var(--pop-pink); }
+
+  /* -------- Laboratorio (Ley III) -------- */
+  .rule-big{ font-family:'Fredoka',sans-serif; font-size:23px; font-weight:600; text-align:center; margin:8px 0 6px; }
+  .rule-note{ font-size:12px; color:var(--muted); text-align:center; margin-bottom:14px; }
+  .numpad{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .numpad button{
+    background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); border-radius:12px; padding:11px 0;
+    font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; transition:transform .15s cubic-bezier(.2,1.4,.4,1), border-color .2s;
+  }
+  .numpad button:active{ transform:scale(.9); }
+  .numpad button.used{ border-color:var(--accent); color:var(--accent); }
+  .numpad button.breaker{ border-color:var(--pop-pink); color:var(--pop-pink); }
+  .lab-log{ margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+  .lab-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; background:var(--ink); border:1px solid var(--line); border-radius:12px; padding:9px 12px; font-size:12.5px; animation:viewIn .3s ease; }
+  .lab-row .calc{ font-family:'Fredoka',sans-serif; font-size:15px; }
+  .lab-row .vd{ font-weight:800; white-space:nowrap; }
+  .lab-row .vd.ok{ color:var(--pop-lime); }
+  .lab-row .vd.no{ color:var(--pop-pink); }
+  .lab-banner{ margin-top:12px; border-radius:14px; padding:12px; font-size:13px; line-height:1.5; }
+  .lab-banner.broke{ background:rgba(255,92,157,.10); border:1px solid rgba(255,92,157,.4); }
+  .lab-banner.held{ background:rgba(198,255,77,.08); border:1px solid rgba(198,255,77,.35); }
+  .rule-status{ display:flex; gap:6px; margin-top:4px; }
+  .rule-status span{ flex:1; text-align:center; font-size:11px; font-weight:800; padding:6px 0; border-radius:100px; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
+  .rule-status span.ok{ color:var(--ink); background:var(--pop-lime); border-color:transparent; }
+
+  /* -------- Balanza (Ley IV) -------- */
+  .balance-wrap{ background:var(--ink); border:1px solid var(--line); border-radius:18px; padding:8px 6px 4px; margin:4px 0 12px; }
+  .balance-wrap svg{ display:block; width:100%; height:auto; }
+  .beam{ transition:transform .7s cubic-bezier(.3,1.5,.5,1); transform-origin:160px 62px; }
+  .pan{ transition:transform .7s cubic-bezier(.3,1.5,.5,1); }
+  .eq-live{ font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; text-align:center; margin:6px 0 2px; }
+  .eq-live .neq{ color:var(--pop-pink); }
+  .move-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .move-grid .btn{ padding:12px 10px; font-size:12.5px; line-height:1.25; border-radius:16px; }
+  .move-legal{ background:var(--surface-2); color:var(--text); border-color:rgba(198,255,77,.35); }
+  .move-illegal{ background:var(--surface-2); color:var(--text); border-color:rgba(255,92,157,.35); }
+  .move-grid .btn:disabled{ opacity:.35; }
+
+  /* -------- Niebla (Ley V) -------- */
+  .fog-card{ position:relative; overflow:hidden; }
+  .fog-layer{
+    position:absolute; inset:-25%; pointer-events:none; z-index:0; transition:opacity 1.4s ease;
+    background:
+      radial-gradient(38% 26% at 22% 28%, rgba(226,220,255,.22), transparent 70%),
+      radial-gradient(44% 30% at 78% 58%, rgba(226,220,255,.18), transparent 70%),
+      radial-gradient(36% 26% at 46% 88%, rgba(226,220,255,.16), transparent 70%);
+    filter:blur(16px); animation:fogDrift 16s ease-in-out infinite alternate;
+  }
+  @keyframes fogDrift{ from{ transform:translate(-4%,0); } to{ transform:translate(4%,3%); } }
+  .fog-card > *:not(.fog-layer){ position:relative; z-index:1; }
+  .fog-problem{ font-family:'Fredoka',sans-serif; font-size:18px; font-weight:500; line-height:1.45; margin:6px 0 12px; }
+  .fog-timer{ display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:12px; }
+  .fog-timer .t{ font-family:'Fredoka',sans-serif; font-size:20px; color:var(--text); }
+  .proto{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .proto button{
+    display:flex; align-items:center; gap:8px; text-align:left; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text);
+    border-radius:14px; padding:10px; font-size:12.5px; font-weight:800; line-height:1.25; transition:.2s;
+  }
+  .proto button .pn{
+    flex-shrink:0; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif; font-size:12px; color:var(--ink); background:linear-gradient(135deg,var(--gold-hi),var(--gold) 50%,var(--gold-lo));
+  }
+  .proto button.on{ border-color:var(--gold); background:rgba(255,210,63,.08); }
+  .tool-pane{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px; font-size:13px; line-height:1.55; }
+  .tester-row{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .tester-row input{ flex:1; min-width:0; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:15px; font-family:'Fredoka',sans-serif; }
+  .tester-out{ margin-top:8px; font-family:'Fredoka',sans-serif; font-size:15px; line-height:1.5; }
+  .breath{ width:96px; height:96px; border-radius:50%; margin:10px auto 6px; border:3px solid var(--pop-cyan); box-shadow:0 0 30px -6px var(--pop-cyan) inset; transform:scale(.62); transition:transform 4s ease-in-out; }
+  .breath.in{ transform:scale(1); }
+  .breath-txt{ text-align:center; font-weight:800; font-size:13px; color:var(--pop-cyan); }
+  .money-row{ display:flex; gap:8px; align-items:center; }
+  .money-row .cur{ font-family:'Fredoka',sans-serif; font-size:24px; color:var(--gold); }
+
+  .req-card .check-list{ margin-top:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation:none !important; transition:none !important; }
+    .card{ opacity:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blobfield">
+  <div class="blob-outer" id="blobOuterA" style="left:0;top:0;"><div class="blob blob-a"></div></div>
+  <div class="blob-outer" id="blobOuterB" style="left:0;top:0;"><div class="blob blob-b"></div></div>
+  <div class="blob-outer" id="blobOuterC" style="left:0;top:0;"><div class="blob blob-c"></div></div>
+</div>
+
+<div class="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <a class="back-link" href="smart.html#mapa" title="Volver al mapa" aria-label="Volver al mapa">←</a>
+      <div>
+        <div class="brand-name" id="brandName">Proyecto Smart</div>
+        <div class="brand-sub" id="brandSub">Parte 2 · Semana 5</div>
+      </div>
+    </div>
+    <div class="brand-mark" id="avatarMark">🧠</div>
+  </div>
+
+  <main class="main">
+    <div class="progress-block">
+      <div class="progress-rows">
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Semana</span><div class="progress-track"><div class="progress-fill" style="width:62.5%"></div></div><span class="progress-label">5 de 8</span></div>
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Sesión</span><div class="progress-track"><div class="progress-fill" style="width:100%"></div></div><span class="progress-label">4 de 4</span></div>
+      </div>
+    </div>
+
+    <div class="hero-seal" id="heroSeal"></div>
+
+    <div class="eyebrow">Semana 5 · Sesión 4</div>
+    <h1 class="hero-title">El porqué y la niebla</h1>
+    <div class="hero-sub">Leyes IV y V · La idea y la tolerancia a la confusión</div>
+    <div class="hero-body">Las dos últimas leyes del código. La cuarta: entender por qué funciona un truco, no solo cómo se hace. La quinta: quedarte cuando todo se pone borroso, porque ahí es donde se aprende. Unos 18 minutos.</div>
+    <div class="hintbox hidden" id="repeatNote"></div>
+
+    <div class="card" style="--d:30ms;">
+      <div class="codex-head">
+        <div class="codex-title">El Código del Pensador</div>
+        <div class="codex-count" id="codexCount">0 de 5 sellos</div>
+      </div>
+      <div class="card-text muted" style="font-size:12.5px;">Hoy se sellan las dos últimas: la Ley IV y la Ley V.</div>
+      <div class="codex" id="codex"></div>
+    </div>
+
+    <div class="card" style="--d:70ms;">
+      <div class="card-label">Orientación</div>
+      <ul class="orient-list">
+        <li><b style="color:var(--text);">Qué vas a hacer:</b> resolver una ecuación con una balanza, descubrir la idea detrás de 3 trucos y entrar a un reto diseñado para confundirte.</li>
+        <li><b style="color:var(--text);">Por qué:</b> quien entiende la idea puede reinventar la técnica cuando la olvida. Y quien aguanta la confusión llega a donde otros se rinden.</li>
+        <li><b style="color:var(--text);">Qué notar:</b> qué haces con tu cuerpo y tu mente cuando no ves claro.</li>
+      </ul>
+    </div>
+
+    <div class="card law-card" style="--d:110ms;">
+      <div class="law-head"><span class="law-num">Ley IV</span><span class="law-name">La idea</span></div>
+      <p class="law-maxim">La técnica es el cómo. La idea es el porqué.</p>
+      <p class="card-text">«Pasa restando» es una técnica: un movimiento que te enseñaron. La idea es otra cosa: si quitas lo mismo de los dos platillos de una balanza, sigue nivelada. La técnica se olvida; la idea te deja reconstruirla.</p>
+      <div class="law-example">
+        <div class="ex-row"><span class="ex-k">Técnica</span><span class="ex-v"><span class="math">x + 5 = 12</span><br><span class="math">x = 12 − 5</span></span></div>
+        <div class="ex-row"><span class="ex-k">Idea</span><span class="ex-v">Quito 5 de cada lado y la balanza no se mueve.</span></div>
+        <div class="ex-row"><span class="ex-k">Por eso</span><span class="ex-v win">Todo lo que hagas igual a los dos lados está permitido.</span></div>
+      </div>
+      <div class="alarm"><span>🚨</span><div><b>Señal de alarma:</b> sabes hacer el paso, pero si te preguntan «¿por qué se puede?», no sabes qué decir.</div></div>
+    </div>
+
+    <div class="card" style="--d:140ms;" id="balanceCard">
+      <div class="card-label">La balanza</div>
+      <div class="card-title">Deja la x sola sin que la balanza se incline</div>
+      <div class="card-text muted" style="font-size:12.5px;">Cada moneda pesa 1. La caja x pesa algo que no conoces. Los botones verdes tratan igual a los dos lados; los rosados, no. Prueba los dos tipos.</div>
+      <div class="balance-wrap">
+        <svg viewBox="0 0 320 200" id="balanceSvg" role="img" aria-label="Balanza con la ecuación">
+          <defs>
+            <linearGradient id="bGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3C9"/><stop offset=".45" stop-color="#FFD23F"/><stop offset="1" stop-color="#C38A1C"/></linearGradient>
+            <linearGradient id="bX" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--accent)"/><stop offset="1" stop-color="#FF5C9D"/></linearGradient>
+          </defs>
+          <rect x="157.5" y="64" width="5" height="116" rx="2.5" fill="url(#bGold)"/>
+          <path d="M126 192 L194 192 L180 178 L140 178 Z" fill="url(#bGold)"/>
+          <g class="pan" id="panL"></g>
+          <g class="pan" id="panR"></g>
+          <g class="beam" id="beam">
+            <rect x="56" y="59" width="208" height="6" rx="3" fill="url(#bGold)"/>
+          </g>
+          <circle cx="160" cy="62" r="7" fill="url(#bGold)" stroke="#1A1331" stroke-width="2"/>
+        </svg>
+        <div class="eq-live" id="eqLive"></div>
+      </div>
+      <div class="feedback" id="balFeedback" aria-live="polite"></div>
+      <div class="move-grid">
+        <button class="btn move-legal" data-m="minus5">Quitar 5 de los dos lados</button>
+        <button class="btn move-legal" data-m="half">Partir los dos lados a la mitad</button>
+        <button class="btn move-legal" data-m="double">Duplicar los dos lados</button>
+        <button class="btn move-illegal" data-m="minus5L">Quitar 5 solo a la izquierda</button>
+        <button class="btn move-illegal" data-m="plus3R">Agregar 3 solo a la derecha</button>
+        <button class="btn btn-ghost" data-m="undo">Deshacer</button>
+      </div>
+      <button class="btn btn-outline btn-block" id="btnBalReset" style="margin-top:10px;">Empezar de nuevo</button>
+    </div>
+
+    <div class="reveal" id="ideaWrap">
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Detrás del truco</div>
+        <div class="card-title">Cada técnica esconde una idea</div>
+        <div class="card-text muted">Te muestro un truco que ya conoces. Tú encuentras la idea que lo hace funcionar.</div>
+      </div>
+      <div class="card" style="--d:0ms;" id="ideaMount"></div>
+    </div>
+
+    <div class="reveal" id="fogWrap">
+      <div class="card law-card" style="--d:0ms;">
+        <div class="law-head"><span class="law-num">Ley V</span><span class="law-name">La niebla</span></div>
+        <p class="law-maxim">La confusión es tu mente cargando, no fallando.</p>
+        <p class="card-text">Cuando algo no se ve claro, tu cerebro está armando una conexión nueva. Rendirte ahí es apagar el horno con la torta a medio hacer. Memorizar el paso sin entenderlo es comprar la torta: sirve hoy, pero no aprendiste a hornear.</p>
+        <ol class="steps">
+          <li><span><b>Nombra la duda.</b> ¿Qué parte exacta no ves?</span></li>
+          <li><span><b>Dilo en palabras.</b> Vuelve a la Ley I.</span></li>
+          <li><span><b>Prueba un caso.</b> Vuelve a la Ley III.</span></li>
+          <li><span><b>Respira tres veces</b> y date cinco minutos más.</span></li>
+        </ol>
+        <div class="alarm"><span>🚨</span><div><b>Señal de alarma:</b> sientes confusión y corres a buscar la respuesta o a memorizar el paso.</div></div>
+      </div>
+
+      <div class="card fog-card" style="--d:0ms;" id="fogCard">
+        <div class="fog-layer" id="fogLayer"></div>
+        <div class="card-label">Reto de la niebla</div>
+        <div id="fogIntro">
+          <div class="card-title">Un problema diseñado para engañarte</div>
+          <div class="card-text muted" style="margin-bottom:14px;">La primera respuesta que se te ocurra probablemente esté mal. Tu meta no es acertar rápido: es quedarte. El reloj cuenta cuánto tiempo aguantas en la niebla.</div>
+          <button class="btn btn-primary btn-block" id="btnFogStart">Entrar a la niebla</button>
+        </div>
+        <div class="hidden" id="fogBody">
+          <div class="fog-timer"><span>Tiempo en la niebla</span><span class="t" id="fogClock">00:00</span></div>
+          <div class="fog-problem">Un cuaderno y un lápiz cuestan $1.100 en total. El cuaderno cuesta $1.000 más que el lápiz. ¿Cuánto cuesta el lápiz?</div>
+          <div class="proto" id="proto">
+            <button data-p="doubt"><span class="pn">1</span>Nombrar la duda</button>
+            <button data-p="words"><span class="pn">2</span>Decirlo en palabras</button>
+            <button data-p="case"><span class="pn">3</span>Probar un caso</button>
+            <button data-p="breathe"><span class="pn">4</span>Respirar</button>
+          </div>
+          <div class="tool-pane hidden" id="pane-doubt">
+            <div class="field" style="margin-bottom:0;"><label for="fogDoubt">¿Qué parte exacta no ves? Una frase.</label><textarea id="fogDoubt" placeholder="Ej.: No entiendo cómo repartir los $1.000 de diferencia."></textarea></div>
+          </div>
+          <div class="tool-pane hidden" id="pane-words">
+            Lápiz = un precio que no sabes.<br>Cuaderno = ese mismo precio + $1.000.<br>Los dos juntos = $1.100.<br><span style="color:var(--muted);">Léelo despacio. ¿Cuántas veces aparece el precio del lápiz en el total?</span>
+          </div>
+          <div class="tool-pane hidden" id="pane-case">
+            Prueba un precio para el lápiz y mira si el total da $1.100.
+            <div class="tester-row"><span class="math" style="color:var(--gold);">$</span><input id="tryN" type="number" inputmode="numeric" placeholder="Precio del lápiz"><button class="btn btn-primary" id="btnTry" style="padding:11px 16px;">Probar</button></div>
+            <div class="tester-out" id="tryOut"></div>
+          </div>
+          <div class="tool-pane hidden" id="pane-breathe">
+            <div class="breath" id="breathRing"></div>
+            <div class="breath-txt" id="breathTxt">Tres respiraciones lentas.</div>
+            <button class="btn btn-ghost btn-block" id="btnBreathe" style="margin-top:10px;">Empezar a respirar</button>
+          </div>
+          <div class="field" style="margin-bottom:6px;">
+            <label for="fogAns">Tu respuesta: el lápiz cuesta…</label>
+            <div class="money-row">
+              <span class="cur">$</span>
+              <input id="fogAns" class="q-input" type="number" inputmode="numeric" placeholder="0" style="font-size:20px;padding:11px;">
+              <button class="btn btn-primary" id="btnFogCheck" style="flex-shrink:0;">Comprobar</button>
+            </div>
+          </div>
+          <div class="feedback" id="fogFeedback" aria-live="polite"></div>
+          <button class="btn btn-outline btn-block hidden" id="btnFogReveal">Ver la solución</button>
+          <div class="why hidden" id="fogSolution"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" id="pledgeWrap">
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Tu juramento de pensador</div>
+        <div class="card-title" style="font-size:14px;">¿Qué ley vas a usar esta semana en el colegio?</div>
+        <div class="chips" id="pledgeChips"></div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="pledgeText">¿Dónde y cómo?</label>
+          <textarea id="pledgeText" placeholder="Ej.: En la tarea de matemáticas: antes de resolver, digo la ecuación en palabras."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div id="actionArea">
+      <div class="card req-card" style="--d:0ms;">
+        <div class="card-label">Para sellar la sesión</div>
+        <ul class="check-list" id="reqList"></ul>
+      </div>
+      <button class="btn btn-primary btn-block" id="btnSave" disabled>Sellar y guardar sesión</button>
+    </div>
+
+    <div class="card done-card hidden" id="doneCard" style="--d:0ms;">
+      <div class="done-seal" id="doneSeal"></div>
+      <div class="done-title">Código del Pensador completo.</div>
+      <div class="done-sub">Cinco leyes, cinco sellos. Ya no solo resuelves: sabes decirlo, sabes de dónde sale, sabes dónde se rompe, sabes por qué funciona y sabes quedarte cuando no ves claro.</div>
+      <a class="btn btn-primary btn-block" href="smart.html#mapa">Volver al mapa</a>
+    </div>
+  </main>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="bottomnav">
+  <a class="navbtn active" href="smart.html#mapa"><span class="ic">🗺️</span><span class="lb">Mapa</span></a>
+  <a class="navbtn" href="smart.html#enfoque"><span class="ic">🎯</span><span class="lb">Enfoque</span></a>
+  <a class="navbtn" href="smart.html#hacer"><span class="ic">✅</span><span class="lb">Hacer</span></a>
+  <a class="navbtn" href="smart.html#capturar"><span class="ic">💡</span><span class="lb">Capturar</span></a>
+  <a class="navbtn" href="smart.html#perfil"><span class="ic">👤</span><span class="lb">Perfil</span></a>
+</nav>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  /* ===== Núcleo compartido · Semana 5 (misma clave que smart.html) ===== */
+  var STORAGE_KEY = "proyectoSmart.state.v3";
+  var WEEK = 5;
+  var SESSION_ID = "w5s4";
+  var SESSION_NUM = 4;
+  var SESSION_TITLE = "El porqué y la niebla";
+  var CURRENT_LAWS = ["IV", "V"];
+  var pageStart = Date.now();
+
+  function hexToRgba(hex, a){
+    var r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return "rgba("+r+","+g+","+b+","+a+")";
+  }
+  function applyAccent(hex){
+    document.documentElement.style.setProperty("--accent", hex);
+    document.documentElement.style.setProperty("--accent-soft", hexToRgba(hex,.18));
+  }
+  function readSharedState(){
+    try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+  }
+  function writeSharedState(mutateFn){
+    var current = readSharedState();
+    mutateFn(current);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); }catch(e){}
+  }
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ var d=document.createElement("div"); d.textContent=String(s==null?"":s); return d.innerHTML; }
+  function wordCount(t){ var m = String(t||"").trim().match(/\S+/g); return m ? m.length : 0; }
+  function fmtClock(sec){ sec=Math.max(0,Math.round(sec)); var m=Math.floor(sec/60), s=sec%60; return (m<10?"0":"")+m+":"+(s<10?"0":"")+s; }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function keepInView(el){
+    if(!el) return;
+    var top = el.getBoundingClientRect().top;
+    if(top < 70 || top > window.innerHeight*0.6) window.scrollTo({ top: window.scrollY + top - 20, behavior:"smooth" });
+  }
+
+  var shared = readSharedState();
+  if(shared.accent) applyAccent(shared.accent);
+  $("avatarMark").textContent = shared.icon || "🧠";
+  $("brandName").textContent = shared.nickname ? "Hola, " + shared.nickname : "Proyecto Smart";
+  var existing = (shared.weeklySessions && shared.weeklySessions[SESSION_ID]) || null;
+  if(existing && existing.completed){
+    var when = existing.date ? new Date(existing.date).toLocaleDateString("es-CO",{ day:"numeric", month:"long" }) : "";
+    $("repeatNote").innerHTML = "Ya sellaste esta sesión"+(when?" el "+esc(when):"")+". Puedes repetirla: se guardará tu nuevo intento.";
+    $("repeatNote").classList.remove("hidden");
+  }
+
+  var toastEl = $("toast"), toastTimer = null;
+  function showToast(text, emoji){
+    toastEl.textContent = (emoji?emoji+" ":"") + text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
+  function burstConfetti(xEl){
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var rect = xEl && xEl.getBoundingClientRect ? xEl.getBoundingClientRect() : { left:innerWidth/2, top:innerHeight/2, width:0, height:0 };
+    var cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    var glyphs = ["✦","✨","⭐","💫"];
+    for(var i=0;i<16;i++){
+      var s = document.createElement("span");
+      s.className = "confetti-particle";
+      s.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+      s.style.left = cx+"px"; s.style.top = cy+"px"; s.style.color = "#FFD23F";
+      s.style.setProperty("--tx", (Math.random()*160-80)+"px");
+      s.style.setProperty("--ty", (Math.random()*-120-30)+"px");
+      document.body.appendChild(s);
+      setTimeout(function(el){ return function(){ el.remove(); }; }(s), 950);
+    }
+  }
+  var bA=$("blobOuterA"), bB=$("blobOuterB"), bC=$("blobOuterC");
+  window.addEventListener("scroll", function(){
+    var y = window.scrollY || 0;
+    bA.style.transform = "translate3d(0,"+(y*0.12)+"px,0)";
+    bB.style.transform = "translate3d(0,"+(y*-0.08)+"px,0)";
+    bC.style.transform = "translate3d(0,"+(y*0.05)+"px,0)";
+  }, { passive:true });
+
+  /* ===== El Código del Pensador ===== */
+  var LAWS = [
+    { n:"I",   name:"Claridad",       short:"Claridad",              maxim:["Si no lo puedes decir,","todavía no lo sabes"],         sid:"w5s1" },
+    { n:"II",  name:"Supuestos",      short:"Supuestos",             maxim:["Lo que supones","no es lo que demuestras"],             sid:"w5s2" },
+    { n:"III", name:"Contraejemplos", short:"Contra\u00ADejemplos", maxim:["Una regla vale lo que","resiste su peor caso"],          sid:"w5s3" },
+    { n:"IV",  name:"La idea",        short:"La idea",               maxim:["La técnica es el cómo","y la idea es el porqué"],       sid:"w5s4" },
+    { n:"V",   name:"La niebla",      short:"La niebla",             maxim:["La confusión es tu mente","cargando, no fallando"],     sid:"w5s4" }
+  ];
+  function lawByN(n){ return LAWS.filter(function(l){ return l.n===n; })[0]; }
+  function lawEarned(st, law){ var r = st.weeklySessions && st.weeklySessions[law.sid]; return !!(r && r.completed); }
+
+  var sealN = 0;
+  function sealSVG(law, o){
+    o = o || {};
+    var id = "sg" + (++sealN);
+    var mini = !!o.mini, locked = o.state === "locked";
+    var c1 = locked ? "#6A5F9C" : "#FFF3C9", c2 = locked ? "#463C78" : "#FFD23F", c3 = locked ? "#2E2552" : "#C38A1C";
+    var nT = mini ? 40 : 96, ticks = "";
+    for(var i=0;i<nT;i++){ ticks += '<rect x="119" y="3" width="2" height="'+(mini?9:7)+'" rx="1" transform="rotate('+(i*360/nT).toFixed(2)+' 120 120)"/>'; }
+    var ring = "";
+    if(!mini){
+      ring =
+        '<path id="'+id+'t" d="M 26,120 a 94,94 0 1,1 188,0" fill="none"/>'+
+        '<path id="'+id+'b" d="M 17,120 a 103,103 0 0,0 206,0" fill="none"/>'+
+        '<g font-family="Fredoka, sans-serif" font-weight="600" font-size="11.5" letter-spacing="1.6" fill="url(#'+id+'g)">'+
+          '<text text-anchor="middle"><textPath href="#'+id+'t" startOffset="50%">'+esc(law.maxim[0].toUpperCase())+'</textPath></text>'+
+          '<text text-anchor="middle"><textPath href="#'+id+'b" startOffset="50%">'+esc(law.maxim[1].toUpperCase())+'</textPath></text>'+
+        '</g>'+
+        '<g fill="url(#'+id+'g)"><path d="M 19,116 l 2.6,4 l -2.6,4 l -2.6,-4 Z"/><path d="M 221,116 l 2.6,4 l -2.6,4 l -2.6,-4 Z"/></g>';
+    } else {
+      var dots = "";
+      for(var k=0;k<16;k++){ dots += '<circle cx="120" cy="22" r="3.2" transform="rotate('+(k*22.5)+' 120 120)"/>'; }
+      ring = '<g fill="url(#'+id+'g)" opacity=".75">'+dots+'</g>';
+    }
+    var fs = law.n.length===1 ? 78 : law.n.length===2 ? 68 : 56;
+    if(mini) fs += 10;
+    var sheen = o.sheen ? '<g clip-path="url(#'+id+'c)"><g transform="rotate(22 120 120)"><rect class="sheen" x="-150" y="-40" width="80" height="320" fill="url(#'+id+'s)"/></g></g>' : '';
+    return '<svg viewBox="0 0 240 240" role="img" aria-label="Sello de la Ley '+law.n+': '+esc(law.name)+(locked?' (por ganar)':'')+'">'+
+      '<defs>'+
+        '<linearGradient id="'+id+'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c1+'"/><stop offset=".42" stop-color="'+c2+'"/><stop offset=".78" stop-color="'+c3+'"/><stop offset="1" stop-color="'+c1+'"/></linearGradient>'+
+        '<radialGradient id="'+id+'d" cx=".36" cy=".30" r=".85"><stop offset="0" style="stop-color:var(--accent)"/><stop offset=".6" stop-color="#34266E"/><stop offset="1" stop-color="#1A1331"/></radialGradient>'+
+        '<linearGradient id="'+id+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+        '<clipPath id="'+id+'c"><circle cx="120" cy="120" r="118"/></clipPath>'+
+      '</defs>'+
+      '<circle cx="120" cy="120" r="118" fill="url(#'+id+'g)"/>'+
+      '<g fill="rgba(26,19,49,.30)">'+ticks+'</g>'+
+      '<circle cx="120" cy="120" r="109" fill="#1A1331"/>'+
+      '<circle cx="120" cy="120" r="109" fill="none" stroke="url(#'+id+'g)" stroke-width="1.5" opacity=".6"/>'+
+      ring+
+      '<circle cx="120" cy="120" r="85" fill="none" stroke="url(#'+id+'g)" stroke-width="2.2"/>'+
+      '<circle cx="120" cy="120" r="79" fill="'+(locked?'#241C45':'url(#'+id+'d)')+'"/>'+
+      '<text x="120" y="122" text-anchor="middle" dominant-baseline="central" font-family="Fredoka, sans-serif" font-weight="600" font-size="'+fs+'" fill="'+(locked?'#6E66A0':'url(#'+id+'g)')+'">'+law.n+'</text>'+
+      sheen+
+    '</svg>';
+  }
+  function sealsHTML(extraClass, withSheen){
+    var laws = CURRENT_LAWS.map(lawByN);
+    return laws.map(function(l){ return '<div class="seal'+(extraClass?' '+extraClass:'')+'">'+sealSVG(l,{ sheen:withSheen })+'</div>'; }).join("");
+  }
+  function renderHeroSeal(){
+    var host = $("heroSeal");
+    if(CURRENT_LAWS.length>1) host.classList.add("seal-pair");
+    host.innerHTML = sealsHTML("", true);
+  }
+  function renderCodex(stampList){
+    var st = readSharedState(), earnedCount = 0;
+    $("codex").innerHTML = LAWS.map(function(l){
+      var earned = lawEarned(st, l);
+      if(earned) earnedCount++;
+      var cur = CURRENT_LAWS.indexOf(l.n) !== -1;
+      var cls = earned ? "earned" : (cur ? "current" : "locked");
+      var stamp = (stampList && stampList.indexOf(l.n) !== -1) ? " stamp" : "";
+      return '<div class="codex-item '+cls+stamp+'">'+sealSVG(l,{ mini:true, state: earned ? "earned" : "locked" })+'<div class="cx-name">'+esc(l.short)+'</div></div>';
+    }).join("");
+    $("codexCount").textContent = earnedCount + " de 5 sellos";
+  }
+  renderHeroSeal();
+  renderCodex();
+
+  /* ===== Requisitos para guardar ===== */
+  function Reqs(items){
+    var done = {};
+    var list = $("reqList"), btn = $("btnSave");
+    function render(){
+      list.innerHTML = items.map(function(it){
+        var ok = !!done[it.id];
+        return '<li class="'+(ok?'ok':'')+'"><span class="box">'+(ok?'✓':'')+'</span>'+esc(it.label)+'</li>';
+      }).join("");
+      btn.disabled = !items.every(function(it){ return done[it.id]; });
+    }
+    render();
+    return { set:function(id, v){ done[id] = (v !== false); render(); } };
+  }
+
+  /* ===== Motor de retos de opción múltiple ===== */
+  var PRAISE = ["¡Exacto!","A la primera.","Eso es pensar claro.","Bien leído."];
+  function runMC(mountId, items, opts, onDone){
+    var mount = $(mountId), i = 0, results = [];
+    opts = opts || {};
+    function show(){
+      var it = items[i], t0 = Date.now(), misses = 0, locked = false;
+      var idx = it.options.map(function(_,k){ return k; });
+      var order = it.fixed ? idx : shuffle(idx);
+      mount.innerHTML =
+        '<div class="card-label">'+esc(opts.label||"Reto")+' '+(i+1)+' de '+items.length+'</div>'+
+        (it.tag ? '<div class="q-tag">'+esc(it.tag)+'</div>' : '')+
+        '<div class="mc-prompt">'+it.prompt+'</div>'+
+        '<div class="mc-opts'+(it.row?' verdict-row':'')+'">'+order.map(function(k){
+          return '<button class="mc-opt'+(it.mathy?' mathy':'')+'" data-k="'+k+'">'+it.options[k]+'</button>';
+        }).join("")+'</div>'+
+        '<div class="feedback" aria-live="polite"></div>'+
+        '<div class="why hidden"></div>'+
+        '<button class="btn btn-primary btn-block hidden mc-next">'+(i+1<items.length?'Siguiente reto':'Ver mi resultado')+'</button>';
+      var fb = mount.querySelector(".feedback"), why = mount.querySelector(".why"), next = mount.querySelector(".mc-next");
+      mount.querySelectorAll(".mc-opt").forEach(function(b){
+        b.addEventListener("click", function(){
+          if(locked) return;
+          var k = parseInt(b.getAttribute("data-k"),10);
+          if(k === it.correct){
+            locked = true;
+            b.classList.add("right");
+            mount.querySelectorAll(".mc-opt").forEach(function(x){ x.disabled = true; });
+            fb.textContent = misses===0 ? PRAISE[Math.floor(Math.random()*PRAISE.length)] : "Ahí está. Ahora mira por qué.";
+            fb.className = "feedback good";
+            why.innerHTML = "<b>Por qué:</b> " + it.why;
+            why.classList.remove("hidden");
+            next.classList.remove("hidden");
+            results.push({ n:i+1, firstTry:misses===0, misses:misses, secs:Math.round((Date.now()-t0)/1000) });
+          } else {
+            misses++;
+            b.classList.remove("shake"); void b.offsetWidth; b.classList.add("wrong","shake");
+            b.disabled = true;
+            fb.textContent = it.nudge || opts.nudge || "No es esa. Léelo otra vez, despacio.";
+            fb.className = "feedback bad";
+          }
+        });
+      });
+      next.addEventListener("click", function(){
+        i++;
+        if(i < items.length){ show(); keepInView(mount); } else { finish(); }
+      });
+    }
+    function finish(){
+      var first = results.filter(function(r){ return r.firstTry; }).length;
+      var avg = Math.round(results.reduce(function(s,r){ return s+r.secs; },0) / Math.max(1,results.length));
+      mount.innerHTML =
+        '<div class="card-label">'+esc(opts.doneLabel||"Tu resultado")+'</div>'+
+        '<div class="score-line"><div class="score-big">'+first+'/'+items.length+'</div>'+
+        '<div class="score-txt"><b>a la primera.</b><br>Promedio: '+avg+' s por reto. '+(first===items.length ? "Lectura impecable." : "Los que fallaste son justo los que más enseñan.")+'</div></div>';
+      onDone({ firstTry:first, total:items.length, avgSecs:avg, results:results });
+    }
+    show();
+  }
+
+  function reveal(id){ var el = $(id); el.classList.add("open"); setTimeout(function(){ keepInView(el); }, 60); }
+
+  function bindChips(containerId, values, initial, onPick){
+    var c = $(containerId), picked = initial || "";
+    c.innerHTML = values.map(function(v){ return '<button class="chip-btn'+(v===picked?' selected':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</button>'; }).join("");
+    c.querySelectorAll(".chip-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        picked = b.getAttribute("data-v");
+        c.querySelectorAll(".chip-btn").forEach(function(x){ x.classList.toggle("selected", x===b); });
+        onPick(picked);
+      });
+    });
+    if(picked) onPick(picked);
+  }
+
+  function finishSession(payload){
+    payload.week = WEEK; payload.session = SESSION_NUM; payload.title = SESSION_TITLE;
+    payload.laws = CURRENT_LAWS.slice(); payload.completed = true;
+    payload.date = new Date().toISOString();
+    payload.totalSecs = Math.round((Date.now()-pageStart)/1000);
+    writeSharedState(function(state){
+      state.weeklySessions = state.weeklySessions || {};
+      state.weeklySessions[SESSION_ID] = payload;
+    });
+    $("actionArea").classList.add("hidden");
+    var ds = $("doneSeal");
+    if(CURRENT_LAWS.length>1) ds.classList.add("seal-pair");
+    ds.innerHTML = sealsHTML("stamped", false);
+    var done = $("doneCard");
+    done.classList.remove("hidden");
+    window.scrollTo({ top: done.offsetTop - 20, behavior:"smooth" });
+    setTimeout(function(){ burstConfetti(ds); }, 420);
+    renderCodex(CURRENT_LAWS);
+    showToast(CURRENT_LAWS.length>1 ? "Leyes "+CURRENT_LAWS.join(" y ")+" selladas" : "Ley "+CURRENT_LAWS[0]+" sellada", "✦");
+  }
+
+
+  /* =====================================================
+     SESIÓN 4 — El porqué y la niebla
+  ===================================================== */
+  var reqs = Reqs([
+    { id:"balance", label:"Deja la x sola en la balanza" },
+    { id:"ideas", label:"Encuentra la idea detrás de 3 trucos" },
+    { id:"fog", label:"Quédate en la niebla hasta salir" },
+    { id:"pledge", label:"Escribe tu juramento de pensador" }
+  ]);
+  function money(n){ return "$" + Math.round(n).toLocaleString("es-CO"); }
+
+  /* ---------- Ley IV · La balanza ---------- */
+  var X = 7;
+  var START = { x:1, l:5, r:12 };
+  var bal = { x:1, l:5, r:12 }, hist = [], legalMoves = 0, illegalMoves = 0, balSolved = false;
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  function panMarkup(cx, xCount, units, label){
+    var s = '<line x1="'+cx+'" y1="62" x2="'+(cx-46)+'" y2="130" stroke="rgba(255,243,201,.55)" stroke-width="1.5"/>'+
+            '<line x1="'+cx+'" y1="62" x2="'+(cx+46)+'" y2="130" stroke="rgba(255,243,201,.55)" stroke-width="1.5"/>';
+    var y = 128;
+    if(xCount > 0){
+      var bw = 28, gap = 6, total = xCount*bw + (xCount-1)*gap, x0 = cx - total/2;
+      for(var i=0;i<xCount;i++){
+        var bx = x0 + i*(bw+gap);
+        s += '<rect x="'+bx+'" y="'+(y-bw)+'" width="'+bw+'" height="'+bw+'" rx="7" fill="url(#bX)"/>'+
+             '<text x="'+(bx+bw/2)+'" y="'+(y-bw/2+1)+'" text-anchor="middle" dominant-baseline="central" font-family="Fredoka, sans-serif" font-weight="600" font-size="17" fill="#fff">x</text>';
+      }
+      y -= bw + 4;
+    }
+    var perRow = 6, sp = 13.5;
+    for(var k=0;k<units;k++){
+      var row = Math.floor(k/perRow), col = k%perRow;
+      var inRow = Math.min(perRow, units - row*perRow);
+      var cxk = cx - ((inRow-1)*sp)/2 + col*sp;
+      s += '<circle cx="'+cxk.toFixed(1)+'" cy="'+(y-7-row*13)+'" r="6.2" fill="url(#bGold)" stroke="rgba(26,19,49,.5)" stroke-width="1"/>';
+    }
+    s += '<path d="M'+(cx-50)+' 130 L'+(cx+50)+' 130 Q'+(cx+40)+' 148 '+cx+' 148 Q'+(cx-40)+' 148 '+(cx-50)+' 130 Z" fill="url(#bGold)"/>';
+    s += '<text x="'+cx+'" y="168" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="15" fill="#F5F2FF">'+label+'</text>';
+    return s;
+  }
+  function sideLabel(xc, u){
+    var parts = [];
+    if(xc > 0) parts.push(xc===1 ? "x" : xc+"x");
+    if(u > 0 || !parts.length) parts.push(String(u));
+    return parts.join(" + ");
+  }
+  function isBalanced(){ return bal.x*X + bal.l === bal.r; }
+  function renderBalance(){
+    var left = bal.x*X + bal.l, right = bal.r;
+    var deg = Math.max(-13, Math.min(13, (right-left)*1.4));
+    var dy = 100*Math.sin(deg*Math.PI/180);
+    $("beam").style.transform = "rotate("+deg+"deg)";
+    var L = $("panL"), R = $("panR");
+    L.innerHTML = panMarkup(60, bal.x, bal.l, sideLabel(bal.x, bal.l));
+    R.innerHTML = panMarkup(260, 0, bal.r, String(bal.r));
+    L.style.transform = "translateY("+(-dy)+"px)";
+    R.style.transform = "translateY("+dy+"px)";
+    var ok = isBalanced();
+    $("eqLive").innerHTML = esc(sideLabel(bal.x, bal.l)) + (ok ? " = " : ' <span class="neq">≠</span> ') + bal.r;
+    var can = {
+      minus5: ok && bal.l >= 5,
+      half: ok && bal.x % 2 === 0 && bal.l % 2 === 0 && bal.r % 2 === 0 && bal.x > 0,
+      double: ok && bal.x < 2 && bal.r*2 <= 24,
+      minus5L: ok && bal.l >= 5,
+      plus3R: ok && bal.r + 3 <= 24,
+      undo: hist.length > 0
+    };
+    if(balSolved){ Object.keys(can).forEach(function(k){ can[k] = false; }); }
+    document.querySelectorAll(".move-grid [data-m]").forEach(function(b){ b.disabled = !can[b.getAttribute("data-m")]; });
+  }
+  var BAL_PANEL = {
+    minus5: "Quitaste 5 de cada lado: la balanza ni se movió. Esa es la idea.",
+    half: "Partiste los dos lados a la mitad: sigue nivelada.",
+    double: "Duplicaste todo: más peso, mismo equilibrio. Cualquier cosa igual a los dos lados está permitida.",
+    minus5L: "Se inclinó: le hiciste algo a un solo lado. Ya no es la misma ecuación. Pulsa «Deshacer».",
+    plus3R: "Se inclinó hacia la derecha: cambiaste un solo lado. Pulsa «Deshacer»."
+  };
+  document.querySelectorAll(".move-grid [data-m]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var m = b.getAttribute("data-m"), fb = $("balFeedback");
+      if(m === "undo"){
+        if(hist.length) bal = hist.pop();
+        fb.textContent = isBalanced() ? "Equilibrio recuperado." : ""; fb.className = "feedback good";
+        renderBalance(); return;
+      }
+      hist.push({ x:bal.x, l:bal.l, r:bal.r });
+      if(m === "minus5"){ bal.l -= 5; bal.r -= 5; legalMoves++; }
+      else if(m === "half"){ bal.x /= 2; bal.l /= 2; bal.r /= 2; legalMoves++; }
+      else if(m === "double"){ bal.x *= 2; bal.l *= 2; bal.r *= 2; legalMoves++; }
+      else if(m === "minus5L"){ bal.l -= 5; illegalMoves++; }
+      else if(m === "plus3R"){ bal.r += 3; illegalMoves++; }
+      var ok = isBalanced();
+      fb.textContent = BAL_PANEL[m]; fb.className = "feedback " + (ok ? "good" : "bad");
+      renderBalance();
+      if(ok && bal.x === 1 && bal.l === 0){
+        balSolved = true;
+        fb.textContent = "x = "+bal.r+". La técnica «pasa restando» es solo el atajo de esta idea: lo que le hagas a un lado, házselo al otro.";
+        fb.className = "feedback good";
+        renderBalance();
+        burstConfetti($("eqLive"));
+        reqs.set("balance");
+        setTimeout(function(){ reveal("ideaWrap"); }, 1100);
+      }
+    });
+  });
+  $("btnBalReset").addEventListener("click", function(){
+    bal = { x:START.x, l:START.l, r:START.r }; hist = [];
+    if(balSolved){ $("balFeedback").textContent = "Otra vez, ahora por un camino distinto."; $("balFeedback").className = "feedback good"; }
+    else { $("balFeedback").textContent = ""; }
+    balSolved = false;
+    renderBalance();
+  });
+  renderBalance();
+
+  /* ---------- Ley IV · Técnica ↔ idea ---------- */
+  var M = function(s){ return '<span class="math-big" style="font-size:24px;">'+s+'</span>'; };
+  var IDEAS = [
+    { tag:"Técnica: «pasa restando»", prompt:M("x + 5 = 12 → x = 12 − 5")+"¿Qué idea hace que esto funcione?",
+      options:["Quitar lo mismo de los dos lados mantiene la igualdad","Los números cambian de signo cuando cruzan el igual","Restar siempre da un número más pequeño"],
+      correct:0, why:"Nada «cruza» el igual: le quitaste 5 a cada lado, como en la balanza. «Pasa restando» es el atajo; la idea es el equilibrio." },
+    { tag:"Técnica: simplificar", prompt:M("40/60 = 2/3")+"¿Qué idea hace que esto funcione?",
+      options:["Dividir arriba y abajo por el mismo número no cambia el valor","Los ceros se tachan porque no valen nada","Las fracciones grandes siempre están mal escritas"],
+      correct:0, why:"Dividiste arriba y abajo entre 20. Es la misma idea de la balanza: lo mismo a las dos partes. Los ceros no «se tachan»: con 105/315 no hay ceros y también se simplifica." },
+    { tag:"Técnica: multiplicar por 5", prompt:M("18 × 5 = 180 ÷ 2")+"¿Qué idea hace que esto funcione?",
+      options:["5 es la mitad de 10, así que × 5 es la mitad de × 10","Es una regla que hay que memorizar y ya","Solo funciona con números pares"],
+      correct:0, why:"Lo usaste en la Semana 1. Funciona porque 5 = 10 ÷ 2, y funciona con cualquier número: 7 × 5 = 70 ÷ 2 = 35." }
+  ];
+  var ideaSummary = null;
+  runMC("ideaMount", IDEAS, { label:"Truco", nudge:"Eso describe el movimiento, no la razón. ¿Por qué se puede hacer?" }, function(sum){
+    ideaSummary = sum;
+    reqs.set("ideas");
+    reveal("fogWrap");
+  });
+
+  /* ---------- Ley V · Reto de la niebla ---------- */
+  var fogStart = null, fogTimer = null, fogSecs = 0, fogAttempts = 0, fogFirst = null, fogSolved = false, fogRevealed = false, stepsUsed = {};
+  function fogStepsCount(){ return Object.keys(stepsUsed).length; }
+  function updateFogLayer(){
+    $("fogLayer").style.opacity = (fogSolved || fogRevealed) ? "0" : String(Math.max(.15, 1 - fogStepsCount()*0.2));
+  }
+  function stopFog(){
+    clearInterval(fogTimer);
+    fogSecs = Math.round((Date.now()-fogStart)/1000);
+    updateFogLayer();
+    reqs.set("fog");
+    setTimeout(function(){ reveal("pledgeWrap"); }, 900);
+  }
+  $("btnFogStart").addEventListener("click", function(){
+    fogStart = Date.now();
+    $("fogIntro").classList.add("hidden");
+    $("fogBody").classList.remove("hidden");
+    fogTimer = setInterval(function(){
+      var s = (Date.now()-fogStart)/1000;
+      $("fogClock").textContent = fmtClock(s);
+      if(s >= 180 && !fogSolved) $("btnFogReveal").classList.remove("hidden");
+    }, 500);
+  });
+  $("proto").querySelectorAll("button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = b.getAttribute("data-p"), pane = $("pane-"+p);
+      var open = pane.classList.contains("hidden");
+      pane.classList.toggle("hidden", !open);
+      b.classList.toggle("on", open || !!stepsUsed[p]);
+      if(open && p !== "breathe"){ stepsUsed[p] = true; b.classList.add("on"); updateFogLayer(); }
+    });
+  });
+  $("btnTry").addEventListener("click", function(){
+    var v = $("tryN").value;
+    if(v === ""){ showToast("Escribe un precio para probar", "✏️"); return; }
+    var n = Number(v), c = n + 1000, t = n + c;
+    var verdict = t === 1100 ? '<span style="color:var(--pop-lime);">¡Cuadra!</span>' :
+      t > 1100 ? '<span style="color:var(--pop-pink);">Se pasa por '+money(t-1100)+'.</span>' :
+                 '<span style="color:var(--pop-pink);">Le faltan '+money(1100-t)+'.</span>';
+    $("tryOut").innerHTML = "Lápiz "+money(n)+" + cuaderno "+money(c)+" = "+money(t)+"<br>"+verdict;
+  });
+  $("tryN").addEventListener("keydown", function(e){ if(e.key==="Enter") $("btnTry").click(); });
+
+  var breathing = false;
+  $("btnBreathe").addEventListener("click", function(){
+    if(breathing) return;
+    breathing = true; stepsUsed.breathe = true;
+    document.querySelector('#proto [data-p="breathe"]').classList.add("on");
+    updateFogLayer();
+    var ring = $("breathRing"), txt = $("breathTxt"), phase = 0, total = 6;
+    function step(){
+      if(phase >= total){ txt.textContent = "Listo. Vuelve al problema con calma."; ring.classList.remove("in"); breathing = false; return; }
+      var inhale = phase % 2 === 0;
+      ring.classList.toggle("in", inhale);
+      txt.textContent = (inhale ? "Inhala" : "Exhala") + " · " + (Math.floor(phase/2)+1) + " de 3";
+      phase++;
+      setTimeout(step, 4000);
+    }
+    step();
+  });
+
+  $("btnFogCheck").addEventListener("click", function(){
+    if(fogSolved) return;
+    var v = $("fogAns").value;
+    if(v === ""){ showToast("Escribe tu respuesta primero", "✏️"); return; }
+    var n = Number(v), fb = $("fogFeedback");
+    fogAttempts++;
+    if(fogFirst === null) fogFirst = n;
+    if(n === 50){
+      fogSolved = true;
+      fb.textContent = "Saliste de la niebla. Lápiz $50 y cuaderno $1.050: juntos $1.100, y la diferencia es exactamente $1.000.";
+      fb.className = "feedback good";
+      $("btnFogReveal").classList.add("hidden");
+      burstConfetti($("fogFeedback"));
+      stopFog();
+    } else if(n === 100){
+      fb.textContent = "Esa es la respuesta que casi todo el mundo da primero. Pruébala: si el lápiz cuesta $100, el cuaderno cuesta $1.100 y juntos suman $1.200. No cuadra. Sigue en la niebla.";
+      fb.className = "feedback bad";
+    } else {
+      fb.textContent = "Compruébala con «Probar un caso»: ¿el total da exactamente $1.100?";
+      fb.className = "feedback bad";
+    }
+    if(!fogSolved && fogAttempts >= 3) $("btnFogReveal").classList.remove("hidden");
+  });
+  $("fogAns").addEventListener("keydown", function(e){ if(e.key==="Enter") $("btnFogCheck").click(); });
+  $("btnFogReveal").addEventListener("click", function(){
+    if(fogSolved || fogRevealed) return;
+    fogRevealed = true;
+    $("btnFogReveal").classList.add("hidden");
+    $("fogSolution").innerHTML = "<b>Así se sale:</b> si el lápiz cuesta L, el cuaderno cuesta L + 1.000. Juntos: L + L + 1.000 = 1.100. Entonces 2L = 100 y L = 50. El lápiz cuesta $50. Aguantaste "+fmtClock((Date.now()-fogStart)/1000)+" en la niebla: eso también es entrenamiento.";
+    $("fogSolution").classList.remove("hidden");
+    stopFog();
+  });
+
+  /* ---------- Juramento ---------- */
+  var pledgeLaw = "";
+  function checkPledge(){ reqs.set("pledge", !!pledgeLaw && wordCount($("pledgeText").value) >= 5); }
+  bindChips("pledgeChips", ["Ley I: Claridad","Ley II: Supuestos","Ley III: Contraejemplos","Ley IV: La idea","Ley V: La niebla"], existing ? existing.pledgeLaw : "", function(v){
+    pledgeLaw = v; checkPledge();
+  });
+  $("pledgeText").addEventListener("input", checkPledge);
+  if(existing){ $("pledgeText").value = existing.pledge || ""; checkPledge(); }
+
+  $("btnSave").addEventListener("click", function(){
+    if($("btnSave").disabled) return;
+    finishSession({
+      balance: { solved:true, legalMoves:legalMoves, illegalMoves:illegalMoves },
+      ideas: ideaSummary,
+      fog: { secs:fogSecs, attempts:fogAttempts, firstAnswer:fogFirst, solved:fogSolved, revealed:fogRevealed, steps:Object.keys(stepsUsed), doubt:$("fogDoubt").value.trim() },
+      pledgeLaw: pledgeLaw,
+      pledge: $("pledgeText").value.trim()
+    });
+  });
+})();
+</script>
+</body>
+</html>
