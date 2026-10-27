@@ -198,7 +198,7 @@
 
   /* -------- Sesiones de la semana (sheetWeek) -------- */
   .week-intro{ font-size:13.5px; line-height:1.6; color:var(--muted); margin-bottom:16px; }
-  .session-row{ display:flex; align-items:center; gap:12px; padding:13px 4px; border-bottom:1px solid var(--line); text-align:left; width:100%; background:none; border-left:none; border-right:none; border-top:none; }
+  .session-row{ display:flex; align-items:center; gap:12px; padding:13px 4px; border-bottom:1px solid var(--line); text-align:left; width:100%; background:none; color:var(--text); border-left:none; border-right:none; border-top:none; }
   .session-row:last-child{ border-bottom:none; }
   .session-num{ width:30px; height:30px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:var(--muted); flex-shrink:0; }
   .session-row[data-status="done"] .session-num{ background:var(--accent-soft); color:var(--accent); }
@@ -848,7 +848,13 @@
         { id:"w3s4", title:"Conecta los puntos", subtitle:"Spelling + Conectar los puntos", file:null }
       ] },
     { num:4, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] },
-    { num:5, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] },
+    { num:5, icon:"💎", title:"Piensa como un genio", tag:"El Código del Pensador: claridad, supuestos, contraejemplos, idea y niebla",
+      sessions:[
+        { id:"w5s1", title:"Dilo en palabras", subtitle:"Ley I · Claridad", file:"semana5-sesion1.html" },
+        { id:"w5s2", title:"¿Dado o ganado?", subtitle:"Ley II · Supuestos y deducciones", file:"semana5-sesion2.html" },
+        { id:"w5s3", title:"Rompe la regla", subtitle:"Ley III · Contraejemplos y casos límite", file:"semana5-sesion3.html" },
+        { id:"w5s4", title:"El porqué y la niebla", subtitle:"Leyes IV y V · La idea y la niebla", file:"semana5-sesion4.html" }
+      ] },
     { num:6, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] },
     { num:7, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] },
     { num:8, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] }
