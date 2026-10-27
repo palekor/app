@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Proyecto Smart — Semana 4 · Sesión 2 · Palabras que abren</title>
+<meta name="description" content="Semana 4 · Sesión 2 de Proyecto Smart: Palabras que abren. El Método SALIDA.">
+<meta name="theme-color" content="#140F26">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#140F26;
+    --surface:#211A3B;
+    --surface-2:#2E2552;
+    --accent:#8B5CFF;
+    --accent-soft:rgba(139,92,255,.20);
+    --pop-pink:#FF5C9D;
+    --pop-cyan:#28E0C8;
+    --pop-lime:#C6FF4D;
+    --pop-yellow:#FFD23F;
+    --text:#F5F2FF;
+    --muted:#A79FC9;
+    --line:rgba(255,255,255,.11);
+    --radius:22px;
+    --chunky:0 10px 0 -4px rgba(0,0,0,.28), 0 18px 34px -16px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(1000px 520px at 15% -8%, rgba(139,92,255,.28), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(255,92,157,.22), transparent 55%),
+      radial-gradient(800px 600px at 50% 120%, rgba(40,224,200,.14), transparent 60%);
+    background-attachment:fixed;
+    color:var(--text); overflow-x:hidden;
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:600;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fredoka',sans-serif; margin:0; letter-spacing:-.01em;}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* -------- Ambient parallax blobs (same language as smart.html) -------- */
+  .blobfield{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob-outer{ position:absolute; will-change:transform; }
+  .blob{ border-radius:50%; filter:blur(55px); opacity:.42; }
+  .blob-a{ top:-60px; left:-40px; width:300px; height:300px; background:var(--accent); animation:driftA 16s ease-in-out infinite; }
+  .blob-b{ top:36%; right:-80px; width:280px; height:280px; background:var(--pop-pink); opacity:.34; animation:driftB 20s ease-in-out infinite; }
+  .blob-c{ bottom:-100px; left:14%; width:320px; height:320px; background:var(--pop-cyan); opacity:.26; animation:driftC 18s ease-in-out infinite; }
+  @keyframes driftA{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(30px,40px); } }
+  @keyframes driftB{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-25px,30px); } }
+  @keyframes driftC{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(20px,-20px) scale(1.08); } }
+
+  .app{ max-width:480px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:96px; z-index:1; }
+
+  /* -------- Topbar -------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 20px 6px; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{ width:50px; height:50px; border-radius:16px; background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border:none; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 8px 18px -6px var(--accent); }
+  .brand-name{ font-weight:800; font-size:17px; font-family:'Fredoka',sans-serif; }
+  .brand-sub{ font-size:11.5px; color:var(--pop-pink); margin-top:2px; font-weight:800; letter-spacing:.02em; }
+  .back-link{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; text-decoration:none; flex-shrink:0; }
+
+  .main{ padding:6px 20px 8px; animation:viewIn .4s ease; }
+  @keyframes viewIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* -------- Progress -------- */
+  .progress-block{ margin-bottom:22px; }
+  .progress-rows{ display:flex; flex-direction:column; gap:8px; }
+  .progress-row{ display:flex; align-items:center; gap:12px; }
+  .progress-track{ flex:1; height:10px; border-radius:100px; background:var(--surface-2); overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.3); }
+  .progress-fill{ height:100%; background:linear-gradient(90deg, var(--accent), var(--pop-pink) 55%, var(--pop-cyan)); background-size:220% 100%; border-radius:100px; animation:shimmer 2.4s linear infinite; }
+  @keyframes shimmer{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+  .progress-label{ font-size:11.5px; color:var(--muted); font-weight:600; white-space:nowrap; }
+
+  /* -------- Hero -------- */
+  .eyebrow{ font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; margin-bottom:10px; }
+  .hero-title{ font-size:28px; font-weight:600; line-height:1.2; margin-bottom:10px; }
+  .hero-sub{ font-size:13.5px; color:var(--accent); font-weight:700; margin-bottom:10px; }
+  .hero-body{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:26px; }
+
+  /* -------- Card / section -------- */
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:16px; opacity:0; animation:cardIn .45s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--d,0ms); box-shadow:var(--chunky); }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+  .card-label{ font-size:10.5px; font-weight:800; letter-spacing:.08em; color:var(--accent); text-transform:uppercase; margin-bottom:8px; }
+  .card-title{ font-size:16px; font-weight:700; margin-bottom:8px; }
+  .card-text{ font-size:13.5px; line-height:1.6; color:var(--text); }
+  .card-text.muted{ color:var(--muted); }
+  .orient-list{ margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .orient-list li{ font-size:13px; line-height:1.5; padding-left:20px; position:relative; color:var(--muted); }
+  .orient-list li::before{ content:"›"; position:absolute; left:0; color:var(--accent); font-weight:700; }
+  .disclaimer{ font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+
+  /* -------- Form -------- */
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .field input, .field textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px;
+    color:var(--text); font-size:14px;
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:80px; line-height:1.5; }
+  .words-row{ display:flex; gap:8px; }
+  .words-row .field{ flex:1; margin-bottom:0; }
+
+  /* -------- Archetype grid -------- */
+  .arch-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:4px; }
+  .arch-card{ background:var(--surface-2); border:2px solid var(--line); border-radius:16px; padding:13px; text-align:left; display:flex; flex-direction:column; gap:5px; transition:border-color .2s ease, background .2s ease, transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .arch-card:active{ transform:scale(.96); }
+  .arch-ic{ font-size:22px; }
+  .arch-name{ font-weight:800; font-size:13px; font-family:'Fredoka',sans-serif; }
+  .arch-desc{ font-size:11px; color:var(--muted); line-height:1.4; }
+  .arch-card.selected{ border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--accent-soft); }
+  .arch-card.selected .arch-name{ color:var(--accent); }
+
+  /* -------- Reflection reveal -------- */
+  .reflect-wrap{ max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.2,.8,.2,1); }
+  .reflect-wrap.open{ max-height:420px; }
+  .reflect-inner{ padding-top:2px; }
+  .prompt-list{ margin:0 0 12px; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .prompt-list li{ font-size:12.5px; color:var(--muted); font-style:italic; }
+
+  /* -------- Buttons -------- */
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; font-size:14.5px; font-weight:800; padding:14px 20px; border-radius:100px; border:2px solid transparent; transition:transform .15s cubic-bezier(.2,1.4,.4,1), opacity .15s ease, box-shadow .2s ease; text-decoration:none; font-family:'Nunito',sans-serif; }
+  .btn:active{ transform:scale(.94); }
+  .btn-primary{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 10px 24px -10px var(--accent); }
+  .btn-primary:disabled{ opacity:.35; box-shadow:none; cursor:not-allowed; transform:none; }
+  .btn-outline{ background:transparent; color:var(--accent); border-color:var(--accent); }
+  .btn-block{ width:100%; }
+
+  /* -------- Completion state -------- */
+  .done-card{ text-align:center; padding:34px 20px; }
+  .done-icon{ font-size:42px; margin-bottom:14px; animation:bob 2.4s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  .done-title{ font-size:20px; font-weight:700; margin-bottom:8px; }
+  .done-sub{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:22px; font-style:italic; }
+
+  /* -------- Bottom nav (same language as smart.html) -------- */
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0; max-width:480px; margin:0 auto;
+    background:rgba(33,26,59,.9); backdrop-filter:blur(14px); border-top:1px solid var(--line);
+    display:flex; padding:9px 4px calc(9px + env(safe-area-inset-bottom)); z-index:30;
+    box-shadow:0 -8px 24px -12px rgba(0,0,0,.7);
+  }
+  .navbtn{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--muted); padding:5px 0; border-radius:12px; text-decoration:none; }
+  .navbtn .ic{ font-size:18px; border-radius:12px; padding:4px 12px; }
+  .navbtn.active{ color:var(--text); }
+  .navbtn.active .ic{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); box-shadow:0 6px 14px -5px var(--accent); }
+  .navbtn .lb{ font-size:10px; font-weight:800; }
+
+  /* -------- Toast -------- */
+  .toast{
+    position:fixed; left:50%; bottom:98px; transform:translate(-50%,16px); max-width:88%;
+    background:linear-gradient(135deg,var(--surface-2),var(--surface)); border:1.5px solid var(--accent); color:var(--text); font-size:13px; font-weight:800;
+    padding:13px 20px; border-radius:100px; opacity:0; pointer-events:none; transition:.28s cubic-bezier(.2,.8,.2,1);
+    z-index:220; text-align:center; box-shadow:0 10px 28px -10px rgba(0,0,0,.7);
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* -------- Confetti -------- */
+  .confetti-particle{ position:fixed; z-index:250; pointer-events:none; font-size:18px; animation:floatUp .9s ease-out forwards; }
+  @keyframes floatUp{ from{ transform:translate(0,0) scale(1) rotate(0deg); opacity:1; } to{ transform:translate(var(--tx),var(--ty)) scale(.5) rotate(180deg); opacity:0; } }
+
+  .hidden{ display:none !important; }
+
+  /* -------- Session extras -------- */
+  .seg{ display:flex; gap:5px; background:var(--surface-2); padding:5px; border-radius:16px; border:1px solid var(--line); margin:4px 0 14px; }
+  .seg button{ flex:1; padding:10px 4px; border-radius:12px; border:none; background:transparent; color:var(--muted); font-weight:800; font-size:13px; transition:.2s; }
+  .seg button.active{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); color:#fff; box-shadow:0 6px 14px -5px var(--accent); }
+  .seg-label{ font-size:11.5px; font-weight:700; color:var(--muted); margin-top:4px; }
+  .big-num{ font-family:'Fredoka',sans-serif; font-size:54px; font-weight:600; text-align:center; margin:6px 0 14px; letter-spacing:.02em; }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ flex:1; }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line); }
+  .lines-grid{ display:flex; flex-direction:column; gap:8px; }
+  .line-row{ display:flex; align-items:center; gap:8px; }
+  .line-n{ width:26px; height:26px; border-radius:8px; background:var(--accent-soft); color:var(--accent); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .line-row input{ flex:1; width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:14px; }
+  .line-row input:focus{ outline:none; border-color:var(--accent); }
+  .counter{ font-size:12px; font-weight:800; color:var(--muted); text-align:right; margin:10px 0 2px; }
+  .counter.ok{ color:var(--pop-lime); }
+  .q-text{ font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; text-align:center; margin:8px 0 16px; }
+  .q-input{ width:100%; background:var(--surface-2); border:2px solid var(--line); border-radius:14px; padding:14px; color:var(--text); font-size:22px; text-align:center; font-family:'Fredoka',sans-serif; }
+  .q-input:focus{ outline:none; border-color:var(--accent); }
+  .feedback{ min-height:22px; text-align:center; font-size:13px; font-weight:800; margin:10px 0; }
+  .feedback.good{ color:var(--pop-lime); }
+  .feedback.bad{ color:var(--pop-pink); }
+  .hintbox{ background:var(--accent-soft); border:1px dashed var(--accent); border-radius:14px; padding:12px; font-size:12.5px; line-height:1.5; margin-bottom:12px; }
+  .ladder{ display:flex; align-items:stretch; gap:8px; margin:10px 0 4px; }
+  .ladder div{ flex:1; border-radius:12px; padding:10px 4px; text-align:center; font-family:'Fredoka',sans-serif; font-weight:600; background:linear-gradient(180deg,var(--accent),var(--pop-pink)); color:#fff; display:flex; flex-direction:column; justify-content:center; line-height:1.15; }
+  .ladder small{ display:block; font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; opacity:.85; }
+  .chip-btn{ border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); border-radius:100px; padding:8px 13px; font-size:12.5px; font-weight:800; transition:transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .chip-btn:active{ transform:scale(.92); }
+  .chip-btn.selected{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
+  .check-list{ list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .check-list li{ font-size:12.5px; color:var(--muted); display:flex; gap:9px; align-items:center; }
+  .check-list li .box{ width:20px; height:20px; border-radius:7px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; transition:.2s; }
+  .check-list li.ok{ color:var(--text); }
+  .check-list li.ok .box{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .own-lines{ margin:8px 0 0; padding:0 0 0 18px; font-size:12.5px; color:var(--muted); line-height:1.55; }
+  .rate{ display:flex; gap:8px; margin:8px 0 4px; }
+  .rate button{ flex:1; padding:12px 0; border-radius:12px; border:1.5px solid var(--line); background:var(--surface-2); color:var(--text); font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; transition:.2s; }
+  .rate button.selected{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border-color:transparent; color:#fff; }
+  .field input[type=text].big{ font-size:15px; font-weight:700; }
+  .reveal{ display:none; }
+  .reveal.open{ display:block; }
+
+  /* =====================================================
+     CAPA DE LUJO · SEMANA 5 — El Código del Pensador
+     Mismo sistema de smart.html + metal dorado y sellos.
+  ===================================================== */
+  :root{
+    --gold:#FFD23F;
+    --gold-hi:#FFF3C9;
+    --gold-lo:#C38A1C;
+    --ink:#1A1331;
+  }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* -------- Sello (hero) -------- */
+  .hero-seal{ display:flex; justify-content:center; align-items:flex-start; margin:4px 0 24px; position:relative; }
+  .hero-seal::before{
+    content:""; position:absolute; left:50%; top:50%; width:270px; height:270px; transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(255,210,63,.20), rgba(139,92,255,.10) 45%, transparent 68%);
+    pointer-events:none;
+  }
+  .seal{ position:relative; width:212px; height:212px; animation:sealIn 1s cubic-bezier(.2,.9,.25,1) both; }
+  .seal svg{ display:block; width:100%; height:100%; overflow:visible; filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)); }
+  .seal-pair .seal{ width:172px; height:172px; }
+  .seal-pair .seal + .seal{ margin-left:-30px; margin-top:34px; animation-delay:.18s; }
+  @keyframes sealIn{ from{ opacity:0; transform:scale(.84) rotate(-10deg); } to{ opacity:1; transform:none; } }
+  .sheen{ animation:sheen 1.8s .55s cubic-bezier(.3,.6,.2,1) both; }
+  @keyframes sheen{ from{ transform:translateX(0); } to{ transform:translateX(440px); } }
+
+  /* Sello estampado al guardar: el único gran momento de la página */
+  .seal.stamped{ animation:stampBig .8s cubic-bezier(.2,1.35,.4,1) both; }
+  .seal-pair .seal.stamped + .seal.stamped{ animation-delay:.22s; }
+  @keyframes stampBig{
+    0%{ opacity:0; transform:scale(1.9) rotate(-16deg); }
+    55%{ opacity:1; transform:scale(.9) rotate(3deg); }
+    100%{ opacity:1; transform:none; }
+  }
+  .done-seal{ display:flex; justify-content:center; margin:2px 0 18px; }
+  .done-seal .seal{ width:170px; height:170px; }
+  .done-seal.seal-pair .seal{ width:146px; height:146px; }
+
+  /* -------- Códice: los 5 sellos -------- */
+  .codex-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .codex-title{ font-family:'Fredoka',sans-serif; font-size:16px; font-weight:600; }
+  .codex-count{ font-size:11.5px; font-weight:800; color:var(--gold); white-space:nowrap; }
+  .codex{ display:flex; justify-content:space-between; gap:6px; margin-top:14px; }
+  .codex-item{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .codex-item svg{ width:54px; height:54px; display:block; border-radius:50%; }
+  .codex-item .cx-name{ font-size:10.5px; font-weight:800; color:var(--muted); text-align:center; line-height:1.25; hyphens:manual; overflow-wrap:break-word; max-width:100%; }
+  .codex-item.earned .cx-name{ color:var(--gold); }
+  .codex-item.current svg{ box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+  .codex-item.current .cx-name{ color:var(--text); }
+  .codex-item.stamp svg{ animation:stampMini .7s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes stampMini{ 0%{ transform:scale(1.8) rotate(-14deg); opacity:0; } 60%{ transform:scale(.9) rotate(2deg); opacity:1; } 100%{ transform:none; } }
+
+  /* -------- Tarjeta de ley (filo dorado) -------- */
+  .card.law-card{
+    border:1.5px solid transparent;
+    background:
+      linear-gradient(var(--surface),var(--surface)) padding-box,
+      linear-gradient(145deg, rgba(255,210,63,.85), rgba(255,210,63,.10) 32%, rgba(139,92,255,.30) 68%, rgba(255,92,157,.55)) border-box;
+  }
+  .law-head{ display:flex; align-items:center; gap:10px; }
+  .law-num{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:var(--ink);
+    background:linear-gradient(135deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));
+    padding:4px 12px; border-radius:100px; box-shadow:0 4px 12px -4px rgba(255,210,63,.6);
+  }
+  .law-name{ font-size:13px; font-weight:800; color:var(--gold); }
+  .law-maxim{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:24px; line-height:1.2; margin:14px 0 12px; letter-spacing:-.005em;
+    background:linear-gradient(115deg,var(--gold-hi) 0%,var(--gold) 38%,#FFB547 70%,var(--gold-hi) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .law-example{ margin:14px 0 12px; background:var(--ink); border-radius:16px; padding:6px 14px; border:1px solid var(--line); }
+  .ex-row{ display:grid; grid-template-columns:96px 1fr; gap:10px; padding:10px 0; align-items:baseline; }
+  .ex-row + .ex-row{ border-top:1px solid var(--line); }
+  .ex-k{ font-size:11.5px; font-weight:800; color:var(--muted); }
+  .ex-v{ font-size:13.5px; line-height:1.5; }
+  .ex-v.win{ color:var(--pop-lime); }
+  .math{ font-family:'Fredoka',sans-serif; font-weight:500; font-size:17px; letter-spacing:.01em; }
+  .alarm{
+    display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:11px 12px; border-radius:14px;
+    background:rgba(255,92,157,.09); border:1px solid rgba(255,92,157,.32); font-size:12.5px; line-height:1.5;
+  }
+  .alarm b{ color:var(--pop-pink); }
+  .breakers{ display:flex; gap:7px; margin:12px 0 2px; }
+  .breakers span{
+    flex:1; text-align:center; font-family:'Fredoka',sans-serif; font-size:19px; font-weight:600; padding:9px 0; border-radius:12px;
+    background:var(--ink); border:1.5px solid rgba(255,210,63,.45); color:var(--gold);
+  }
+  .steps{ list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; counter-reset:st; }
+  .steps li{ counter-increment:st; display:flex; gap:11px; align-items:flex-start; font-size:13.5px; line-height:1.45; }
+  .steps li::before{
+    content:counter(st); flex-shrink:0; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif; font-size:13px; font-weight:600; color:var(--ink);
+    background:linear-gradient(135deg,var(--gold-hi),var(--gold) 50%,var(--gold-lo));
+  }
+
+  /* -------- Retos de opción múltiple -------- */
+  .q-tag{
+    display:inline-block; font-size:11px; font-weight:800; color:var(--pop-cyan); background:rgba(40,224,200,.10);
+    border:1px solid rgba(40,224,200,.35); padding:4px 10px; border-radius:100px; margin-bottom:12px;
+  }
+  .mc-prompt{ font-size:15px; line-height:1.5; margin-bottom:16px; }
+  .mc-prompt .math-big{ display:block; font-family:'Fredoka',sans-serif; font-size:32px; font-weight:600; text-align:center; margin:2px 0 4px; }
+  .mc-prompt .given{ display:block; background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-bottom:10px; font-size:13.5px; line-height:1.55; }
+  .mc-prompt .given b{ color:var(--gold); font-size:11px; letter-spacing:.02em; }
+  .mc-prompt .concl{ display:block; font-family:'Fredoka',sans-serif; font-size:17px; font-weight:500; line-height:1.35; }
+  .mc-opts{ display:flex; flex-direction:column; gap:9px; }
+  .mc-opts.verdict-row{ flex-direction:row; }
+  .mc-opts.verdict-row .mc-opt{ flex:1; text-align:center; }
+  .mc-opt{
+    text-align:left; background:var(--surface-2); border:2px solid var(--line); color:var(--text);
+    border-radius:16px; padding:13px 14px; font-size:14px; font-weight:700; line-height:1.4;
+    transition:transform .15s cubic-bezier(.2,1.4,.4,1), border-color .2s ease, background .2s ease, opacity .2s ease;
+  }
+  .mc-opt:active{ transform:scale(.97); }
+  .mc-opt.mathy{ font-family:'Fredoka',sans-serif; font-size:19px; font-weight:500; }
+  .mc-opt.right{ border-color:var(--pop-lime); background:rgba(198,255,77,.12); opacity:1; }
+  .mc-opt.wrong{ border-color:var(--pop-pink); background:rgba(255,92,157,.08); opacity:.6; }
+  .mc-opt:disabled{ cursor:default; }
+  .mc-opt:disabled:not(.right):not(.wrong){ opacity:.45; }
+  .shake{ animation:shake .36s ease; }
+  @keyframes shake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+  .why{ background:var(--accent-soft); border:1px dashed var(--accent); border-radius:14px; padding:12px; font-size:13px; line-height:1.55; margin:4px 0 12px; }
+  .score-line{ display:flex; align-items:center; gap:14px; }
+  .score-big{ font-family:'Fredoka',sans-serif; font-size:40px; font-weight:600; line-height:1; color:var(--gold); }
+  .score-txt{ font-size:13px; color:var(--muted); line-height:1.5; }
+  .score-txt b{ color:var(--text); }
+
+  /* -------- Clasificar (Ley II) -------- */
+  .case-name{ font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; margin-bottom:12px; }
+  .stmt{ background:var(--surface-2); border:1.5px solid var(--line); border-radius:16px; padding:12px; margin-bottom:10px; transition:border-color .25s ease; }
+  .stmt-text{ font-size:14px; line-height:1.45; margin-bottom:10px; }
+  .tri{ display:flex; gap:6px; }
+  .tri button{ flex:1; padding:9px 2px; border-radius:100px; border:1.5px solid var(--line); background:transparent; color:var(--muted); font-size:11.5px; font-weight:800; transition:.2s; }
+  .tri button.sel{ border-color:var(--accent); background:var(--accent-soft); color:var(--text); }
+  .stmt.ok{ border-color:var(--pop-lime); }
+  .stmt.no{ border-color:var(--pop-pink); }
+  .stmt .fix{ font-size:12px; font-weight:800; margin-top:9px; color:var(--pop-pink); }
+
+  /* -------- Laboratorio (Ley III) -------- */
+  .rule-big{ font-family:'Fredoka',sans-serif; font-size:23px; font-weight:600; text-align:center; margin:8px 0 6px; }
+  .rule-note{ font-size:12px; color:var(--muted); text-align:center; margin-bottom:14px; }
+  .numpad{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .numpad button{
+    background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); border-radius:12px; padding:11px 0;
+    font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; transition:transform .15s cubic-bezier(.2,1.4,.4,1), border-color .2s;
+  }
+  .numpad button:active{ transform:scale(.9); }
+  .numpad button.used{ border-color:var(--accent); color:var(--accent); }
+  .numpad button.breaker{ border-color:var(--pop-pink); color:var(--pop-pink); }
+  .lab-log{ margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+  .lab-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; background:var(--ink); border:1px solid var(--line); border-radius:12px; padding:9px 12px; font-size:12.5px; animation:viewIn .3s ease; }
+  .lab-row .calc{ font-family:'Fredoka',sans-serif; font-size:15px; }
+  .lab-row .vd{ font-weight:800; white-space:nowrap; }
+  .lab-row .vd.ok{ color:var(--pop-lime); }
+  .lab-row .vd.no{ color:var(--pop-pink); }
+  .lab-banner{ margin-top:12px; border-radius:14px; padding:12px; font-size:13px; line-height:1.5; }
+  .lab-banner.broke{ background:rgba(255,92,157,.10); border:1px solid rgba(255,92,157,.4); }
+  .lab-banner.held{ background:rgba(198,255,77,.08); border:1px solid rgba(198,255,77,.35); }
+  .rule-status{ display:flex; gap:6px; margin-top:4px; }
+  .rule-status span{ flex:1; text-align:center; font-size:11px; font-weight:800; padding:6px 0; border-radius:100px; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
+  .rule-status span.ok{ color:var(--ink); background:var(--pop-lime); border-color:transparent; }
+
+  /* -------- Balanza (Ley IV) -------- */
+  .balance-wrap{ background:var(--ink); border:1px solid var(--line); border-radius:18px; padding:8px 6px 4px; margin:4px 0 12px; }
+  .balance-wrap svg{ display:block; width:100%; height:auto; }
+  .beam{ transition:transform .7s cubic-bezier(.3,1.5,.5,1); transform-origin:160px 62px; }
+  .pan{ transition:transform .7s cubic-bezier(.3,1.5,.5,1); }
+  .eq-live{ font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; text-align:center; margin:6px 0 2px; }
+  .eq-live .neq{ color:var(--pop-pink); }
+  .move-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .move-grid .btn{ padding:12px 10px; font-size:12.5px; line-height:1.25; border-radius:16px; }
+  .move-legal{ background:var(--surface-2); color:var(--text); border-color:rgba(198,255,77,.35); }
+  .move-illegal{ background:var(--surface-2); color:var(--text); border-color:rgba(255,92,157,.35); }
+  .move-grid .btn:disabled{ opacity:.35; }
+
+  /* -------- Niebla (Ley V) -------- */
+  .fog-card{ position:relative; overflow:hidden; }
+  .fog-layer{
+    position:absolute; inset:-25%; pointer-events:none; z-index:0; transition:opacity 1.4s ease;
+    background:
+      radial-gradient(38% 26% at 22% 28%, rgba(226,220,255,.22), transparent 70%),
+      radial-gradient(44% 30% at 78% 58%, rgba(226,220,255,.18), transparent 70%),
+      radial-gradient(36% 26% at 46% 88%, rgba(226,220,255,.16), transparent 70%);
+    filter:blur(16px); animation:fogDrift 16s ease-in-out infinite alternate;
+  }
+  @keyframes fogDrift{ from{ transform:translate(-4%,0); } to{ transform:translate(4%,3%); } }
+  .fog-card > *:not(.fog-layer){ position:relative; z-index:1; }
+  .fog-problem{ font-family:'Fredoka',sans-serif; font-size:18px; font-weight:500; line-height:1.45; margin:6px 0 12px; }
+  .fog-timer{ display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:12px; }
+  .fog-timer .t{ font-family:'Fredoka',sans-serif; font-size:20px; color:var(--text); }
+  .proto{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .proto button{
+    display:flex; align-items:center; gap:8px; text-align:left; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text);
+    border-radius:14px; padding:10px; font-size:12.5px; font-weight:800; line-height:1.25; transition:.2s;
+  }
+  .proto button .pn{
+    flex-shrink:0; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif; font-size:12px; color:var(--ink); background:linear-gradient(135deg,var(--gold-hi),var(--gold) 50%,var(--gold-lo));
+  }
+  .proto button.on{ border-color:var(--gold); background:rgba(255,210,63,.08); }
+  .tool-pane{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px; font-size:13px; line-height:1.55; }
+  .tester-row{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .tester-row input{ flex:1; min-width:0; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:15px; font-family:'Fredoka',sans-serif; }
+  .tester-out{ margin-top:8px; font-family:'Fredoka',sans-serif; font-size:15px; line-height:1.5; }
+  .breath{ width:96px; height:96px; border-radius:50%; margin:10px auto 6px; border:3px solid var(--pop-cyan); box-shadow:0 0 30px -6px var(--pop-cyan) inset; transform:scale(.62); transition:transform 4s ease-in-out; }
+  .breath.in{ transform:scale(1); }
+  .breath-txt{ text-align:center; font-weight:800; font-size:13px; color:var(--pop-cyan); }
+  .money-row{ display:flex; gap:8px; align-items:center; }
+  .money-row .cur{ font-family:'Fredoka',sans-serif; font-size:24px; color:var(--gold); }
+
+  .req-card .check-list{ margin-top:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation:none !important; transition:none !important; }
+    .card{ opacity:1 !important; }
+  }
+
+  /* =====================================================
+     SEMANA 4 · EL MÉTODO SALIDA
+     Mismo sistema + "camino de luz" (cian → lima).
+     Redefine el metal dorado de la capa de lujo.
+  ===================================================== */
+  :root{
+    --gold-hi:#EBFFC2;
+    --gold:#C6FF4D;
+    --gold-lo:#28E0C8;
+    --trail:linear-gradient(150deg,#EBFFC2,#C6FF4D 40%,#28E0C8);
+  }
+  :focus-visible{ outline:2px solid var(--pop-cyan); outline-offset:3px; }
+
+  .card.law-card{
+    background:
+      linear-gradient(var(--surface),var(--surface)) padding-box,
+      linear-gradient(145deg, rgba(40,224,200,.85), rgba(40,224,200,.10) 32%, rgba(139,92,255,.30) 68%, rgba(198,255,77,.55)) border-box;
+  }
+  .law-maxim{ background:linear-gradient(115deg,#EBFFC2 0%,#C6FF4D 35%,#28E0C8 75%,#EBFFC2 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .law-num.letter{ font-size:21px; width:38px; height:38px; padding:0; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  .law-name{ color:var(--pop-lime); font-size:14px; }
+  .mc-opts.verdict-row .mc-opt{ padding:12px 4px; font-size:13px; }
+
+  /* -------- Hero: el laberinto -------- */
+  .maze-hero{ max-width:330px; margin:4px auto 24px; position:relative; animation:sealIn .9s cubic-bezier(.2,.9,.25,1) both; }
+  .maze-frame{
+    position:relative; border-radius:26px; padding:14px 14px 12px; overflow:hidden;
+    background:radial-gradient(120% 80% at 20% 0%, rgba(139,92,255,.22), transparent 60%), var(--ink);
+    border:1.5px solid transparent;
+    background-clip:padding-box;
+    box-shadow:0 0 0 1.5px rgba(40,224,200,.28), var(--chunky);
+  }
+  .maze-frame svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .maze-cap{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:11.5px; font-weight:800; color:var(--muted); }
+  .maze-cap .exit-lbl.open{ color:var(--pop-lime); }
+  .mz-wall{ stroke:rgba(167,159,201,.42); stroke-width:2.6; stroke-linecap:round; fill:none; }
+  .mz-border{ stroke:rgba(167,159,201,.62); stroke-width:3.4; stroke-linecap:round; fill:none; }
+  .trail-done{ fill:none; stroke-width:6.5; stroke-linecap:round; stroke-linejoin:round; }
+  .trail-next{ fill:none; stroke:var(--accent); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1.5 9; opacity:.95; animation:trailMove 1.1s linear infinite; }
+  @keyframes trailMove{ to{ stroke-dashoffset:-10.5; } }
+  .ms circle.ms-dot{ fill:#241C45; stroke:rgba(167,159,201,.38); stroke-width:1.5; }
+  .ms text{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; fill:#7C74AE; }
+  .ms.lit text{ fill:#1A1331; }
+  .ms.next circle.ms-dot{ fill:#2E2552; stroke:var(--accent); stroke-width:2; }
+  .ms.next text{ fill:#F5F2FF; }
+  .ms-ring{ fill:none; stroke:var(--accent); stroke-width:2; transform-box:fill-box; transform-origin:center; animation:msPulse 1.8s ease-out infinite; }
+  @keyframes msPulse{ from{ transform:scale(1); opacity:.9; } to{ transform:scale(1.9); opacity:0; } }
+  .ms.pop{ transform-box:fill-box; transform-origin:center; animation:stampMini .7s cubic-bezier(.2,1.4,.4,1) both; }
+  .exit-glow{ opacity:0; transition:opacity 1s ease; }
+  .exit-glow.on{ opacity:1; }
+
+  /* -------- Método SALIDA (fichas) -------- */
+  .salida-row{ display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:14px; }
+  .sl-tile{ display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
+  .sl-letter{
+    width:100%; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; background:#241C45; color:#6E66A0; border:1.5px solid var(--line);
+  }
+  .sl-tile.lit .sl-letter{ background:var(--trail); color:var(--ink); border-color:transparent; box-shadow:0 8px 18px -8px rgba(40,224,200,.7); }
+  .sl-tile.now .sl-letter{ background:var(--accent-soft); color:var(--text); border-color:var(--accent); }
+  .sl-name{ font-size:10px; font-weight:800; color:var(--muted); text-align:center; line-height:1.2; overflow-wrap:anywhere; }
+  .sl-tile.lit .sl-name{ color:var(--pop-lime); }
+  .sl-tile.now .sl-name{ color:var(--text); }
+  .sl-tile.stamp .sl-letter{ animation:stampMini .7s cubic-bezier(.2,1.4,.4,1) both; }
+  .sl-today{ margin-top:14px; padding-top:12px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .sl-today b{ color:var(--text); }
+  .done-maze{ max-width:270px; margin:0 auto 18px; }
+  .done-maze .maze-frame{ padding:10px; border-radius:22px; }
+
+  /* -------- Subtítulos de sección dentro de tarjeta -------- */
+  .subhead{ font-size:12px; font-weight:800; color:var(--muted); margin:16px 0 8px; }
+  .lesson{ background:rgba(40,224,200,.08); border:1px solid rgba(40,224,200,.35); border-radius:14px; padding:12px; font-size:13px; line-height:1.55; margin-top:12px; }
+  .lesson b{ color:var(--pop-cyan); }
+  .care-note{ font-size:12px; color:var(--muted); line-height:1.5; margin-top:10px; padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); }
+
+  /* -------- Reto de los 9 puntos -------- */
+  .nd-wrap{ background:var(--ink); border:1px solid var(--line); border-radius:18px; padding:4px; margin:12px 0 10px; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+  .nd-wrap svg{ display:block; width:100%; max-width:330px; height:auto; margin:0 auto; }
+  .nd-dot{ fill:#B9B1E0; transition:fill .25s ease; }
+  .nd-dot.hit{ fill:var(--pop-lime); }
+  .nd-ghost{ fill:rgba(245,242,255,0); transition:fill .6s ease; }
+  .nd-wrap.reveal-out .nd-ghost{ fill:rgba(245,242,255,.34); }
+  .nd-tap{ fill:transparent; cursor:pointer; }
+  .nd-line{ stroke-width:6; stroke-linecap:round; }
+  .nd-pen{ fill:none; stroke:var(--accent); stroke-width:3; }
+  .nd-status{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:10px; }
+  .nd-status b{ color:var(--text); }
+
+  /* -------- Tres lentes -------- */
+  .lenses{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px; }
+  .lens{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:11px 7px; text-align:center; }
+  .lens .li{ font-size:22px; }
+  .lens .ln{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; margin:4px 0 5px; }
+  .lens .lq{ font-size:11px; color:var(--muted); line-height:1.35; font-style:italic; }
+  .lens.win{ border-color:rgba(40,224,200,.6); background:rgba(40,224,200,.08); }
+  .lens.win .ln{ color:var(--pop-cyan); }
+
+  /* -------- Emparejar frases -------- */
+  .match-heads{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px; }
+  .match-heads span{ font-size:11.5px; font-weight:800; color:var(--muted); }
+  .match{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .match-col{ display:flex; flex-direction:column; gap:8px; }
+  .m-item{
+    text-align:left; background:var(--surface-2); border:2px solid var(--line); color:var(--text); border-radius:14px;
+    padding:10px; font-size:12.5px; font-weight:700; line-height:1.35; min-height:58px;
+    transition:transform .15s cubic-bezier(.2,1.4,.4,1), border-color .2s ease, background .2s ease, opacity .3s ease;
+  }
+  .m-item.closed{ border-color:rgba(255,92,157,.28); }
+  .m-item.open{ border-color:rgba(40,224,200,.28); }
+  .m-item.sel{ border-color:var(--accent); background:var(--accent-soft); }
+  .m-item.done{ border-color:var(--pop-lime); background:rgba(198,255,77,.10); opacity:.7; }
+  .m-item:active{ transform:scale(.97); }
+
+  /* -------- Detector de palabras borrosas -------- */
+  .detector{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:11px 12px; font-size:13.5px; line-height:1.6; min-height:46px; margin:-4px 0 6px; overflow-wrap:anywhere; }
+  .detector:empty::before{ content:"Aquí aparece tu frase con las palabras borrosas marcadas."; color:var(--muted); font-size:12.5px; }
+  .detector mark{ background:rgba(255,92,157,.18); color:var(--pop-pink); border-radius:6px; padding:0 3px; font-weight:800; }
+  .det-meta{ font-size:12px; font-weight:800; color:var(--muted); margin-bottom:14px; }
+  .det-meta.bad{ color:var(--pop-pink); }
+  .det-meta.ok{ color:var(--pop-lime); }
+  .check-list li.live{ cursor:default; }
+
+  /* -------- Escalera de preguntas -------- */
+  .qladder{ display:flex; flex-direction:column-reverse; gap:6px; margin:14px 0 4px; }
+  .rung{ display:grid; grid-template-columns:26px 1fr; gap:10px; align-items:center; padding:9px 12px; border-radius:12px; background:var(--ink); border-left:4px solid var(--c); }
+  .rung .rn{ width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-size:12px; font-weight:600; background:var(--c); color:var(--ink); }
+  .rung b{ display:block; font-size:12.5px; }
+  .rung span{ font-size:12px; color:var(--muted); font-style:italic; }
+  .sig-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0 2px; }
+  .sig{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:10px; }
+  .sig .si{ font-size:18px; }
+  .sig .sn{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:13.5px; margin:3px 0 2px; }
+  .sig .sd{ font-size:11.5px; color:var(--muted); line-height:1.4; }
+
+  /* -------- Detective de señales -------- */
+  .case-title{ font-family:'Fredoka',sans-serif; font-size:19px; font-weight:600; margin-bottom:10px; }
+  .case-setup{ background:var(--ink); border:1px solid var(--line); border-radius:16px; padding:13px; font-size:14px; line-height:1.55; margin-bottom:12px; }
+  .q-budget{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; font-weight:800; color:var(--muted); }
+  .q-pips{ display:flex; gap:4px; }
+  .q-pips i{ width:16px; height:7px; border-radius:4px; background:var(--pop-cyan); transition:background .3s ease; }
+  .q-pips i.used{ background:var(--surface-2); }
+  .q-bank{ display:flex; flex-direction:column; gap:8px; }
+  .q-ask{ text-align:left; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); border-radius:14px; padding:11px 12px; font-size:13px; font-weight:700; line-height:1.4; transition:transform .15s cubic-bezier(.2,1.4,.4,1), opacity .2s; }
+  .q-ask:active{ transform:scale(.97); }
+  .q-ask:disabled{ opacity:.35; cursor:default; }
+  .q-log{ display:flex; flex-direction:column; gap:8px; }
+  .q-entry{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:10px 12px; animation:viewIn .3s ease; }
+  .q-entry .qq{ font-size:12px; color:var(--muted); font-weight:700; }
+  .q-entry .qa{ font-size:13.5px; margin-top:4px; line-height:1.45; }
+  .q-badge{ display:inline-block; font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:100px; margin-top:7px; }
+  .q-badge.signal{ background:rgba(40,224,200,.15); color:var(--pop-cyan); }
+  .q-badge.cut{ background:rgba(198,255,77,.13); color:var(--pop-lime); }
+  .q-badge.empty{ background:rgba(167,159,201,.13); color:var(--muted); }
+  .clues{ display:flex; flex-wrap:wrap; gap:6px; }
+  .clues .empty-clue{ font-size:12px; color:var(--muted); font-style:italic; }
+  .clue{ font-size:12px; font-weight:800; padding:6px 10px; border-radius:100px; background:rgba(40,224,200,.10); border:1px solid rgba(40,224,200,.42); animation:stampMini .5s cubic-bezier(.2,1.4,.4,1) both; }
+  .clue.cut{ background:rgba(198,255,77,.08); border-color:rgba(198,255,77,.38); }
+  .oq-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .oq-row input{ flex:1; min-width:0; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; color:var(--text); font-size:14px; }
+  .oq-row input:focus{ outline:none; border-color:var(--accent); }
+  .oq-st{ width:26px; height:26px; flex-shrink:0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; background:var(--surface-2); color:var(--muted); }
+  .oq-st.ok{ background:var(--pop-lime); color:var(--ink); }
+  .oq-st.bad{ background:rgba(255,92,157,.2); color:var(--pop-pink); }
+  .oq-msg{ font-size:12px; font-weight:700; color:var(--pop-pink); min-height:16px; margin:-2px 0 8px; }
+  .problem-quote{ background:var(--ink); border-left:4px solid var(--pop-cyan); border-radius:10px; padding:10px 12px; font-size:13.5px; line-height:1.5; margin-bottom:12px; font-style:italic; }
+
+  /* -------- Las siete salidas -------- */
+  .exits{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0 4px; }
+  .exit{ background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:10px 11px; }
+  .exit:last-child{ grid-column:1 / -1; }
+  .exit .ei{ font-size:19px; }
+  .exit .en{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; margin:3px 0 2px; }
+  .exit .ed{ font-size:11.5px; color:var(--muted); line-height:1.4; }
+
+  /* -------- Las jarras -------- */
+  .goal-pill{ display:inline-block; font-size:12px; font-weight:800; padding:5px 12px; border-radius:100px; background:rgba(198,255,77,.12); color:var(--pop-lime); border:1px solid rgba(198,255,77,.4); }
+  .jars{ display:flex; justify-content:center; align-items:flex-end; gap:34px; padding:18px 0 8px; background:var(--ink); border:1px solid var(--line); border-radius:18px; margin:12px 0; }
+  .jar{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .jar-body{ position:relative; width:76px; border:3px solid rgba(245,242,255,.6); border-top:none; border-radius:0 0 18px 18px; overflow:hidden; background:rgba(255,255,255,.03); }
+  .jar-body.cap5{ height:160px; }
+  .jar-body.cap3{ height:96px; }
+  .water{ position:absolute; left:0; right:0; bottom:0; height:0; background:linear-gradient(180deg,#7FF5E4,#28E0C8 35%,#1592B8); transition:height .65s cubic-bezier(.3,1.25,.5,1); }
+  .water::before{ content:""; position:absolute; left:0; right:0; top:0; height:5px; background:rgba(255,255,255,.45); }
+  .jar-amt{ font-family:'Fredoka',sans-serif; font-size:22px; font-weight:600; }
+  .jar-amt.goal{ color:var(--pop-lime); }
+  .jar-cap{ font-size:11.5px; font-weight:800; color:var(--muted); }
+  .act-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .act-grid .btn{ padding:11px 8px; font-size:12.5px; border-radius:14px; }
+  .act-grid .btn:disabled{ opacity:.4; cursor:default; }
+  .moves{ font-size:12px; font-weight:800; color:var(--muted); text-align:center; margin-top:10px; }
+
+  /* -------- El río -------- */
+  .river{ background:var(--ink); border:1px solid var(--line); border-radius:18px; padding:10px; display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+  .bank{ border-radius:14px; padding:9px 10px; background:rgba(198,255,77,.05); border:1px dashed rgba(198,255,77,.28); }
+  .bank-label{ font-size:11px; font-weight:800; color:var(--muted); margin-bottom:6px; }
+  .bank-items{ display:flex; gap:8px; flex-wrap:wrap; min-height:52px; align-items:center; }
+  .rv-item{ font-size:26px; width:52px; height:52px; border-radius:14px; background:var(--surface-2); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; padding:0; transition:transform .15s cubic-bezier(.2,1.4,.4,1); }
+  .rv-item:active{ transform:scale(.9); }
+  .rv-item:disabled{ opacity:.5; cursor:default; }
+  .rv-item.eaten{ position:relative; opacity:1; border-color:var(--pop-pink); background:rgba(255,92,157,.16); }
+  .rv-item.eaten::after{ content:"✕"; position:absolute; top:-7px; right:-7px; width:20px; height:20px; border-radius:50%; background:var(--pop-pink); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .rv-item.farmer{ border-color:var(--accent); background:var(--accent-soft); }
+  .water-lane{ position:relative; height:92px; border-radius:14px; background:linear-gradient(90deg, rgba(40,224,200,.20), rgba(139,92,255,.20)); overflow:hidden; }
+  .water-lane::after{ content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, transparent 0 22px, rgba(255,255,255,.06) 22px 26px); animation:flow 3s linear infinite; }
+  @keyframes flow{ to{ background-position:52px 0; } }
+  .boat{ position:absolute; left:50%; top:6px; transform:translateX(-50%); z-index:1; display:flex; align-items:center; gap:4px; padding:4px 12px 6px; border-radius:6px 6px 22px 22px; background:linear-gradient(180deg,#9B6A3A,#5E3A1A); font-size:24px; transition:top .7s cubic-bezier(.4,0,.2,1); box-shadow:0 8px 14px -8px rgba(0,0,0,.7); }
+  .boat.down{ top:40px; }
+  .boat .cargo{ min-width:30px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.18); border:none; padding:0 4px; font-size:22px; }
+  .river-ctrl{ display:flex; gap:8px; }
+  .river-ctrl .btn{ flex:1; }
+
+  /* -------- Mapa de salida -------- */
+  .sf-row{ display:grid; grid-template-columns:40px 1fr; gap:12px; margin-bottom:16px; }
+  .sf-letter{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-size:20px; font-weight:600; color:var(--ink); background:var(--trail); }
+  .sf-label{ font-size:13.5px; font-weight:800; margin-bottom:3px; }
+  .sf-hint{ font-size:12px; color:var(--muted); line-height:1.45; margin-bottom:8px; }
+  .sf-row .field{ margin-bottom:0; }
+  .sf-row textarea{ min-height:70px; }
+  .tap-check{ display:flex; gap:10px; align-items:flex-start; width:100%; text-align:left; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); border-radius:14px; padding:11px 12px; font-size:13px; font-weight:700; line-height:1.4; }
+  .tap-check .box{ width:22px; height:22px; flex-shrink:0; border-radius:7px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .tap-check.ok{ border-color:var(--pop-lime); }
+  .tap-check.ok .box{ background:var(--pop-lime); border-color:var(--pop-lime); color:var(--ink); }
+  .mapa{
+    border-radius:24px; padding:20px 18px; margin-bottom:16px; position:relative; overflow:hidden;
+    border:1.5px solid transparent;
+    background:
+      radial-gradient(120% 70% at 100% 0%, rgba(40,224,200,.16), transparent 60%) padding-box,
+      linear-gradient(var(--ink),var(--ink)) padding-box,
+      linear-gradient(145deg, rgba(40,224,200,.9), rgba(139,92,255,.35) 50%, rgba(198,255,77,.8)) border-box;
+    box-shadow:var(--chunky);
+    animation:cardIn .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .mapa-kicker{ font-size:12px; font-weight:800; color:var(--pop-cyan); }
+  .mapa-title{ font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; margin:2px 0 12px; }
+  .mapa-problem{ font-size:14px; line-height:1.5; font-style:italic; color:var(--text); padding-bottom:14px; border-bottom:1px solid var(--line); }
+  .rail{ position:relative; margin-top:16px; padding-left:46px; }
+  .rail::before{ content:""; position:absolute; left:15px; top:6px; bottom:6px; width:4px; border-radius:4px; background:linear-gradient(180deg,#28E0C8,#C6FF4D); }
+  .rail-step{ position:relative; margin-bottom:14px; min-height:34px; }
+  .rail-step:last-child{ margin-bottom:0; }
+  .rail-step .rl{ position:absolute; left:-46px; top:-2px; width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-family:'Fredoka',sans-serif; font-size:17px; font-weight:600; color:var(--ink); background:var(--trail); box-shadow:0 0 0 4px var(--ink); }
+  .rail-step .rt{ font-size:11.5px; font-weight:800; color:var(--muted); }
+  .rail-step .rv{ font-size:13.5px; line-height:1.5; white-space:pre-line; overflow-wrap:anywhere; }
+  .first-step{ margin-top:16px; background:rgba(198,255,77,.10); border:1px solid rgba(198,255,77,.45); border-radius:16px; padding:12px 14px; }
+  .first-step .fk{ font-size:11.5px; font-weight:800; color:var(--pop-lime); }
+  .first-step .fv{ font-family:'Fredoka',sans-serif; font-size:17px; font-weight:500; line-height:1.35; margin-top:3px; }
+  .mapa-foot{ font-size:11.5px; color:var(--muted); margin-top:14px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="blobfield">
+  <div class="blob-outer" id="blobOuterA" style="left:0;top:0;"><div class="blob blob-a"></div></div>
+  <div class="blob-outer" id="blobOuterB" style="left:0;top:0;"><div class="blob blob-b"></div></div>
+  <div class="blob-outer" id="blobOuterC" style="left:0;top:0;"><div class="blob blob-c"></div></div>
+</div>
+
+<div class="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <a class="back-link" href="smart.html#mapa" title="Volver al mapa" aria-label="Volver al mapa">←</a>
+      <div>
+        <div class="brand-name" id="brandName">Proyecto Smart</div>
+        <div class="brand-sub" id="brandSub">Parte 1 · Semana 4</div>
+      </div>
+    </div>
+    <div class="brand-mark" id="avatarMark">🧠</div>
+  </div>
+
+  <main class="main">
+    <div class="progress-block">
+      <div class="progress-rows">
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Semana</span><div class="progress-track"><div class="progress-fill" style="width:50%"></div></div><span class="progress-label">4 de 8</span></div>
+        <div class="progress-row"><span class="progress-label" style="width:64px;">Sesión</span><div class="progress-track"><div class="progress-fill" style="width:50%"></div></div><span class="progress-label">2 de 4</span></div>
+      </div>
+    </div>
+
+    <div class="maze-hero" id="heroMaze"></div>
+
+    <div class="eyebrow">Semana 4 · Sesión 2</div>
+    <h1 class="hero-title">Palabras que abren</h1>
+    <div class="hero-sub">L: lenguaje preciso</div>
+    <div class="hero-body">Las palabras con las que describes un problema deciden las ideas que se te ocurren. Palabras borrosas, ideas borrosas. Palabras precisas, salidas claras. Unos 15 minutos.</div>
+    <div class="hintbox hidden" id="repeatNote"></div>
+
+    <div class="card" style="--d:30ms;">
+      <div class="codex-head">
+        <div class="codex-title">El Método SALIDA</div>
+        <div class="codex-count" id="salidaCount">0 de 6 letras</div>
+      </div>
+      <div class="card-text muted" style="font-size:12.5px;">Seis letras, un método para no quedarte pegado nunca. Cada sesión enciende un tramo del laberinto.</div>
+      <div class="salida-row" id="salidaRow"></div>
+      <div class="sl-today" id="slToday"></div>
+    </div>
+
+    <div class="card" style="--d:70ms;">
+      <div class="card-label">Orientación</div>
+      <ul class="orient-list">
+        <li><b style="color:var(--text);">Qué vas a hacer:</b> cambiar frases borrosas por frases precisas y reescribir tu problema real con un detector de palabras borrosas.</li>
+        <li><b style="color:var(--text);">Por qué:</b> un problema dicho con precisión ya trae media solución adentro.</li>
+        <li><b style="color:var(--text);">Qué notar:</b> cuántas veces usas siempre, nunca o «no puedo» sin darte cuenta.</li>
+      </ul>
+    </div>
+
+    <div class="card law-card" style="--d:110ms;">
+      <div class="law-head"><span class="law-num letter">L</span><span class="law-name">Lenguaje preciso</span></div>
+      <p class="law-maxim">Palabras borrosas, ideas borrosas. Palabras precisas, salidas claras.</p>
+      <p class="card-text">Con «soy malo en matemáticas» no hay nada que arreglar: es una etiqueta. Con «me equivoco al sumar fracciones con distinto denominador» ya sabes exactamente qué practicar. Cuanto más precisas tus palabras, más cerca está la solución.</p>
+      <div class="law-example">
+        <div class="ex-row"><span class="ex-k">Borroso</span><span class="ex-v">«Me fue mal en el examen.»</span></div>
+        <div class="ex-row"><span class="ex-k">Preciso</span><span class="ex-v">«Perdí 3 de 5 puntos en los problemas de porcentajes.»</span></div>
+        <div class="ex-row"><span class="ex-k">La salida aparece</span><span class="ex-v win">Hago 10 problemas de porcentajes esta semana.</span></div>
+      </div>
+      <div class="alarm"><span>🚨</span><div><b>Señal de alarma:</b> usas siempre, nunca, todo, nada, imposible, o una etiqueta sobre ti: bruto, vago, desastre.</div></div>
+    </div>
+
+    <div class="card" style="--d:140ms;" id="preciseMount"></div>
+
+    <div class="reveal" id="matchWrap">
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Traductor</div>
+        <div class="card-title">Palabras que cierran, palabras que abren</div>
+        <div class="card-text muted" style="margin-bottom:14px;">Toca una frase que cierra y luego la frase que la abre. Une las 6 parejas.</div>
+        <div class="match-heads"><span>🔒 Cierran</span><span>🔓 Abren</span></div>
+        <div class="match" id="matchGrid">
+          <div class="match-col" id="mClosed"></div>
+          <div class="match-col" id="mOpen"></div>
+        </div>
+        <div class="feedback" id="mFeedback" aria-live="polite"></div>
+        <div class="lesson hidden" id="mLesson"></div>
+      </div>
+    </div>
+
+    <div class="reveal" id="detWrap">
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Detector de palabras borrosas</div>
+        <div class="card-title">Tu problema, con palabras precisas</div>
+        <div class="card-text muted" style="margin-bottom:12px;">El detector marca en rosado las palabras que no dejan ver la salida: siempre, nunca, todo, nada, imposible, «no puedo» y las etiquetas como bruto o desastre.</div>
+        <div class="field">
+          <label for="blurText">1. Así lo dirías normalmente</label>
+          <textarea id="blurText" placeholder="Ej.: Siempre me va mal en inglés, soy malísimo y nunca voy a aprender."></textarea>
+        </div>
+        <div class="detector" id="blurView"></div>
+        <div class="det-meta" id="blurMeta"></div>
+        <div class="field">
+          <label for="sharpText">2. Ahora dilo exacto: qué pasa, cuándo, cuánto, en qué parte</label>
+          <textarea id="sharpText" placeholder="Ej.: En los dos últimos quizzes de inglés perdí los puntos de vocabulario. Estudio la noche antes, unos 15 minutos."></textarea>
+        </div>
+        <div class="detector" id="sharpView"></div>
+        <ul class="check-list" id="sharpChecks"></ul>
+        <div class="lesson hidden" id="sharpLesson"></div>
+      </div>
+
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Tu compromiso</div>
+        <div class="card-title" style="font-size:14px;">¿Qué palabra vas a dejar de usar esta semana?</div>
+        <div class="chips" id="wordChips"></div>
+        <div class="field" style="margin-bottom:0;">
+          <textarea id="reflectionText" placeholder="Opcional: cuando la escuches en tu cabeza, ¿por cuál frase la vas a cambiar?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div id="actionArea">
+      <div class="card req-card" style="--d:0ms;">
+        <div class="card-label">Para encender este tramo</div>
+        <ul class="check-list" id="reqList"></ul>
+      </div>
+      <button class="btn btn-primary btn-block" id="btnSave" disabled>Guardar y encender el tramo</button>
+    </div>
+
+    <div class="card done-card hidden" id="doneCard" style="--d:0ms;">
+      <div class="done-maze" id="doneMaze"></div>
+      <div class="done-title">Segundo tramo encendido.</div>
+      <div class="done-sub">Ahora tu problema tiene nombre exacto. Lo que tiene nombre exacto se puede resolver.</div>
+      <a class="btn btn-primary btn-block" href="smart.html#mapa">Volver al mapa</a>
+    </div>
+  </main>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="bottomnav">
+  <a class="navbtn active" href="smart.html#mapa"><span class="ic">🗺️</span><span class="lb">Mapa</span></a>
+  <a class="navbtn" href="smart.html#enfoque"><span class="ic">🎯</span><span class="lb">Enfoque</span></a>
+  <a class="navbtn" href="smart.html#hacer"><span class="ic">✅</span><span class="lb">Hacer</span></a>
+  <a class="navbtn" href="smart.html#capturar"><span class="ic">💡</span><span class="lb">Capturar</span></a>
+  <a class="navbtn" href="smart.html#perfil"><span class="ic">👤</span><span class="lb">Perfil</span></a>
+</nav>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  /* ===== Núcleo compartido · Semana 4 (misma clave que smart.html) ===== */
+  var STORAGE_KEY = "proyectoSmart.state.v3";
+  var WEEK = 4;
+  var SESSION_ID = "w4s2";
+  var SESSION_NUM = 2;
+  var SESSION_TITLE = "Palabras que abren";
+  var pageStart = Date.now();
+
+  function hexToRgba(hex, a){
+    var r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return "rgba("+r+","+g+","+b+","+a+")";
+  }
+  function applyAccent(hex){
+    document.documentElement.style.setProperty("--accent", hex);
+    document.documentElement.style.setProperty("--accent-soft", hexToRgba(hex,.18));
+  }
+  function readSharedState(){
+    try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+  }
+  function writeSharedState(mutateFn){
+    var current = readSharedState();
+    mutateFn(current);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(current)); }catch(e){}
+  }
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ var d=document.createElement("div"); d.textContent=String(s==null?"":s); return d.innerHTML; }
+  function wordCount(t){ var m = String(t||"").trim().match(/\S+/g); return m ? m.length : 0; }
+  function fmtClock(sec){ sec=Math.max(0,Math.round(sec)); var m=Math.floor(sec/60), s=sec%60; return (m<10?"0":"")+m+":"+(s<10?"0":"")+s; }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function keepInView(el){
+    if(!el) return;
+    var top = el.getBoundingClientRect().top;
+    if(top < 70 || top > window.innerHeight*0.6) window.scrollTo({ top: window.scrollY + top - 20, behavior:"smooth" });
+  }
+
+  var shared = readSharedState();
+  if(shared.accent) applyAccent(shared.accent);
+  $("avatarMark").textContent = shared.icon || "🧠";
+  $("brandName").textContent = shared.nickname ? "Hola, " + shared.nickname : "Proyecto Smart";
+  var existing = (shared.weeklySessions && shared.weeklySessions[SESSION_ID]) || null;
+  if(existing && existing.completed){
+    var when = existing.date ? new Date(existing.date).toLocaleDateString("es-CO",{ day:"numeric", month:"long" }) : "";
+    $("repeatNote").innerHTML = "Ya recorriste este tramo"+(when?" el "+esc(when):"")+". Puedes repetirla: se guardará tu nuevo intento.";
+    $("repeatNote").classList.remove("hidden");
+  }
+
+  var toastEl = $("toast"), toastTimer = null;
+  function showToast(text, emoji){
+    toastEl.textContent = (emoji?emoji+" ":"") + text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
+  function burstConfetti(xEl){
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var rect = xEl && xEl.getBoundingClientRect ? xEl.getBoundingClientRect() : { left:innerWidth/2, top:innerHeight/2, width:0, height:0 };
+    var cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    var glyphs = ["✦","✨","⭐","💫"];
+    for(var i=0;i<16;i++){
+      var s = document.createElement("span");
+      s.className = "confetti-particle";
+      s.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+      s.style.left = cx+"px"; s.style.top = cy+"px"; s.style.color = Math.random()<.5 ? "#C6FF4D" : "#28E0C8";
+      s.style.setProperty("--tx", (Math.random()*160-80)+"px");
+      s.style.setProperty("--ty", (Math.random()*-120-30)+"px");
+      document.body.appendChild(s);
+      setTimeout(function(el){ return function(){ el.remove(); }; }(s), 950);
+    }
+  }
+  var bA=$("blobOuterA"), bB=$("blobOuterB"), bC=$("blobOuterC");
+  window.addEventListener("scroll", function(){
+    var y = window.scrollY || 0;
+    bA.style.transform = "translate3d(0,"+(y*0.12)+"px,0)";
+    bB.style.transform = "translate3d(0,"+(y*-0.08)+"px,0)";
+    bC.style.transform = "translate3d(0,"+(y*0.05)+"px,0)";
+  }, { passive:true });
+
+  /* ===== Detector de palabras borrosas (compartido) ===== */
+  var VAGUE = {};
+  ("siempre nunca jamás jamas todo toda todos todas nada nadie ninguno ninguna imposible malo mala malísimo malísima malisimo malisima "+
+   "mal fatal bruto bruta brutísimo tonto tonta vago vaga desastre horrible pésimo pésima pesimo pesima inútil inutil odio").split(" ").forEach(function(w){ VAGUE[w] = 1; });
+  var NUMWORDS = {};
+  ("dos tres cuatro cinco seis siete ocho nueve diez once doce quince veinte treinta cuarenta cincuenta cien media medio "+
+   "lunes martes miércoles miercoles jueves viernes sábado sabado domingo mañana mañanas tarde tardes noche noches "+
+   "hora horas minuto minutos semana semanas hoy ayer mes primer primera primero segundo segunda tercer tercera último última").split(" ").forEach(function(w){ NUMWORDS[w] = 1; });
+  var WORD_RE = /[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+/g;
+  function tokens(text){
+    var m, out = [];
+    WORD_RE.lastIndex = 0;
+    while((m = WORD_RE.exec(text))){ out.push({ w:m[0].toLowerCase(), s:m.index, e:m.index+m[0].length }); }
+    return out;
+  }
+  function scanVague(text){
+    text = String(text||"");
+    var toks = tokens(text), flag = {};
+    toks.forEach(function(t,i){
+      if(VAGUE[t.w]) flag[i] = true;
+      if(t.w==="no" && toks[i+1] && (toks[i+1].w==="puedo" || toks[i+1].w==="sirvo")){ flag[i] = true; flag[i+1] = true; }
+    });
+    var html = "", pos = 0, list = [];
+    for(var i=0;i<toks.length;i++){
+      if(!flag[i]) continue;
+      var j = i;
+      while(flag[j+1] && toks[j+1].s - toks[j].e <= 1) j++;
+      html += esc(text.slice(pos, toks[i].s)) + "<mark>" + esc(text.slice(toks[i].s, toks[j].e)) + "</mark>";
+      list.push(text.slice(toks[i].s, toks[j].e).toLowerCase());
+      pos = toks[j].e; i = j;
+    }
+    html += esc(text.slice(pos));
+    return { html:html.replace(/\n/g,"<br>"), count:list.length, list:list };
+  }
+  function hasConcrete(text){
+    if(/\d/.test(text)) return true;
+    return tokens(String(text||"")).some(function(t){ return NUMWORDS[t.w]; });
+  }
+
+  /* ===== El Método SALIDA ===== */
+  var LETTERS = [
+    { ch:"S", name:"Suelta",    full:"Suelta el «no puedo»",  s:1 },
+    { ch:"A", name:"Ajusta",    full:"Ajusta el lente",       s:1 },
+    { ch:"L", name:"Lenguaje",  full:"Lenguaje preciso",      s:2 },
+    { ch:"I", name:"Interroga", full:"Interroga",             s:3 },
+    { ch:"D", name:"Detecta",   full:"Detecta las señales",   s:3 },
+    { ch:"A", name:"Actúa",     full:"Actúa por una salida",  s:4 }
+  ];
+  function sessionDone(st, n){ var r = st.weeklySessions && st.weeklySessions["w4s"+n]; return !!(r && r.completed); }
+  function prevData(n){ var st = readSharedState(); return (st.weeklySessions && st.weeklySessions["w4s"+n]) || {}; }
+
+  /* ----- Laberinto determinista (semilla fija = mismo laberinto en las 4 sesiones) ----- */
+  var MZ_C = 9, MZ_R = 9, MZ_S = 32, MZ_SEED = 9;
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  var MAZE = (function(){
+    var C=MZ_C, R=MZ_R, rnd=mulberry32(MZ_SEED), cells=[], i;
+    for(i=0;i<C*R;i++) cells.push({ w:[1,1,1,1], v:false });
+    var D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
+    var stack=[0]; cells[0].v=true;
+    while(stack.length){
+      var cur=stack[stack.length-1], cx=cur%C, cy=(cur/C)|0, opts=[];
+      for(var d=0;d<4;d++){ var nx=cx+D[d][0], ny=cy+D[d][1]; if(nx>=0&&ny>=0&&nx<C&&ny<R&&!cells[ny*C+nx].v) opts.push(d); }
+      if(!opts.length){ stack.pop(); continue; }
+      var dd=opts[Math.floor(rnd()*opts.length)], n=(cy+D[dd][1])*C+(cx+D[dd][0]);
+      cells[cur].w[D[dd][2]]=0; cells[n].w[D[dd][3]]=0; cells[n].v=true; stack.push(n);
+    }
+    var prev=[], q=[0], seen={0:1};
+    for(i=0;i<C*R;i++) prev.push(-1);
+    while(q.length){
+      var c=q.shift(); if(c===C*R-1) break;
+      var x=c%C, y=(c/C)|0;
+      for(var d2=0;d2<4;d2++){ if(cells[c].w[d2]) continue; var n2=(y+D[d2][1])*C+(x+D[d2][0]); if(!seen[n2]){ seen[n2]=1; prev[n2]=c; q.push(n2); } }
+    }
+    var path=[], p=C*R-1; while(p!==-1){ path.unshift(p); p=prev[p]; }
+    var S=MZ_S, walls="", border="";
+    cells.forEach(function(cell,k){
+      var x=(k%C)*S, y=((k/C)|0)*S, top=((k/C)|0)===0, left=(k%C)===0;
+      if(cell.w[0] && k!==0) (top?function(s){ border+=s; }:function(s){ walls+=s; })("M"+x+" "+y+"h"+S);
+      if(cell.w[3]) (left?function(s){ border+=s; }:function(s){ walls+=s; })("M"+x+" "+y+"v"+S);
+      if((k%C)===C-1 && cell.w[1]) border+="M"+(x+S)+" "+y+"v"+S;
+      if(((k/C)|0)===R-1 && cell.w[2] && k!==C*R-1) border+="M"+x+" "+(y+S)+"h"+S;
+    });
+    var L=path.length, ms=[];
+    for(var m=1;m<=6;m++) ms.push(Math.round(m*(L-1)/6));
+    var ends={ 1:ms[1], 2:ms[2], 3:ms[4], 4:L-1 };
+    function center(k){ return [ (k%C)*S+S/2, ((k/C)|0)*S+S/2 ]; }
+    return { path:path, walls:walls, border:border, ms:ms, ends:ends, center:center, W:C*S, H:R*S };
+  })();
+
+  function segPoints(s){
+    var a = s===1 ? 0 : MAZE.ends[s-1], b = MAZE.ends[s], pts = [];
+    if(s===1){ var c0 = MAZE.center(MAZE.path[0]); pts.push([c0[0], -16]); }
+    for(var i=a;i<=b;i++) pts.push(MAZE.center(MAZE.path[i]));
+    if(s===4){ var cl = MAZE.center(MAZE.path[MAZE.path.length-1]); pts.push([cl[0], MAZE.H+16]); }
+    return pts.map(function(p){ return p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+  }
+
+  var mazeN = 0;
+  function mazeSVG(mode){
+    var st = readSharedState(), id = "mz"+(++mazeN), segs = "", marks = "";
+    var allDone = [1,2,3,4].every(function(s){ return sessionDone(st,s); });
+    for(var s=1;s<=4;s++){
+      var done = sessionDone(st,s);
+      if(mode==="done" && s===SESSION_NUM){
+        segs += '<polyline class="trail-done draw" points="'+segPoints(s)+'" stroke="url(#'+id+'g)" filter="url(#'+id+'f)"/>';
+      } else if(done){
+        segs += '<polyline class="trail-done" points="'+segPoints(s)+'" stroke="url(#'+id+'g)" filter="url(#'+id+'f)"/>';
+      } else if(mode==="hero" && s===SESSION_NUM){
+        segs += '<polyline class="trail-next" points="'+segPoints(s)+'"/>';
+      }
+    }
+    LETTERS.forEach(function(l, k){
+      var c = MAZE.center(MAZE.path[MAZE.ms[k]]);
+      var lit = sessionDone(st, l.s) || (mode==="done" && l.s===SESSION_NUM);
+      var next = !lit && mode==="hero" && l.s===SESSION_NUM;
+      var pop = mode==="done" && l.s===SESSION_NUM;
+      marks += '<g class="ms'+(lit?' lit':'')+(next?' next':'')+(pop?' pop':'')+'"'+(pop?' style="animation-delay:'+(1.25+k*0.12).toFixed(2)+'s"':'')+'>'+
+        (next ? '<circle class="ms-ring" cx="'+c[0]+'" cy="'+c[1]+'" r="11"/>' : '')+
+        '<circle class="ms-dot" cx="'+c[0]+'" cy="'+c[1]+'" r="11.5"'+(lit?' fill="url(#'+id+'g)" stroke="none" style="fill:url(#'+id+'g);stroke:none"':'')+'/>'+
+        '<text x="'+c[0]+'" y="'+(c[1]+0.5)+'" text-anchor="middle" dominant-baseline="central">'+l.ch+'</text></g>';
+    });
+    var start = MAZE.center(MAZE.path[0]), end = MAZE.center(MAZE.path[MAZE.path.length-1]);
+    var exitOn = allDone || (mode==="done" && SESSION_NUM===4);
+    return '<svg viewBox="-10 -22 '+(MAZE.W+20)+' '+(MAZE.H+44)+'" role="img" aria-label="Laberinto del Método SALIDA: tramos recorridos de la semana">'+
+      '<defs>'+
+        '<linearGradient id="'+id+'g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="'+MAZE.W+'" y2="'+MAZE.H+'"><stop offset="0" stop-color="#28E0C8"/><stop offset=".55" stop-color="#7DF0A8"/><stop offset="1" stop-color="#C6FF4D"/></linearGradient>'+
+        '<filter id="'+id+'f" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+        '<radialGradient id="'+id+'x"><stop offset="0" stop-color="#C6FF4D" stop-opacity=".75"/><stop offset="1" stop-color="#C6FF4D" stop-opacity="0"/></radialGradient>'+
+      '</defs>'+
+      '<path d="M'+(start[0]-7)+' -14 l7 8 l7 -8" fill="none" stroke="rgba(167,159,201,.7)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'+
+      '<circle class="exit-glow'+(exitOn?' on':'')+'" cx="'+end[0]+'" cy="'+(MAZE.H+6)+'" r="26" fill="url(#'+id+'x)"/>'+
+      '<path class="mz-wall" d="'+MAZE.walls+'"/>'+
+      '<path class="mz-border" d="'+MAZE.border+'"/>'+
+      segs + marks +
+    '</svg>';
+  }
+  function mazeFrame(mode){
+    var st = readSharedState();
+    var allDone = [1,2,3,4].every(function(s){ return sessionDone(st,s); }) || (mode==="done" && SESSION_NUM===4);
+    return '<div class="maze-frame">'+mazeSVG(mode)+
+      (mode==="hero" ? '<div class="maze-cap"><span>↓ Entrada</span><span class="exit-lbl'+(allDone?' open':'')+'">'+(allDone?'Salida encontrada ✓':'Salida ↓')+'</span></div>' : '')+
+      '</div>';
+  }
+  function renderHeroMaze(){ $("heroMaze").innerHTML = mazeFrame("hero"); }
+
+  function renderMethod(stampSession){
+    var st = readSharedState(), lit = 0;
+    $("salidaRow").innerHTML = LETTERS.map(function(l){
+      var on = sessionDone(st, l.s);
+      if(on) lit++;
+      var cls = on ? "lit" : (l.s===SESSION_NUM ? "now" : "");
+      var stamp = stampSession===l.s ? " stamp" : "";
+      return '<div class="sl-tile '+cls+stamp+'"><div class="sl-letter">'+l.ch+'</div><div class="sl-name">'+esc(l.name)+'</div></div>';
+    }).join("");
+    $("salidaCount").textContent = lit + " de 6 letras";
+    var today = LETTERS.filter(function(l){ return l.s===SESSION_NUM; });
+    $("slToday").innerHTML = "Hoy recorres "+today.map(function(l){ return "la <b>"+l.ch+"</b>"; }).join(" y ")+": "+
+      today.map(function(l, i){ var t = esc(l.full); return i===0 ? t : t.charAt(0).toLowerCase()+t.slice(1); }).join(" y ")+".";
+  }
+  renderHeroMaze();
+  renderMethod();
+
+  /* ===== Requisitos para guardar ===== */
+  function Reqs(items){
+    var done = {};
+    var list = $("reqList"), btn = $("btnSave");
+    function render(){
+      list.innerHTML = items.map(function(it){
+        var ok = !!done[it.id];
+        return '<li class="'+(ok?'ok':'')+'"><span class="box">'+(ok?'✓':'')+'</span>'+esc(it.label)+'</li>';
+      }).join("");
+      btn.disabled = !items.every(function(it){ return done[it.id]; });
+    }
+    render();
+    return { set:function(id, v){ done[id] = (v !== false); render(); } };
+  }
+
+  /* ===== Motor de retos de opción múltiple ===== */
+  var PRAISE = ["¡Exacto!","A la primera.","Eso es pensar claro.","Bien leído."];
+  function runMC(mountId, items, opts, onDone){
+    var mount = $(mountId), i = 0, results = [];
+    opts = opts || {};
+    function show(){
+      var it = items[i], t0 = Date.now(), misses = 0, locked = false;
+      var idx = it.options.map(function(_,k){ return k; });
+      var order = it.fixed ? idx : shuffle(idx);
+      mount.innerHTML =
+        '<div class="card-label">'+esc(opts.label||"Reto")+' '+(i+1)+' de '+items.length+'</div>'+
+        (it.tag ? '<div class="q-tag">'+esc(it.tag)+'</div>' : '')+
+        '<div class="mc-prompt">'+it.prompt+'</div>'+
+        '<div class="mc-opts'+(it.row?' verdict-row':'')+'">'+order.map(function(k){
+          return '<button class="mc-opt'+(it.mathy?' mathy':'')+'" data-k="'+k+'">'+it.options[k]+'</button>';
+        }).join("")+'</div>'+
+        '<div class="feedback" aria-live="polite"></div>'+
+        '<div class="why hidden"></div>'+
+        '<button class="btn btn-primary btn-block hidden mc-next">'+(i+1<items.length?'Siguiente reto':'Ver mi resultado')+'</button>';
+      var fb = mount.querySelector(".feedback"), why = mount.querySelector(".why"), next = mount.querySelector(".mc-next");
+      mount.querySelectorAll(".mc-opt").forEach(function(b){
+        b.addEventListener("click", function(){
+          if(locked) return;
+          var k = parseInt(b.getAttribute("data-k"),10);
+          if(k === it.correct){
+            locked = true;
+            b.classList.add("right");
+            mount.querySelectorAll(".mc-opt").forEach(function(x){ x.disabled = true; });
+            fb.textContent = misses===0 ? PRAISE[Math.floor(Math.random()*PRAISE.length)] : "Ahí está. Ahora mira por qué.";
+            fb.className = "feedback good";
+            why.innerHTML = "<b>Por qué:</b> " + it.why;
+            why.classList.remove("hidden");
+            next.classList.remove("hidden");
+            results.push({ n:i+1, firstTry:misses===0, misses:misses, secs:Math.round((Date.now()-t0)/1000) });
+          } else {
+            misses++;
+            b.classList.remove("shake"); void b.offsetWidth; b.classList.add("wrong","shake");
+            b.disabled = true;
+            fb.textContent = it.nudge || opts.nudge || "No es esa. Léelo otra vez, despacio.";
+            fb.className = "feedback bad";
+          }
+        });
+      });
+      next.addEventListener("click", function(){
+        i++;
+        if(i < items.length){ show(); keepInView(mount); } else { finish(); }
+      });
+    }
+    function finish(){
+      var first = results.filter(function(r){ return r.firstTry; }).length;
+      var avg = Math.round(results.reduce(function(s,r){ return s+r.secs; },0) / Math.max(1,results.length));
+      mount.innerHTML =
+        '<div class="card-label">'+esc(opts.doneLabel||"Tu resultado")+'</div>'+
+        '<div class="score-line"><div class="score-big">'+first+'/'+items.length+'</div>'+
+        '<div class="score-txt"><b>a la primera.</b><br>Promedio: '+avg+' s por reto. '+(first===items.length ? "Lectura impecable." : "Los que fallaste son justo los que más enseñan.")+'</div></div>';
+      onDone({ firstTry:first, total:items.length, avgSecs:avg, results:results });
+    }
+    show();
+  }
+
+  function reveal(id){ var el = $(id); el.classList.add("open"); setTimeout(function(){ keepInView(el); }, 60); }
+
+  function bindChips(containerId, values, initial, onPick){
+    var c = $(containerId), picked = initial || "";
+    c.innerHTML = values.map(function(v){ return '<button class="chip-btn'+(v===picked?' selected':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</button>'; }).join("");
+    c.querySelectorAll(".chip-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        picked = b.getAttribute("data-v");
+        c.querySelectorAll(".chip-btn").forEach(function(x){ x.classList.toggle("selected", x===b); });
+        onPick(picked);
+      });
+    });
+    if(picked) onPick(picked);
+  }
+
+  function drawTrail(host){
+    var el = host.querySelector(".draw");
+    if(!el || !el.getTotalLength) return;
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var len = el.getTotalLength();
+    el.style.strokeDasharray = len;
+    el.style.strokeDashoffset = len;
+    el.getBoundingClientRect();
+    el.style.transition = "stroke-dashoffset 1.5s cubic-bezier(.55,0,.25,1) .25s";
+    el.style.strokeDashoffset = "0";
+  }
+
+  function finishSession(payload){
+    payload.week = WEEK; payload.session = SESSION_NUM; payload.title = SESSION_TITLE;
+    payload.letters = LETTERS.filter(function(l){ return l.s===SESSION_NUM; }).map(function(l){ return l.ch; });
+    payload.completed = true;
+    payload.date = new Date().toISOString();
+    payload.totalSecs = Math.round((Date.now()-pageStart)/1000);
+    writeSharedState(function(state){
+      state.weeklySessions = state.weeklySessions || {};
+      state.weeklySessions[SESSION_ID] = payload;
+    });
+    $("actionArea").classList.add("hidden");
+    var dm = $("doneMaze");
+    dm.innerHTML = mazeFrame("done");
+    var done = $("doneCard");
+    done.classList.remove("hidden");
+    window.scrollTo({ top: done.offsetTop - 20, behavior:"smooth" });
+    setTimeout(function(){ drawTrail(dm); }, 350);
+    setTimeout(function(){ burstConfetti(dm); }, 1900);
+    renderMethod(SESSION_NUM);
+    renderHeroMaze();
+    showToast(SESSION_NUM===4 ? "¡Encontraste la salida!" : "Tramo "+SESSION_NUM+" de 4 recorrido", "✦");
+  }
+
+
+  /* =====================================================
+     SESIÓN 2 — Palabras que abren
+  ===================================================== */
+  var reqs = Reqs([
+    { id:"precise", label:"Encuentra la versión precisa en 6 frases" },
+    { id:"match", label:"Une las 6 parejas de frases" },
+    { id:"sharp", label:"Reescribe tu problema sin palabras borrosas" },
+    { id:"word", label:"Elige la palabra que vas a dejar de usar" }
+  ]);
+
+  /* ---------- Borroso → preciso ---------- */
+  function B(s){ return '<span class="given"><b>Borroso</b><br>«'+s+'»</span><span class="concl" style="font-size:15px;">¿Cuál es la versión precisa?</span>'; }
+  var PRECISE = [
+    { prompt:B("No entiendo nada de inglés."),
+      options:["«No entiendo cuándo usar el pasado simple y cuándo el presente perfecto.»","«El inglés no es lo mío, nunca lo voy a entender.»","«Me cuesta mucho el inglés en general.»"], correct:0,
+      why:"Con «nada» no hay por dónde empezar. Con «pasado simple vs. presente perfecto» ya sabes qué buscar en YouTube esta tarde." },
+    { prompt:B("Mi hermano siempre me molesta."),
+      options:["«Mi hermano entra a mi cuarto sin tocar cuando estoy estudiando, casi todas las tardes.»","«Mi hermano es insoportable.»","«Todo el mundo en mi casa me molesta.»"], correct:0,
+      why:"«Siempre me molesta» solo produce pelea. «Entra sin tocar cuando estudio» produce una salida: acordar una señal en la puerta." },
+    { prompt:B("Soy desordenado."),
+      options:["«Pierdo tareas porque las anoto en cuadernos distintos.»","«Soy un desastre con mis cosas.»","«Nunca encuentro nada.»"], correct:0,
+      why:"«Desordenado» es una etiqueta. «Anoto en cuadernos distintos» es un hábito, y los hábitos sí se cambian: un solo lugar para las tareas." },
+    { prompt:B("No tengo tiempo."),
+      options:["«Entre semana uso unas 3 horas en el celular después de las 6 p. m.»","«Mi vida es muy ocupada.»","«El día no me alcanza para nada.»"], correct:0,
+      why:"Cuando lo dices con números aparece la salida sola: ahí hay tiempo que se puede mover." },
+    { prompt:B("El proyecto está muy difícil."),
+      options:["«No sé cómo empezar la introducción del proyecto de ciencias.»","«Este proyecto es imposible.»","«Los profes ponen cosas muy difíciles.»"], correct:0,
+      why:"«Difícil» es todo el proyecto. «No sé empezar la introducción» es un solo paso: puedes pedir un ejemplo de introducción." },
+    { prompt:B("Me fue horrible en el partido."),
+      options:["«Perdí 4 balones cuando me presionaban por la izquierda.»","«Jugué fatal, soy malísimo.»","«Nada me salió bien.»"], correct:0,
+      why:"Así hablan los entrenadores profesionales: dato concreto, parte concreta. Ahora sabes qué entrenar el martes." }
+  ];
+  var preciseSummary = null;
+  runMC("preciseMount", PRECISE, { label:"Frase", nudge:"Esa sigue borrosa: ¿te dice exactamente qué arreglar?" }, function(sum){
+    preciseSummary = sum;
+    reqs.set("precise");
+    reveal("matchWrap");
+  });
+
+  /* ---------- Emparejar: cierran / abren ---------- */
+  var PAIRS = [
+    { c:"No puedo.", o:"Todavía no sé cómo." },
+    { c:"Es imposible.", o:"¿Qué tendría que pasar para lograrlo?" },
+    { c:"Siempre me sale mal.", o:"Esta vez salió mal. ¿Qué cambio la próxima?" },
+    { c:"Soy bruto para esto.", o:"Me falta practicar esta parte." },
+    { c:"Ya lo intenté.", o:"Probé una forma. ¿Qué otra existe?" },
+    { c:"No es mi culpa.", o:"¿Qué parte sí depende de mí?" }
+  ];
+  var selC = null, selO = null, matched = 0, matchMisses = 0;
+  $("mClosed").innerHTML = shuffle(PAIRS.map(function(p,i){ return i; })).map(function(i){ return '<button class="m-item closed" data-i="'+i+'">«'+esc(PAIRS[i].c)+'»</button>'; }).join("");
+  $("mOpen").innerHTML = shuffle(PAIRS.map(function(p,i){ return i; })).map(function(i){ return '<button class="m-item open" data-i="'+i+'">«'+esc(PAIRS[i].o)+'»</button>'; }).join("");
+  function tryMatch(){
+    if(selC===null || selO===null) return;
+    var bc = $("mClosed").querySelector('[data-i="'+selC+'"]'), bo = $("mOpen").querySelector('[data-i="'+selO+'"]'), fb = $("mFeedback");
+    if(selC === selO){
+      [bc,bo].forEach(function(b){ b.classList.remove("sel"); b.classList.add("done"); b.disabled = true; });
+      matched++;
+      fb.textContent = matched < PAIRS.length ? "Pareja "+matched+" de "+PAIRS.length+"." : "¡Las 6 parejas!";
+      fb.className = "feedback good";
+      if(matched === PAIRS.length){
+        $("mLesson").innerHTML = "<b>Fíjate en la diferencia.</b> Las frases que cierran terminan en punto: no hay nada más que pensar. Las que abren casi siempre terminan en pregunta o dejan una tarea. Tu cerebro responde a lo que le preguntas.";
+        $("mLesson").classList.remove("hidden");
+        reqs.set("match");
+        setTimeout(function(){ reveal("detWrap"); }, 700);
+      }
+    } else {
+      matchMisses++;
+      [bc,bo].forEach(function(b){ b.classList.remove("sel","shake"); void b.offsetWidth; b.classList.add("shake"); });
+      fb.textContent = "Esas dos no son pareja. ¿Cuál de las que abren responde a esa frase?";
+      fb.className = "feedback bad";
+    }
+    selC = null; selO = null;
+  }
+  $("mClosed").querySelectorAll(".m-item").forEach(function(b){
+    b.addEventListener("click", function(){
+      if(b.disabled) return;
+      $("mClosed").querySelectorAll(".m-item").forEach(function(x){ x.classList.remove("sel"); });
+      b.classList.add("sel"); selC = parseInt(b.getAttribute("data-i"),10); tryMatch();
+    });
+  });
+  $("mOpen").querySelectorAll(".m-item").forEach(function(b){
+    b.addEventListener("click", function(){
+      if(b.disabled) return;
+      $("mOpen").querySelectorAll(".m-item").forEach(function(x){ x.classList.remove("sel"); });
+      b.classList.add("sel"); selO = parseInt(b.getAttribute("data-i"),10); tryMatch();
+    });
+  });
+
+  /* ---------- Detector en vivo ---------- */
+  var p1 = prevData(1);
+  if(existing){ $("blurText").value = existing.blurry || ""; $("sharpText").value = existing.precise || ""; }
+  else if(p1.problem){ $("blurText").value = p1.problem; }
+
+  var sharpOk = false;
+  function updateDetector(){
+    var b = scanVague($("blurText").value), s = scanVague($("sharpText").value);
+    $("blurView").innerHTML = $("blurText").value.trim() ? b.html : "";
+    $("blurView").classList.toggle("hidden", !!$("blurText").value.trim() && !b.count);
+    var bm = $("blurMeta");
+    if(!$("blurText").value.trim()){ bm.textContent = ""; bm.className = "det-meta"; }
+    else if(b.count){ bm.textContent = "Palabras borrosas: "+b.count+". Normal: así hablamos todos cuando estamos atascados."; bm.className = "det-meta bad"; }
+    else { bm.textContent = "Sin palabras borrosas. Igual, intenta hacerlo todavía más exacto abajo."; bm.className = "det-meta ok"; }
+    $("sharpView").innerHTML = $("sharpText").value.trim() ? s.html : "";
+    $("sharpView").classList.toggle("hidden", !!$("sharpText").value.trim() && !s.count);
+    var checks = [
+      { ok: $("sharpText").value.trim() !== "" && s.count === 0, t: s.count ? "Sin palabras borrosas (quedan "+s.count+": "+s.list.join(", ")+")" : "Sin palabras borrosas" },
+      { ok: wordCount($("sharpText").value) >= 12, t:"Al menos 12 palabras (llevas "+wordCount($("sharpText").value)+")" },
+      { ok: hasConcrete($("sharpText").value), t:"Incluye un número o un momento exacto (cuántos, cuándo, cuánto tiempo)" }
+    ];
+    $("sharpChecks").innerHTML = checks.map(function(c){ return '<li class="live'+(c.ok?' ok':'')+'"><span class="box">'+(c.ok?'✓':'')+'</span>'+esc(c.t)+'</li>'; }).join("");
+    var all = checks.every(function(c){ return c.ok; });
+    if(all && !sharpOk){
+      $("sharpLesson").innerHTML = "<b>Mira lo que pasó.</b> Con la primera frase solo te queda sentirte mal. Con la segunda ya casi puedes ver qué hacer mañana. Las palabras precisas no describen mejor el problema: lo hacen más pequeño.";
+      $("sharpLesson").classList.remove("hidden");
+    }
+    sharpOk = all;
+    reqs.set("sharp", all && wordCount($("blurText").value) >= 4);
+  }
+  $("blurText").addEventListener("input", updateDetector);
+  $("sharpText").addEventListener("input", updateDetector);
+  updateDetector();
+
+  var word = "";
+  bindChips("wordChips", ["Siempre","Nunca","No puedo","Imposible","Una etiqueta sobre mí"], existing ? existing.word : "", function(v){ word = v; reqs.set("word"); });
+  if(existing){ $("reflectionText").value = existing.reflection || ""; }
+
+  $("btnSave").addEventListener("click", function(){
+    if($("btnSave").disabled) return;
+    finishSession({
+      precise: $("sharpText").value.trim(),
+      blurry: $("blurText").value.trim(),
+      blurryCount: scanVague($("blurText").value).count,
+      preciseQuiz: preciseSummary,
+      match: { misses:matchMisses },
+      word: word,
+      reflection: $("reflectionText").value.trim()
+    });
+  });
+})();
+</script>
+</body>
+</html>
