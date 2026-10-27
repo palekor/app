@@ -423,6 +423,30 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   .overlay,.toast{ transition:opacity 150ms ease !important; }
 }
 @keyframes fadeOnly{ from{opacity:0} to{opacity:1} }
+
+/* ===== v2: habilidades, dificultad, respaldo ===== */
+.skill-row{ display:flex; align-items:center; gap:12px; width:100%; padding:11px 6px; background:none; border:none; border-bottom:1px solid var(--line); color:var(--text); text-align:left; border-radius:10px; transition:background-color 120ms ease, transform 140ms var(--ease-out); }
+.skill-row:last-child{ border-bottom:none; }
+.skill-row:active{ background:var(--surface-2); transform:scale(.99); }
+.skill-ic{ font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+.skill-body{ flex:1; min-width:0; }
+.skill-name{ font-weight:800; font-size:13.5px; }
+.skill-lvl{ font-size:11px; color:var(--muted); font-weight:700; margin-top:2px; }
+.skill-row[data-level="3"] .skill-lvl,.skill-row[data-level="4"] .skill-lvl{ color:var(--accent); }
+.skill-pips{ display:flex; gap:4px; flex-shrink:0; }
+.skill-pips i{ width:14px; height:6px; border-radius:99px; background:var(--surface-2); border:1px solid var(--line); }
+.skill-pips i.on{ background:linear-gradient(90deg,var(--accent),var(--pop-pink)); border-color:transparent; }
+.level-opts{ display:flex; flex-direction:column; gap:8px; }
+.level-opt{ display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; padding:11px 14px; border-radius:14px; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); transition:transform 140ms var(--ease-out), border-color 150ms ease, background-color 150ms ease; }
+.level-opt:active{ transform:scale(.98); }
+.level-opt.selected{ border-color:var(--accent); background:var(--accent-soft); }
+.level-opt b{ font-size:13.5px; }
+.level-opt span{ font-size:11.5px; color:var(--muted); font-weight:600; }
+.skill-hist{ margin-top:16px; font-size:12px; color:var(--muted); line-height:1.5; }
+.skill-hist div{ padding:7px 0; border-top:1px solid var(--line); }
+.week-note{ font-size:11px; color:var(--muted); font-weight:700; margin-top:10px; text-align:center; }
+.compare-note{ font-size:11.5px; color:var(--muted); margin-top:12px; line-height:1.5; }
+.helped-line{ font-size:12.5px; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -499,9 +523,10 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     <div class="card trend-card" style="animation:none;opacity:1;" id="trendCard">
       <div class="row-between" style="margin-bottom:10px;">
         <span style="font-weight:700;font-size:13px;">Últimos 7 días</span>
-        <span style="font-size:11.5px;color:var(--muted);font-weight:700;" id="habitStreakLabel">0 días seguidos</span>
+        <span style="font-size:11.5px;color:var(--muted);font-weight:700;" id="habitStreakLabel">0 días de racha</span>
       </div>
       <div class="trend-row" id="trendRow"></div>
+      <div class="week-note" id="habitWeekNote"></div>
     </div>
 
     <div class="row-between" style="margin-bottom:8px;">
@@ -599,6 +624,15 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       </div>
     </div>
 
+    <div class="card" id="skillsCard">
+      <div class="row-between" style="margin-bottom:4px;">
+        <span style="font-weight:700;font-size:14.5px;">🌱 Lo que ya puedes hacer</span>
+        <span style="font-size:11px;color:var(--muted);font-weight:700;" id="skillsCount">0/8</span>
+      </div>
+      <div class="section-sub" style="margin-bottom:10px;">Mide habilidades, no tareas completadas. Toca una para actualizar su nivel con una evidencia real.</div>
+      <div id="skillList"></div>
+    </div>
+
     <div class="card" id="progressCard">
       <div style="font-weight:700;font-size:14.5px;margin-bottom:4px;">📈 Tu progreso</div>
       <div id="progressBody"></div>
@@ -624,6 +658,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       <div style="font-weight:700;font-size:14.5px;margin-bottom:10px;">Datos</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <button class="btn btn-ghost btn-block" id="btnExport">Exportar copia (.json)</button>
+        <button class="btn btn-ghost btn-block hidden" id="btnRestore">Deshacer último cambio</button>
         <button class="btn btn-ghost btn-block" id="btnImport">Importar copia (.json)</button>
         <input type="file" id="importFile" accept="application/json" class="hidden">
         <button class="btn btn-outline btn-block" id="btnReset" style="border-color:#a95c5c;color:#d38a8a;">Reiniciar datos</button>
@@ -667,6 +702,14 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     <label>Semana</label>
     <select id="fWeek"></select>
   </div>
+  <div class="field">
+    <label>Dificultad de la tarea</label>
+    <div class="segmented" id="fDifficulty" style="margin-bottom:0;">
+      <button type="button" data-v="1">Fácil</button>
+      <button type="button" data-v="2">Media</button>
+      <button type="button" data-v="3">Retadora</button>
+    </div>
+  </div>
   <div class="field-row">
     <div class="field">
       <label>Latencia de inicio (seg)</label>
@@ -700,10 +743,29 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     <label class="switch"><input type="checkbox" id="fMicro"><span class="slider"></span></label>
   </div>
   <div class="field" style="margin-top:10px;">
+    <label>¿Qué estrategia funcionó? (opcional)</label>
+    <input type="text" id="fHelped" maxlength="140" placeholder="Ej: dividir la tarea en 3 pasos pequeños">
+  </div>
+  <div class="field">
     <label>Observación (hechos, no interpretaciones)</label>
     <textarea id="fNote" placeholder="Ej: en 3 de 4 intentos volvió a la tarea en menos de 10 segundos."></textarea>
   </div>
   <button class="btn btn-primary btn-block" id="btnSaveSession">Guardar sesión</button>
+</div>
+
+<!-- ============ SHEET: HABILIDAD ============ -->
+<div class="sheet" id="sheetSkill">
+  <button class="sheet-close" data-close>×</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="skillTitle"></div>
+  <div class="sheet-sub" id="skillDesc"></div>
+  <div class="level-opts" id="skillLevelOpts"></div>
+  <div class="field" style="margin-top:14px;">
+    <label>Evidencia: ¿qué hiciste que lo demuestra?</label>
+    <textarea id="skillEvidence" maxlength="240" placeholder="Ej: arranqué la tarea de ciencias en menos de 1 minuto, sin recordatorio."></textarea>
+  </div>
+  <button class="btn btn-primary btn-block" id="btnSaveSkill">Guardar nivel</button>
+  <div class="skill-hist" id="skillHistory"></div>
 </div>
 
 <!-- ============ SHEET: TOOL RUNNER ============ -->
@@ -926,14 +988,33 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     { id:"custom", icon:"➕", name:"Personalizada", minutes:20, freq:0, note:"Elige tu duración" }
   ];
 
+  var SKILLS = [
+    { id:"atencion", icon:"🔎", name:"Atención", desc:"Notar cuándo te vas y volver a lo que hacías." },
+    { id:"arranque", icon:"⏱️", name:"Arrancar tareas", desc:"Empezar sin esperar a que te lo pidan." },
+    { id:"recuperacion", icon:"🔄", name:"Recuperarte", desc:"Retomar la tarea después de una interrupción." },
+    { id:"memoria", icon:"🧩", name:"Memoria de trabajo", desc:"Sostener y organizar información mientras la usas." },
+    { id:"autorregulacion", icon:"⏸️", name:"Autorregulación", desc:"Pausar y elegir antes de reaccionar." },
+    { id:"planeacion", icon:"🗺️", name:"Planear y cumplir", desc:"Dividir, priorizar y terminar lo que planeaste." },
+    { id:"salida", icon:"🧭", name:"Resolver problemas", desc:"Encontrar una salida cuando te atascas." },
+    { id:"pensamiento", icon:"💎", name:"Pensar con claridad", desc:"Decirlo en palabras y separar supuestos de hechos." }
+  ];
+  var LEVELS = [
+    { n:0, name:"Sin evaluar", desc:"Todavía no hay evidencia." },
+    { n:1, name:"Reconoce", desc:"Puedes nombrar la habilidad o el obstáculo." },
+    { n:2, name:"Practica", desc:"Usas una estrategia con guía." },
+    { n:3, name:"Aplica", desc:"La usas por tu cuenta en situaciones conocidas." },
+    { n:4, name:"Transfiere", desc:"La adaptas a una situación nueva." }
+  ];
+  var DIFF_LABEL = { 1:"Fácil", 2:"Media", 3:"Retadora" };
+
   var ICONS = ["🧠","🚀","🎯","🦉","⚡","🧩","🦁","🌙","🔭","🐉","📘","✍️","💧","🛏️","🚶","💡"];
   var COLORS = ["#8B5CFF","#FF5C9D","#28E0C8","#4DD86B","#3FA0FF","#FF8A3D"];
   var HINTS = {
     mapa:"Toca un nodo disponible para ver su reto de la semana y su herramienta.",
     enfoque:"Elige un preset y corre el tiempo. Cada sesión cuenta para tu racha.",
-    hacer:"Marca tus hábitos de hoy — el calendario se llena solo con tu cumplimiento.",
+    hacer:"Marca tus hábitos de hoy — el calendario se llena solo. Un día de descanso no rompe tu racha.",
     capturar:"Guarda lo que no quieres olvidar en Memoria o Palabras — o crea tu propia categoría.",
-    perfil:"Tu Manual del Operador se escribe solo, con tus datos, después de 3 sesiones registradas."
+    perfil:"Actualiza tus habilidades con evidencias reales. Tu Manual del Operador se escribe solo con lo que descubres."
   };
 
   function totalCaptureEntries(st){
@@ -952,7 +1033,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     { id:"first_habit", icon:"🌱", label:"Primer hábito", check:function(st){ return st.habits.length>=1; } },
     { id:"first_session", icon:"🎯", label:"Primera sesión", check:function(st){ return st.sessions.length>=1; } },
     { id:"perfect_day", icon:"⭐", label:"Día perfecto", check:function(st){ return anyPerfectDay(st); } },
-    { id:"habit_streak_3", icon:"🔥", label:"3 días seguidos", check:function(){ return computeHabitStreak()>=3; } },
+    { id:"habit_streak_3", icon:"🔥", label:"3 días de racha", check:function(){ return computeHabitStreak()>=3; } },
     { id:"habit_streak_7", icon:"🏆", label:"Semana completa", check:function(){ return computeHabitStreak()>=7; } },
     { id:"habit_streak_14", icon:"👑", label:"Dos semanas firme", check:function(){ return computeHabitStreak()>=14; } },
     { id:"sessions_10", icon:"📊", label:"10 sesiones", check:function(st){ return st.sessions.length>=10; } },
@@ -960,8 +1041,16 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     { id:"week1_done", icon:"🧠", label:"Semana 1 completa", check:function(st){ return st.completedWeeks.indexOf(1)!==-1; } },
     { id:"part1_done", icon:"🚀", label:"Parte 1 completa", check:function(st){ return partDone(PARTS[0]); } },
     { id:"part2_done", icon:"🛸", label:"Parte 2 completa", check:function(st){ return partDone(PARTS[1]); } },
-    { id:"habit_streak_30", icon:"💎", label:"Un mes de disciplina", check:function(){ return computeHabitStreak()>=30; } }
+    { id:"habit_streak_30", icon:"💎", label:"Un mes de disciplina", check:function(){ return computeHabitStreak()>=30; } },
+    { id:"comeback", icon:"🔁", label:"Volví y seguí", check:function(st){ return (st.comebacks||0)>=1; } },
+    { id:"skill_apply", icon:"🌿", label:"Primera habilidad aplicada", check:function(st){ return maxSkillLevel(st)>=3; } },
+    { id:"skill_transfer", icon:"🌳", label:"Primera transferencia", check:function(st){ return maxSkillLevel(st)>=4; } }
   ];
+  function maxSkillLevel(st){
+    var m = 0, sk = st.skills || {};
+    Object.keys(sk).forEach(function(k){ if(sk[k] && sk[k].level > m) m = sk[k].level; });
+    return m;
+  }
 
   function checkBadges(){
     var earnedNow = [];
@@ -1001,14 +1090,35 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       ],
       activeCategory:"memoria",
       seenHints:{},
-      badges:[]
+      badges:[],
+      skills:{}, comebacks:0, lastWelcomeFor:""
     };
+  }
+
+  // Repara datos incompletos (otras páginas, copias viejas o archivos editados a mano)
+  function normalizeState(raw){
+    var d = defaultState();
+    var st = Object.assign(defaultState(), (raw && typeof raw==="object" && !Array.isArray(raw)) ? raw : {});
+    ["completedWeeks","sessions","habits","todos","captures","badges"].forEach(function(k){
+      if(!Array.isArray(st[k])) st[k] = d[k];
+    });
+    ["toolChecks","weeklySessions","seenHints","skills"].forEach(function(k){
+      if(!st[k] || typeof st[k]!=="object" || Array.isArray(st[k])) st[k] = d[k];
+    });
+    st.habits = st.habits.filter(function(h){ return h && typeof h==="object"; });
+    st.habits.forEach(function(h){ if(!Array.isArray(h.doneDates)) h.doneDates = []; });
+    st.captures = st.captures.filter(function(c){ return c && typeof c==="object"; });
+    st.captures.forEach(function(c){ if(!Array.isArray(c.entries)) c.entries = []; });
+    if(!st.captures.length) st.captures = d.captures;
+    st.sessions = st.sessions.filter(function(x){ return x && typeof x.date==="string"; });
+    st.todos = st.todos.filter(function(t){ return t && typeof t==="object"; });
+    return st;
   }
 
   function loadState(){
     try{
       var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){ return Object.assign(defaultState(), JSON.parse(raw)); }
+      if(raw){ lastRaw = raw; return normalizeState(JSON.parse(raw)); }
       var legacyRaw = localStorage.getItem(LEGACY_KEY);
       if(legacyRaw){
         var legacy = JSON.parse(legacyRaw);
@@ -1019,13 +1129,31 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
           sessions: (legacy.sessions || []).map(function(s){ s.kind = "tool"; return s; }),
           seenHints: {}
         });
-        return seeded;
+        return normalizeState(seeded);
       }
       return defaultState();
     }catch(e){ return defaultState(); }
   }
+  var BACKUP_KEY = "proyectoSmart.backup.v1";
+  var lastRaw = null;
   var state = loadState();
-  function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+  // Las páginas de sesión escriben weeklySessions en la misma clave. Antes de guardar,
+  // se toma siempre la versión guardada para no borrar sesiones completadas en otra página.
+  // replace=true solo al importar, restaurar o reiniciar.
+  function saveState(replace){
+    try{
+      if(!replace){
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if(raw){
+          var cur = JSON.parse(raw);
+          if(cur && cur.weeklySessions && typeof cur.weeklySessions==="object") state.weeklySessions = cur.weeklySessions;
+        }
+      }
+      lastRaw = JSON.stringify(state);
+      localStorage.setItem(STORAGE_KEY, lastRaw);
+    }catch(e){}
+  }
+  function localDayKey(iso){ var d = new Date(iso); return isNaN(d) ? String(iso).slice(0,10) : dateKey(d); }
 
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function todayISO(){ return new Date().toISOString(); }
@@ -1449,32 +1577,53 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   ===================================================== */
   function sortedSessions(){ return state.sessions.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); }); }
 
-  function computeStreak(){
-    if(state.sessions.length===0) return 0;
-    var days = {};
-    state.sessions.forEach(function(s){ days[s.date.slice(0,10)] = true; });
+  // Racha flexible: cuenta días activos y tolera UN día de descanso entre ellos.
+  // Dos días seguidos sin actividad sí la reinician.
+  function streakFromDays(days){
     var uniqueDays = Object.keys(days).sort().reverse();
     var streak = 0, cursor = new Date(); cursor.setHours(0,0,0,0);
     for(var i=0;i<uniqueDays.length;i++){
       var d = new Date(uniqueDays[i]+"T00:00:00");
       var diff = Math.round((cursor - d) / 86400000);
-      if(diff <= 1){ streak++; cursor = d; } else break;
+      if(diff < 0) continue;
+      if(diff <= 2){ streak++; cursor = d; } else break;
     }
     return streak;
   }
-
-  function computeHabitStreak(){
-    if(state.habits.length===0) return 0;
-    var doneDays = {};
-    state.habits.forEach(function(h){ h.doneDates.forEach(function(k){ doneDays[k] = true; }); });
-    var uniqueDays = Object.keys(doneDays).sort().reverse();
-    var streak = 0, cursor = new Date(); cursor.setHours(0,0,0,0);
-    for(var i=0;i<uniqueDays.length;i++){
-      var d = new Date(uniqueDays[i]+"T00:00:00");
-      var diff = Math.round((cursor - d) / 86400000);
-      if(diff <= 1){ streak++; cursor = d; } else break;
+  function sessionDays(){
+    var days = {};
+    state.sessions.forEach(function(s){ days[localDayKey(s.date)] = true; });
+    return days;
+  }
+  function habitDays(){
+    var days = {};
+    state.habits.forEach(function(h){ h.doneDates.forEach(function(k){ days[k] = true; }); });
+    return days;
+  }
+  function computeStreak(){ return state.sessions.length ? streakFromDays(sessionDays()) : 0; }
+  function computeHabitStreak(){ return state.habits.length ? streakFromDays(habitDays()) : 0; }
+  function activeDaysThisWeek(){
+    var all = Object.assign({}, sessionDays(), habitDays());
+    var count = 0;
+    for(var i=0;i<7;i++){ var d = new Date(); d.setDate(d.getDate()-i); if(all[dateKey(d)]) count++; }
+    return count;
+  }
+  function lastActiveDay(){
+    var keys = Object.keys(Object.assign({}, sessionDays(), habitDays())).sort();
+    return keys.length ? keys[keys.length-1] : null;
+  }
+  function checkWelcomeBack(){
+    var last = lastActiveDay();
+    if(!last) return;
+    var today = new Date(); today.setHours(0,0,0,0);
+    var gap = Math.round((today - new Date(last+"T00:00:00")) / 86400000);
+    if(gap >= 3 && state.lastWelcomeFor !== last){
+      state.lastWelcomeFor = last;
+      state.comebacks = (state.comebacks||0) + 1;
+      saveState();
+      setTimeout(function(){ showToast("¡Volviste! Regresar también es una habilidad", "👋"); }, 700);
+      announceBadges(checkBadges());
     }
-    return streak;
   }
 
   function habitTrend(days){
@@ -1500,8 +1649,24 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     document.getElementById("fToolUsed").checked = false;
     document.getElementById("fMicro").checked = false;
     document.getElementById("fNote").value = "";
+    document.getElementById("fHelped").value = "";
+    setDifficulty(prefill && prefill.difficulty ? prefill.difficulty : null);
     openSheet(document.getElementById("sheetSession"));
   }
+  var sessionDifficulty = null;
+  function setDifficulty(v){
+    sessionDifficulty = v;
+    document.querySelectorAll("#fDifficulty button").forEach(function(b){
+      b.classList.toggle("active", Number(b.getAttribute("data-v"))===v);
+      b.setAttribute("aria-pressed", Number(b.getAttribute("data-v"))===v ? "true" : "false");
+    });
+  }
+  document.querySelectorAll("#fDifficulty button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var v = Number(b.getAttribute("data-v"));
+      setDifficulty(sessionDifficulty===v ? null : v);
+    });
+  });
   document.getElementById("btnManualSession").addEventListener("click", function(){ openSessionSheet(); });
 
   document.getElementById("btnSaveSession").addEventListener("click", function(){
@@ -1511,7 +1676,9 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       latency: num("fLatency"), sustained: num("fSustained"), leaksSelf: num("fLeaksSelf"),
       leaksFlag: num("fLeaksFlag"), recovery: num("fRecovery"),
       toolUsed: document.getElementById("fToolUsed").checked, micro: document.getElementById("fMicro").checked,
-      note: document.getElementById("fNote").value.trim()
+      note: document.getElementById("fNote").value.trim(),
+      difficulty: sessionDifficulty,
+      helped: document.getElementById("fHelped").value.trim()
     };
     state.sessions.push(entry);
     saveState();
@@ -1535,12 +1702,14 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       if(s.recovery!=null) chips.push('<span class="chip">Recup. '+s.recovery+'s</span>');
       if(s.toolUsed) chips.push('<span class="chip">🛠️ Herramienta espontánea</span>');
       if(s.micro) chips.push('<span class="chip">✓ Micro-misión</span>');
+      if(s.difficulty) chips.push('<span class="chip">Dificultad: '+DIFF_LABEL[s.difficulty]+'</span>');
     }
     return '<div class="card entry" data-id="'+s.id+'" style="--d:'+(i*40)+'ms">'+
       '<div class="entry-num">'+(s.kind==="focus"?"🎯":"S"+s.week)+'</div>'+
       '<div class="entry-body">'+
         '<div class="entry-date">'+label+' · '+formatDate(s.date)+'</div>'+
         (chips.length ? '<div class="entry-metrics">'+chips.join("")+'</div>' : '')+
+        (s.helped ? '<div class="helped-line">💡 '+escapeHtml(s.helped)+'</div>' : '')+
         (s.note ? '<div style="font-size:12.5px;color:var(--muted);margin-top:8px;">'+escapeHtml(s.note)+'</div>' : '')+
       '</div>'+
       '<button class="entry-del" data-del="'+s.id+'">×</button>'+
@@ -1893,7 +2062,9 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
   function renderTrend(){
     var hStreak = computeHabitStreak();
-    document.getElementById("habitStreakLabel").textContent = "🔥 "+hStreak+(hStreak===1?" día seguido":" días seguidos");
+    document.getElementById("habitStreakLabel").textContent = "🔥 "+hStreak+(hStreak===1?" día de racha":" días de racha");
+    var wk = activeDaysThisWeek();
+    document.getElementById("habitWeekNote").textContent = "Últimos 7 días: "+wk+(wk===1?" día activo":" días activos")+" · un día de descanso no rompe tu racha";
     var todayK = todayKey();
     var days = habitTrend(7);
     document.getElementById("trendRow").innerHTML = days.map(function(d){
@@ -2341,17 +2512,19 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     document.getElementById("profileHabits").textContent = state.habits.length;
     document.getElementById("profileStreak").textContent = computeStreak();
     document.getElementById("profileHabitStreak").textContent = computeHabitStreak();
+    renderSkills();
     renderProgress();
     renderBadges();
+    renderRestoreBtn();
 
     var manualBody = document.getElementById("manualBody");
     var manualActions = document.getElementById("manualActions");
-    if(state.sessions.length < 3){
-      manualBody.innerHTML = "Registra al menos 3 sesiones (llevas "+state.sessions.length+") para que tu manual empiece a tomar forma.";
+    if(state.sessions.length < 3 && maxSkillLevel(state)===0){
+      manualBody.innerHTML = "Registra al menos 3 sesiones (llevas "+state.sessions.length+") o evalúa una habilidad para que tu manual empiece a tomar forma.";
       manualActions.innerHTML = "";
     } else {
       var text = buildManualText();
-      manualBody.innerHTML = text.replace(/\n/g,"<br>");
+      manualBody.innerHTML = escapeHtml(text).replace(/\n/g,"<br>");
       manualActions.innerHTML = '<button class="btn btn-ghost btn-sm" id="btnCopyManual">Copiar</button><button class="btn btn-ghost btn-sm" id="btnDownloadManual">Descargar .txt</button>';
       document.getElementById("btnCopyManual").addEventListener("click", function(){
         navigator.clipboard && navigator.clipboard.writeText(text);
@@ -2411,8 +2584,97 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       '<div class="compare-arrow">→</div>'+
       '<div class="compare-col"><div class="compare-num">'+(lastSustained!=null?lastSustained+'min':'—')+'</div><div class="compare-lbl">Sostenido<br>reciente</div>'+deltaHtml(firstSustained,lastSustained,false)+'</div>'+
     '</div>';
+    var firstDiff = avg1(first.map(function(s){ return s.difficulty; }));
+    var lastDiff = avg1(last.map(function(s){ return s.difficulty; }));
+    if(firstDiff!=null && lastDiff!=null){
+      var note = 'Dificultad promedio: '+firstDiff+' → '+lastDiff+' (1 fácil · 3 retadora).';
+      if(lastDiff < firstDiff) note += ' Ojo: las tareas recientes fueron más fáciles; parte de la mejora puede deberse a eso.';
+      else if(lastDiff > firstDiff) note += ' Las tareas recientes fueron más retadoras: cualquier mejora vale doble.';
+      html += '<div class="compare-note">'+note+'</div>';
+    } else {
+      html += '<div class="compare-note">Registra la dificultad de cada tarea para saber si la mejora es real o la tarea era más fácil.</div>';
+    }
     body.innerHTML = html;
   }
+
+  function avg1(arr){
+    var vals = arr.filter(function(v){ return v!=null; });
+    if(!vals.length) return null;
+    return Math.round(vals.reduce(function(a,b){ return a+b; },0)/vals.length*10)/10;
+  }
+
+  /* =====================================================
+     HABILIDADES (dominio, separado de la participación)
+  ===================================================== */
+  function skillLevel(id){ var r = state.skills[id]; return (r && r.level) || 0; }
+  function renderSkills(){
+    var evaluated = SKILLS.filter(function(sk){ return skillLevel(sk.id)>0; }).length;
+    document.getElementById("skillsCount").textContent = evaluated+"/"+SKILLS.length+" evaluadas";
+    document.getElementById("skillList").innerHTML = SKILLS.map(function(sk){
+      var lv = skillLevel(sk.id);
+      var pips = "";
+      for(var i=1;i<=4;i++) pips += '<i class="'+(i<=lv?'on':'')+'"></i>';
+      return '<button class="skill-row" data-skill="'+sk.id+'" data-level="'+lv+'" aria-label="'+escapeHtml(sk.name)+': '+LEVELS[lv].name+', nivel '+lv+' de 4">'+
+        '<div class="skill-ic">'+sk.icon+'</div>'+
+        '<div class="skill-body"><div class="skill-name">'+escapeHtml(sk.name)+'</div><div class="skill-lvl">'+LEVELS[lv].name+'</div></div>'+
+        '<div class="skill-pips" aria-hidden="true">'+pips+'</div>'+
+      '</button>';
+    }).join("");
+    document.querySelectorAll("#skillList .skill-row").forEach(function(row){
+      row.addEventListener("click", function(){ openSkillSheet(row.getAttribute("data-skill")); });
+    });
+  }
+
+  var skillDraft = { id:null, level:0 };
+  function openSkillSheet(id){
+    var sk = SKILLS.filter(function(x){ return x.id===id; })[0];
+    if(!sk) return;
+    skillDraft = { id:id, level:skillLevel(id) };
+    document.getElementById("skillTitle").textContent = sk.icon+" "+sk.name;
+    document.getElementById("skillDesc").textContent = sk.desc;
+    document.getElementById("skillEvidence").value = "";
+    renderLevelOpts();
+    var hist = (state.skills[id] && state.skills[id].history) || [];
+    document.getElementById("skillHistory").innerHTML = hist.length
+      ? '<div style="border-top:none;font-weight:800;color:var(--text);">Historial</div>' + hist.slice().reverse().slice(0,6).map(function(h){
+          return '<div><b style="color:var(--text);">'+LEVELS[h.level].name+'</b> · '+formatDate(h.date)+(h.evidence?'<br>'+escapeHtml(h.evidence):'')+'</div>';
+        }).join("")
+      : '';
+    openSheet(document.getElementById("sheetSkill"));
+  }
+  function renderLevelOpts(){
+    document.getElementById("skillLevelOpts").innerHTML = LEVELS.slice(1).map(function(l){
+      return '<button type="button" class="level-opt'+(l.n===skillDraft.level?' selected':'')+'" data-lv="'+l.n+'" aria-pressed="'+(l.n===skillDraft.level)+'">'+
+        '<b>'+l.n+' · '+l.name+'</b><span>'+l.desc+'</span></button>';
+    }).join("");
+    document.querySelectorAll("#skillLevelOpts .level-opt").forEach(function(b){
+      b.addEventListener("click", function(){ skillDraft.level = Number(b.getAttribute("data-lv")); renderLevelOpts(); });
+    });
+  }
+  document.getElementById("btnSaveSkill").addEventListener("click", function(){
+    var id = skillDraft.id; if(!id) return;
+    var evidence = document.getElementById("skillEvidence").value.trim();
+    var prev = skillLevel(id);
+    if(skillDraft.level === prev && !evidence){ closeSheet(); return; }
+    if(!evidence){ showToast("Escribe una evidencia corta: qué hiciste", "✍️"); document.getElementById("skillEvidence").focus(); return; }
+    var rec = state.skills[id] || { level:0, history:[] };
+    if(!Array.isArray(rec.history)) rec.history = [];
+    rec.level = skillDraft.level;
+    rec.history.push({ level:skillDraft.level, date:todayISO(), evidence:evidence });
+    if(rec.history.length > 30) rec.history = rec.history.slice(-30);
+    state.skills[id] = rec;
+    saveState();
+    closeSheet();
+    renderProfile();
+    var sk = SKILLS.filter(function(x){ return x.id===id; })[0];
+    if(skillDraft.level > prev){
+      showToast(sk.name+": ahora "+LEVELS[skillDraft.level].name, "🌱");
+      burstConfetti(document.querySelector('.skill-row[data-skill="'+id+'"]'));
+    } else {
+      showToast("Nivel actualizado", "✅");
+    }
+    announceBadges(checkBadges());
+  });
 
   function avg(arr){
     var vals = arr.filter(function(v){ return v!=null; });
@@ -2441,6 +2703,26 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     lines.push("Cumplió la micro-misión en "+microDone+" de "+toolSessions.length+" sesiones de herramienta");
     lines.push("Hábitos activos: "+state.habits.length+" · Racha de enfoque: "+computeStreak()+" días · Racha de hábitos: "+computeHabitStreak()+" días");
     lines.push("Logros desbloqueados: "+state.badges.length+" de "+BADGES.length);
+    var evaluated = SKILLS.filter(function(sk){ return skillLevel(sk.id)>0; });
+    if(evaluated.length){
+      lines.push("");
+      lines.push("LO QUE YA PUEDES HACER");
+      evaluated.forEach(function(sk){
+        var rec = state.skills[sk.id];
+        var lastEv = rec.history && rec.history.length ? rec.history[rec.history.length-1].evidence : "";
+        lines.push("• "+sk.name+" — "+LEVELS[rec.level].name+(lastEv ? " (evidencia: "+lastEv+")" : ""));
+      });
+    }
+    var seen = {}, helped = [];
+    sortedSessions().forEach(function(x){
+      var h = (x.helped||"").trim(); var k = h.toLowerCase();
+      if(h && !seen[k] && helped.length < 6){ seen[k] = true; helped.push(h); }
+    });
+    if(helped.length){
+      lines.push("");
+      lines.push("ESTRATEGIAS QUE TE FUNCIONARON");
+      helped.forEach(function(h){ lines.push("• "+h); });
+    }
     lines.push("");
     lines.push("Tus resultados actuales son información. No son tu identidad.");
     return lines.join("\n");
@@ -2462,29 +2744,63 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     var file = e.target.files[0];
     if(!file) return;
     var reader = new FileReader();
+    e.target.value = "";
     reader.onload = function(){
-      try{
-        var parsed = JSON.parse(reader.result);
-        state = Object.assign(defaultState(), parsed);
-        saveState(); applyAccent(state.accent);
-        if(!state.onboarded){
-          document.getElementById("onboard").classList.remove("hidden","leaving");
-          ob = { step:0, nickname:state.nickname||"", icon:state.icon||"🧠", color:state.accent||"#8B5CFF" };
-          renderObStep();
-        } else {
-          document.getElementById("onboard").classList.add("hidden");
-          checkBadges();
-          renderAll();
-        }
+      var parsed;
+      try{ parsed = JSON.parse(reader.result); }catch(err){ showToast("No se pudo leer ese archivo", "⚠️"); return; }
+      var looksValid = parsed && typeof parsed==="object" && !Array.isArray(parsed) &&
+        (Array.isArray(parsed.sessions) || Array.isArray(parsed.habits) || Array.isArray(parsed.completedWeeks) || "onboarded" in parsed);
+      if(!looksValid){ showToast("Ese archivo no es una copia de Proyecto Smart", "⚠️"); return; }
+      openConfirm("Importar copia", "Tus datos actuales se reemplazarán por los del archivo. Guardo un respaldo en este dispositivo por si quieres deshacerlo.", function(){
+        backupCurrent();
+        state = normalizeState(parsed);
+        saveState(true);
+        applyLoadedState();
         showToast("Copia importada", "✅");
-      }catch(err){ showToast("No se pudo leer ese archivo", "⚠️"); }
+      });
     };
     reader.readAsText(file);
   });
+
+  function backupCurrent(){
+    try{ localStorage.setItem(BACKUP_KEY, JSON.stringify({ date:todayISO(), data:state })); }catch(e){}
+  }
+  function readBackup(){
+    try{ var b = JSON.parse(localStorage.getItem(BACKUP_KEY)); return (b && b.data) ? b : null; }catch(e){ return null; }
+  }
+  function applyLoadedState(){
+    applyAccent(state.accent);
+    if(!state.onboarded){
+      document.getElementById("onboard").classList.remove("hidden","leaving");
+      ob = { step:0, nickname:state.nickname||"", icon:state.icon||"🧠", color:state.accent||"#8B5CFF" };
+      renderObStep();
+    } else {
+      document.getElementById("onboard").classList.add("hidden");
+      checkBadges();
+      renderAll();
+    }
+  }
+  function renderRestoreBtn(){
+    var btn = document.getElementById("btnRestore");
+    var b = readBackup();
+    btn.classList.toggle("hidden", !b);
+    if(b) btn.textContent = "Deshacer último cambio ("+formatDate(b.date)+")";
+  }
+  document.getElementById("btnRestore").addEventListener("click", function(){
+    var b = readBackup(); if(!b) return;
+    openConfirm("Deshacer último cambio", "Vuelves a los datos que tenías antes de la última importación o reinicio. Lo actual queda como respaldo.", function(){
+      backupCurrent();
+      state = normalizeState(b.data);
+      saveState(true);
+      applyLoadedState();
+      showToast("Datos restaurados", "↩️");
+    });
+  });
   document.getElementById("btnReset").addEventListener("click", function(){
     openConfirm("Reiniciar datos", "Esto borra todo tu progreso en este dispositivo. No se puede deshacer.", function(){
+      backupCurrent();
       state = defaultState();
-      saveState();
+      saveState(true);
       applyAccent(state.accent);
       document.getElementById("onboard").classList.remove("hidden","leaving");
       ob = { step:0, nickname:"", icon:"🧠", color:"#8B5CFF" };
@@ -2502,6 +2818,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
   if(state.onboarded){
     document.getElementById("onboard").classList.add("hidden");
+    checkWelcomeBack();
     checkBadges();
     renderAll();
     openTabFromHash();
@@ -2516,6 +2833,26 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     if(tabs.indexOf(h) !== -1) switchTab(h);
   }
   window.addEventListener("hashchange", function(){ if(state.onboarded) openTabFromHash(); });
+
+  // Sincroniza con lo que guardaron las páginas de sesión u otra pestaña:
+  // al volver con el botón "atrás" (bfcache), al regresar a la app o si otra pestaña cambia los datos.
+  function refreshFromStorage(){
+    var raw;
+    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){ return; }
+    if(!raw || raw === lastRaw) return;
+    var fresh;
+    try{ fresh = normalizeState(JSON.parse(raw)); }catch(e){ return; }
+    lastRaw = raw;
+    var wasOnboarded = state.onboarded;
+    state = fresh;
+    if(state.onboarded && wasOnboarded && !openSheetEl){
+      applyAccent(state.accent);
+      renderAll();
+    }
+  }
+  window.addEventListener("pageshow", function(e){ if(e.persisted) refreshFromStorage(); });
+  window.addEventListener("storage", function(e){ if(e.key===STORAGE_KEY) refreshFromStorage(); });
+  document.addEventListener("visibilitychange", function(){ if(document.visibilityState==="visible") refreshFromStorage(); });
 
 })();
 </script>
