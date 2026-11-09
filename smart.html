@@ -447,6 +447,77 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 .week-note{ font-size:11px; color:var(--muted); font-weight:700; margin-top:10px; text-align:center; }
 .compare-note{ font-size:11.5px; color:var(--muted); margin-top:12px; line-height:1.5; }
 .helped-line{ font-size:12.5px; margin-top:8px; }
+
+/* =========================================================
+   MISIÓN: del ruido a la claridad (onboarding + inicio)
+========================================================= */
+.ob-canvas{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+.onboard-card{ text-shadow:0 2px 18px rgba(20,15,38,.85); }
+.ob-kicker{ text-align:center; font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--pop-cyan); margin-bottom:12px; }
+.ob-noise{ position:relative; display:inline-block; color:var(--text); animation:noiseShake 2.4s steps(1) infinite; }
+.ob-noise::before,.ob-noise::after{ content:attr(data-t); position:absolute; left:0; top:0; opacity:.7; }
+.ob-noise::before{ color:var(--pop-pink); transform:translate(-2px,0); clip-path:inset(0 0 55% 0); }
+.ob-noise::after{ color:var(--pop-cyan); transform:translate(2px,0); clip-path:inset(50% 0 0 0); }
+@keyframes noiseShake{ 0%,100%{ transform:none; } 8%{ transform:translate(-1px,1px) skewX(-4deg); } 9%{ transform:none; } 52%{ transform:translate(1px,-1px); } 53%{ transform:none; } }
+.ob-clear{ background:linear-gradient(120deg,var(--pop-lime),var(--pop-cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none; }
+.ob-promise{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:-8px 0 26px; }
+.ob-promise span{ font-size:11.5px; font-weight:800; color:var(--muted); background:rgba(46,37,82,.75); border:1px solid var(--line); border-radius:100px; padding:6px 11px; text-shadow:none; }
+.mission-list{ display:flex; flex-direction:column; gap:9px; margin-bottom:22px; }
+.mission-opt{ display:flex; align-items:center; gap:12px; text-align:left; width:100%; padding:13px 14px; border-radius:16px; background:rgba(33,26,59,.92); border:1.5px solid var(--line); color:var(--text); text-shadow:none; transition:transform 140ms var(--ease-out), border-color 150ms ease, background-color 150ms ease; }
+.mission-opt:active{ transform:scale(.98); }
+.mission-opt .mo-ic{ font-size:24px; width:40px; height:40px; flex-shrink:0; border-radius:12px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; }
+.mission-opt b{ display:block; font-size:14.5px; font-family:'Fredoka',sans-serif; font-weight:600; }
+.mission-opt small{ display:block; font-size:11.5px; color:var(--muted); font-weight:700; margin-top:1px; }
+.mission-opt.selected{ border-color:var(--accent); background:var(--accent-soft); }
+.mission-opt.selected .mo-ic{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); }
+.ob-badge-preview{ display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:18px; }
+.ob-badge-preview .bp-icon{ width:62px; height:62px; border-radius:20px; font-size:32px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--pop-pink)); box-shadow:0 12px 26px -10px var(--accent); }
+.ob-badge-preview .bp-name{ font-family:'Fredoka',sans-serif; font-size:20px; font-weight:600; }
+.ob-mini-label{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:4px 0 10px; text-align:center; }
+.ob-insignia .icon-grid{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:9px; margin-bottom:16px; }
+.ob-insignia .icon-opt{ font-size:24px; border-radius:14px; }
+.ob-insignia .color-grid{ grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin-bottom:24px; }
+.ob-insignia .color-opt.selected::after{ font-size:15px; }
+.ob-brief{ background:rgba(33,26,59,.92); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:20px; text-shadow:none; box-shadow:var(--chunky); }
+
+/* ---- Inicio: tarjeta de misión ---- */
+.mission-hero{ position:relative; overflow:hidden; background:linear-gradient(160deg,var(--surface-2),var(--surface) 70%); border:1px solid var(--line); border-radius:var(--radius); padding:18px 16px 16px; margin-bottom:22px; box-shadow:var(--chunky); opacity:0; animation:nodeIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
+.mission-hero::before{ content:""; position:absolute; width:220px; height:220px; right:-80px; top:-90px; border-radius:50%; background:radial-gradient(circle,var(--accent-soft),transparent 70%); pointer-events:none; }
+.mh-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; position:relative; }
+.mh-label{ font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--pop-cyan); }
+.mh-mission{ font-family:'Fredoka',sans-serif; font-size:21px; font-weight:600; line-height:1.2; margin-top:3px; }
+.mh-change{ flex-shrink:0; font-size:11.5px; font-weight:800; color:var(--muted); background:var(--surface); border:1px solid var(--line); border-radius:100px; padding:6px 11px; }
+.mh-change:active{ transform:scale(.96); }
+.mh-today{ position:relative; margin-top:14px; padding:14px; border-radius:18px; background:rgba(20,15,38,.55); border:1px solid var(--line); }
+.mh-kicker{ font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--pop-pink); }
+.mh-title{ font-family:'Fredoka',sans-serif; font-size:19px; font-weight:600; margin:3px 0 2px; line-height:1.25; }
+.mh-sub{ font-size:12.5px; color:var(--muted); margin-bottom:12px; }
+.mh-go{ font-size:15.5px; padding-top:14px; padding-bottom:14px; }
+.route-head{ display:flex; align-items:baseline; justify-content:space-between; margin:18px 0 10px; position:relative; }
+.route-head b{ font-size:13px; }
+.route-head span{ font-size:11.5px; color:var(--muted); font-weight:700; }
+.route-grid{ display:flex; flex-direction:column; gap:6px; position:relative; }
+.route-row{ display:grid; grid-template-columns:44px repeat(4,minmax(0,1fr)) 20px; gap:6px; align-items:center; padding:3px 0; border-radius:10px; }
+.route-row:not(.locked):active{ transform:scale(.98); }
+.route-row.locked{ opacity:.36; }
+.route-wk{ font-size:11px; font-weight:800; color:var(--muted); white-space:nowrap; }
+.route-row.current .route-wk{ color:var(--text); }
+.route-cell{ height:15px; border-radius:6px; background:var(--surface-2); border:1px solid var(--line); }
+.route-cell.done{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border-color:transparent; }
+.route-cell.ready{ border-color:var(--accent); background:var(--accent-soft); }
+.route-cell.soon{ background:transparent; border-style:dashed; }
+.route-cell.today{ background:var(--pop-lime); border-color:transparent; animation:todayPulse 1.9s ease-in-out infinite; }
+@keyframes todayPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(198,255,77,.0); } 50%{ box-shadow:0 0 0 5px rgba(198,255,77,.22); } }
+.route-end{ font-size:12px; text-align:center; }
+.route-legend{ display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:var(--muted); font-weight:700; position:relative; }
+.route-legend i{ display:inline-block; width:11px; height:11px; border-radius:4px; margin-right:5px; vertical-align:-1px; border:1px solid var(--line); background:var(--surface-2); }
+.route-legend i.done{ background:linear-gradient(135deg,var(--accent),var(--pop-pink)); border-color:transparent; }
+.route-legend i.today{ background:var(--pop-lime); border-color:transparent; }
+.route-legend i.soon{ background:transparent; border-style:dashed; }
+@media (prefers-reduced-motion:reduce){
+  .ob-noise,.route-cell.today{ animation:none; }
+  .mission-hero{ animation:fadeOnly 150ms ease forwards; }
+}
 </style>
 </head>
 <body>
@@ -472,8 +543,9 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
   <!-- ============ VIEW: MAPA ============ -->
   <main class="view active" id="view-mapa">
+    <div id="missionHero"></div>
     <div class="section-title">El camino</div>
-    <div class="section-sub">Dos partes, cuatro semanas cada una. Cada nodo se desbloquea al completar el anterior — nunca por el calendario.</div>
+    <div class="section-sub">Cada semana se desbloquea cuando terminas la anterior. Tú marcas el ritmo, no el calendario.</div>
     <div class="hint-slot" data-tab="mapa"></div>
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="mapProgressFill" style="width:0%"></div></div>
@@ -897,8 +969,18 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   </div>
 </div>
 
+<!-- ============ SHEET: MISIÓN ============ -->
+<div class="sheet" id="sheetMission">
+  <button class="sheet-close" data-close>×</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Tu misión</div>
+  <div class="sheet-sub">¿Qué quieres que tu mente haga mejor? Puedes cambiarla cuando quieras.</div>
+  <div class="mission-list" id="missionSheetList"></div>
+</div>
+
 <!-- ============ ONBOARDING ============ -->
 <div class="onboard" id="onboard">
+  <canvas class="ob-canvas" id="obCanvas" aria-hidden="true"></canvas>
   <div class="onboard-card">
     <div class="ob-dots" id="obDots"></div>
     <div id="obStepArea"></div>
@@ -1091,7 +1173,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       activeCategory:"memoria",
       seenHints:{},
       badges:[],
-      skills:{}, comebacks:0, lastWelcomeFor:""
+      skills:{}, comebacks:0, lastWelcomeFor:"", mission:""
     };
   }
 
@@ -1285,8 +1367,91 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   /* =====================================================
      ONBOARDING
   ===================================================== */
-  var ob = { step:0, nickname:"", icon:"🧠", color:"#8B5CFF" };
-  var TOTAL_OB_STEPS = 4;
+  /* ---------- Misiones: lo que el estudiante quiere rescatar ---------- */
+  var MISSIONS = [
+    { id:"enfoque",    icon:"🎯", name:"Enfocarme sin perderme",       week:1, hint:"Semana 1 · Descubre tu cerebro" },
+    { id:"arrancar",   icon:"⚡", name:"Empezar sin postergar",         week:2, hint:"Semana 2 · Constrúyete un sistema" },
+    { id:"curiosidad", icon:"✨", name:"Aprender con ganas, no a la fuerza", week:3, hint:"Semana 3 · Entrena tu curiosidad" },
+    { id:"salida",     icon:"🧭", name:"Nunca quedarme atascado",       week:4, hint:"Semana 4 · Siempre hay salida" },
+    { id:"claridad",   icon:"💎", name:"Pensar y hablar con claridad",  week:5, hint:"Semana 5 · Piensa como un genio" }
+  ];
+  function missionById(id){ return MISSIONS.filter(function(m){ return m.id===id; })[0] || null; }
+  function missionListHtml(selectedId){
+    return MISSIONS.map(function(m){
+      return '<button class="mission-opt'+(m.id===selectedId?' selected':'')+'" data-mission="'+m.id+'">'+
+        '<span class="mo-ic">'+m.icon+'</span>'+
+        '<span><b>'+m.name+'</b><small>'+m.hint+'</small></span>'+
+      '</button>';
+    }).join("");
+  }
+
+  /* ---------- Del ruido a la claridad (lienzo del onboarding) ---------- */
+  var noise = (function(){
+    var canvas = document.getElementById("obCanvas");
+    var ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var parts = [], raf = null, mode = "noise", t0 = 0, w = 0, h = 0, dpr = 1, angle = 0;
+    var palette = ["#8B5CFF","#FF5C9D","#28E0C8","#C6FF4D","#FFD23F","#A79FC9"];
+    function resize(){
+      if(!canvas) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w*dpr; canvas.height = h*dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function seed(){
+      parts = [];
+      var n = Math.round(Math.min(170, Math.max(90, w*h/3200)));
+      for(var i=0;i<n;i++){
+        parts.push({ x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-.5)*3, vy:(Math.random()-.5)*3,
+          r:1+Math.random()*2.4, c:palette[i%palette.length], a:i/n*Math.PI*2, ring:i%3 });
+      }
+    }
+    function draw(now){
+      ctx.clearRect(0,0,w,h);
+      var cx = w/2, cy = 46, base = 14;
+      var k = mode==="clear" ? Math.min(1,(now-t0)/1400) : 0;
+      var ease = 1-Math.pow(1-k,3);
+      angle += mode==="clear" ? 0.0022 : 0;
+      for(var i=0;i<parts.length;i++){
+        var p = parts[i];
+        if(mode==="noise"){
+          p.vx += (Math.random()-.5)*1.4; p.vy += (Math.random()-.5)*1.4;
+          p.vx *= .86; p.vy *= .86;
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0) p.x+=w; if(p.x>w) p.x-=w; if(p.y<0) p.y+=h; if(p.y>h) p.y-=h;
+          ctx.globalAlpha = .35 + Math.random()*.45;
+        } else {
+          var rad = base + p.ring*9;
+          var tx = cx + Math.cos(p.a+angle*(p.ring%2?1:-1))*rad;
+          var ty = cy + Math.sin(p.a+angle*(p.ring%2?1:-1))*rad;
+          p.x += (tx-p.x)*(0.04+ease*0.12); p.y += (ty-p.y)*(0.04+ease*0.12);
+          ctx.globalAlpha = .45 + ease*.4;
+        }
+        ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      raf = requestAnimationFrame(draw);
+    }
+    function start(){
+      if(!ctx) return;
+      stop(); resize(); seed(); mode = "noise";
+      if(reduce){ draw(performance.now()); cancelAnimationFrame(raf); raf=null; return; }
+      raf = requestAnimationFrame(draw);
+    }
+    function clarify(){
+      if(!ctx || mode==="clear") return;
+      mode = "clear"; t0 = performance.now();
+      if(reduce){ ctx.clearRect(0,0,w,h); }
+    }
+    function stop(){ if(raf){ cancelAnimationFrame(raf); raf = null; } }
+    window.addEventListener("resize", function(){ if(raf){ resize(); } });
+    return { start:start, clarify:clarify, stop:stop };
+  })();
+
+  var ob = { step:0, nickname:"", icon:"🧠", color:"#8B5CFF", mission:"" };
+  var TOTAL_OB_STEPS = 5;
 
   function renderObDots(){
     var html = "";
@@ -1298,64 +1463,80 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     renderObDots();
     var area = document.getElementById("obStepArea");
     if(ob.step===0){
+      noise.start();
       area.innerHTML =
-        '<div class="ob-icon-big">🗺️</div>'+
-        '<div class="ob-title">Bienvenido, futuro Operador</div>'+
-        '<div class="ob-sub">Dos partes, cuatro semanas cada una. Tu entrenamiento se organiza en tres cosas simples:</div>'+
-        '<div class="ob-pillars">'+
-          '<div class="ob-pillar"><span class="pic">🎯</span>Enfoque</div>'+
-          '<div class="ob-pillar"><span class="pic">✅</span>Hacer</div>'+
-          '<div class="ob-pillar"><span class="pic">💡</span>Capturar</div>'+
-        '</div>'+
-        '<button class="btn btn-primary btn-block" id="obNext">Empezar →</button>';
-      document.getElementById("obNext").addEventListener("click", function(){ ob.step=1; renderObStep(); });
+        '<div class="ob-kicker">Proyecto Smart · Misión 001</div>'+
+        '<div class="ob-title">Tu mente está atrapada en el <span class="ob-noise" data-t="ruido">ruido</span></div>'+
+        '<div class="ob-sub">Notificaciones, prisa, mil pestañas abiertas. Debajo de todo eso hay una mente brillante esperando. Tu misión: rescatarla — con ciencia.</div>'+
+        '<div class="ob-promise"><span>8 semanas</span><span>4 sesiones por semana</span><span>A tu ritmo</span></div>'+
+        '<button class="btn btn-primary btn-block" id="obNext">Aceptar la misión →</button>';
+      document.getElementById("obNext").addEventListener("click", function(){
+        noise.clarify();
+        ob.step=1; renderObStep();
+      });
     }
     else if(ob.step===1){
       area.innerHTML =
-        '<div class="ob-icon-big">✍️</div>'+
-        '<div class="ob-title">¿Cómo te llamamos?</div>'+
-        '<div class="ob-sub">Así verás tu progreso — solo tú lo ves.</div>'+
-        '<div class="field"><input type="text" id="obNickInput" placeholder="Tu nombre o apodo" value="'+escapeHtml(ob.nickname)+'" autofocus></div>'+
+        '<div class="ob-kicker">Paso 1 · Elige tu misión</div>'+
+        '<div class="ob-title" style="font-size:26px;">¿Qué quieres que tu mente haga <span class="ob-clear">mejor</span>?</div>'+
+        '<div class="ob-sub" style="margin-bottom:18px;">Elige la que más te llame. Todas las semanas te sirven — esta será tu brújula.</div>'+
+        '<div class="mission-list" id="obMissionList">'+missionListHtml(ob.mission)+'</div>'+
+        '<div class="ob-nav">'+
+          '<button class="btn btn-ghost ob-back" id="obBack">←</button>'+
+          '<button class="btn btn-primary btn-block" id="obNext"'+(ob.mission?'':' disabled')+'>Siguiente →</button>'+
+        '</div>';
+      var list = document.getElementById("obMissionList");
+      list.querySelectorAll(".mission-opt").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          ob.mission = btn.getAttribute("data-mission");
+          list.querySelectorAll(".mission-opt").forEach(function(x){ x.classList.remove("selected"); });
+          btn.classList.add("selected");
+          document.getElementById("obNext").disabled = false;
+        });
+      });
+      document.getElementById("obBack").addEventListener("click", function(){ ob.step=0; renderObStep(); });
+      document.getElementById("obNext").addEventListener("click", function(){ if(ob.mission){ ob.step=2; renderObStep(); } });
+    }
+    else if(ob.step===2){
+      area.innerHTML =
+        '<div class="ob-kicker">Paso 2 · Identidad</div>'+
+        '<div class="ob-title">¿Cuál es tu nombre de operador?</div>'+
+        '<div class="ob-sub">Tu nombre o un apodo. Solo tú lo ves.</div>'+
+        '<div class="field"><input type="text" id="obNickInput" placeholder="Ej: Sam, Nova, Halcón…" maxlength="24" value="'+escapeHtml(ob.nickname)+'" autofocus></div>'+
         '<div class="ob-nav">'+
           '<button class="btn btn-ghost ob-back" id="obBack">←</button>'+
           '<button class="btn btn-primary btn-block" id="obNext">Siguiente →</button>'+
         '</div>';
-      document.getElementById("obBack").addEventListener("click", function(){ ob.step=0; renderObStep(); });
-      document.getElementById("obNext").addEventListener("click", function(){
-        ob.nickname = document.getElementById("obNickInput").value.trim();
-        ob.step=2; renderObStep();
-      });
+      var nickInput = document.getElementById("obNickInput");
+      function goNext(){ ob.nickname = nickInput.value.trim(); ob.step=3; renderObStep(); }
+      nickInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); goNext(); } });
+      document.getElementById("obBack").addEventListener("click", function(){ ob.nickname = nickInput.value.trim(); ob.step=1; renderObStep(); });
+      document.getElementById("obNext").addEventListener("click", goNext);
     }
-    else if(ob.step===2){
+    else if(ob.step===3){
       area.innerHTML =
-        '<div class="ob-title" style="margin-bottom:4px;">Elige tu ícono</div>'+
-        '<div class="ob-sub">'+(ob.nickname? "Hola, "+escapeHtml(ob.nickname)+"." : "")+' Este será tu marca en la app.</div>'+
-        '<div class="icon-grid" id="obIconGrid"></div>'+
+        '<div class="ob-kicker">Paso 3 · Tu insignia</div>'+
+        '<div class="ob-badge-preview"><div class="bp-icon" id="obBpIcon">'+ob.icon+'</div><div class="bp-name">'+escapeHtml(ob.nickname||"Operador")+'</div></div>'+
+        '<div class="ob-insignia">'+
+          '<div class="ob-mini-label">Ícono</div>'+
+          '<div class="icon-grid" id="obIconGrid"></div>'+
+          '<div class="ob-mini-label">Color</div>'+
+          '<div class="color-grid" id="obColorGrid"></div>'+
+        '</div>'+
         '<div class="ob-nav">'+
           '<button class="btn btn-ghost ob-back" id="obBack">←</button>'+
-          '<button class="btn btn-primary btn-block" id="obNext">Siguiente →</button>'+
+          '<button class="btn btn-primary btn-block" id="obNext">Ver mi ruta →</button>'+
         '</div>';
       var grid = document.getElementById("obIconGrid");
       grid.innerHTML = ICONS.slice(0,10).map(function(ic){ return '<button class="icon-opt'+(ic===ob.icon?' selected':'')+'" data-icon="'+ic+'">'+ic+'</button>'; }).join("");
       grid.querySelectorAll(".icon-opt").forEach(function(btn){
         btn.addEventListener("click", function(){
           ob.icon = btn.getAttribute("data-icon");
+          document.getElementById("obBpIcon").textContent = ob.icon;
           grid.querySelectorAll(".icon-opt").forEach(function(x){ x.classList.remove("selected"); });
           btn.classList.add("selected");
         });
       });
-      document.getElementById("obBack").addEventListener("click", function(){ ob.step=1; renderObStep(); });
-      document.getElementById("obNext").addEventListener("click", function(){ ob.step=3; renderObStep(); });
-    }
-    else if(ob.step===3){
-      area.innerHTML =
-        '<div class="ob-title" style="margin-bottom:4px;">Elige tu color</div>'+
-        '<div class="ob-sub">Se aplica en toda la app — puedes cambiarlo cuando quieras.</div>'+
-        '<div class="color-grid" id="obColorGrid"></div>'+
-        '<div class="ob-nav">'+
-          '<button class="btn btn-ghost ob-back" id="obBack">←</button>'+
-          '<button class="btn btn-primary btn-block" id="obFinish">Crear mi mapa 🚀</button>'+
-        '</div>';
       var cgrid = document.getElementById("obColorGrid");
       cgrid.innerHTML = COLORS.map(function(c){ return '<button class="color-opt'+(c===ob.color?' selected':'')+'" data-color="'+c+'" style="background:'+c+';"></button>'; }).join("");
       cgrid.querySelectorAll(".color-opt").forEach(function(btn){
@@ -1367,6 +1548,25 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
         });
       });
       document.getElementById("obBack").addEventListener("click", function(){ ob.step=2; renderObStep(); });
+      document.getElementById("obNext").addEventListener("click", function(){ ob.step=4; renderObStep(); });
+    }
+    else if(ob.step===4){
+      var m = missionById(ob.mission);
+      var first = WEEKS[0].sessions[0];
+      area.innerHTML =
+        '<div class="ob-kicker">Misión aceptada</div>'+
+        '<div class="ob-title" style="font-size:26px;">Listo, '+escapeHtml(ob.nickname||"Operador")+'. <span class="ob-clear">Así se ve tu ruta.</span></div>'+
+        '<div class="ob-brief">'+
+          '<div class="mh-label">Tu misión</div>'+
+          '<div class="mh-mission" style="font-size:18px;">'+(m?m.icon+' '+m.name:'')+'</div>'+
+          routeGridHtml(true, m?m.week:0)+
+        '</div>'+
+        '<div class="ob-sub" style="margin-bottom:20px;">Hoy empiezas con <b style="color:var(--text);">«'+first.title+'»</b>. Cada sesión completada enciende una casilla.</div>'+
+        '<div class="ob-nav">'+
+          '<button class="btn btn-ghost ob-back" id="obBack">←</button>'+
+          '<button class="btn btn-primary btn-block" id="obFinish">Entrar a mi misión 🚀</button>'+
+        '</div>';
+      document.getElementById("obBack").addEventListener("click", function(){ ob.step=3; renderObStep(); });
       document.getElementById("obFinish").addEventListener("click", finishOnboarding);
     }
   }
@@ -1376,12 +1576,14 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     state.nickname = ob.nickname || "Operador";
     state.icon = ob.icon;
     state.accent = ob.color;
+    state.mission = ob.mission || "";
     saveState();
     applyAccent(state.accent);
     var el = document.getElementById("onboard");
     el.classList.add("leaving");
     setTimeout(function(){
       el.classList.add("hidden");
+      noise.stop();
       renderAll();
       showToast("Tu mapa está listo, "+state.nickname, "🎉");
       burstConfetti(document.getElementById("avatarBtn"));
@@ -1467,7 +1669,119 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     });
   });
 
+  /* ---------- Siguiente sesión + ruta de 32 casillas ---------- */
+  function nextStep(){
+    for(var i=0;i<WEEKS.length;i++){
+      var w = WEEKS[i];
+      var ws = weekStatus(w.num);
+      if(ws==="done") continue;
+      if(ws==="locked") return null;
+      if(w.pending || !w.sessions.length) return { week:w, pending:true };
+      for(var j=0;j<w.sessions.length;j++){
+        if(sessionStatus(w.sessions[j])!=="done") return { week:w, session:w.sessions[j], idx:j };
+      }
+      return { week:w, allDone:true };
+    }
+    return { finished:true };
+  }
+
+  function routeGridHtml(preview, missionWeek){
+    var nx = preview ? { week:WEEKS[0], session:WEEKS[0].sessions[0] } : nextStep();
+    var rows = WEEKS.map(function(w){
+      var ws = preview ? (w.num===1?"available":"locked") : weekStatus(w.num);
+      var isCurrent = nx && nx.week && nx.week.num===w.num;
+      var cells = "";
+      for(var j=0;j<4;j++){
+        var s = w.sessions[j];
+        var cls = "route-cell";
+        if(!preview && s && sessionStatus(s)==="done") cls += " done";
+        else if(isCurrent && nx.session && s && nx.session.id===s.id) cls += " today";
+        else if(!s || !s.file) cls += " soon";
+        else if(ws!=="locked") cls += " ready";
+        cells += '<div class="'+cls+'" title="'+(s?escapeHtml(s.title):"Próximamente")+'"></div>';
+      }
+      var end = ws==="done" ? "✅" : (w.num===missionWeek ? "⭐" : "");
+      return '<div class="route-row'+(ws==="locked"?" locked":"")+(isCurrent?" current":"")+'" data-week="'+w.num+'" data-status="'+ws+'">'+
+        '<div class="route-wk">Sem '+w.num+'</div>'+cells+'<div class="route-end">'+end+'</div></div>';
+    }).join("");
+    var doneCount = 0;
+    if(!preview) WEEKS.forEach(function(w){ w.sessions.forEach(function(s){ if(sessionStatus(s)==="done") doneCount++; }); });
+    return '<div class="route-head"><b>Tu ruta · 32 sesiones</b><span>'+(preview? "⭐ = tu arma secreta" : doneCount+"/32 encendidas")+'</span></div>'+
+      '<div class="route-grid">'+rows+'</div>'+
+      '<div class="route-legend"><span><i class="today"></i>Hoy</span><span><i class="done"></i>Hecha</span><span><i></i>Lista</span><span><i class="soon"></i>En construcción</span></div>';
+  }
+
+  function renderMissionHero(){
+    var host = document.getElementById("missionHero");
+    if(!host) return;
+    var m = missionById(state.mission);
+    var nx = nextStep();
+    var today = "";
+    if(nx && nx.session){
+      var ready = !!nx.session.file;
+      today =
+        '<div class="mh-kicker">Hoy · Semana '+nx.week.num+' · Sesión '+(nx.idx+1)+' de 4</div>'+
+        '<div class="mh-title">'+nx.session.title+'</div>'+
+        '<div class="mh-sub">'+nx.session.subtitle+'</div>'+
+        (ready
+          ? '<button class="btn btn-primary btn-block mh-go" id="mhGo" data-file="'+nx.session.file+'">Empezar sesión →</button>'
+          : '<button class="btn btn-outline btn-block" id="mhWeek" data-week="'+nx.week.num+'">En construcción · ver la semana</button>');
+    } else if(nx && nx.allDone){
+      today =
+        '<div class="mh-kicker">Semana '+nx.week.num+' · 4/4 sesiones</div>'+
+        '<div class="mh-title">¡Semana conquistada! 🎉</div>'+
+        '<div class="mh-sub">Ciérrala para desbloquear la siguiente.</div>'+
+        '<button class="btn btn-primary btn-block mh-go" id="mhWeek" data-week="'+nx.week.num+'">Cerrar semana '+nx.week.num+' →</button>';
+    } else if(nx && nx.pending){
+      today =
+        '<div class="mh-kicker">Semana '+nx.week.num+'</div>'+
+        '<div class="mh-title">Tu próxima misión se está construyendo 🚧</div>'+
+        '<div class="mh-sub">Mientras tanto, entrena en Enfoque y Hacer.</div>';
+    } else {
+      today =
+        '<div class="mh-kicker">Misión completa</div>'+
+        '<div class="mh-title">Rescataste tu mente del ruido 🏆</div>'+
+        '<div class="mh-sub">Revisa tu Manual del Operador en Perfil.</div>';
+    }
+    host.innerHTML =
+      '<div class="mission-hero">'+
+        '<div class="mh-top">'+
+          '<div><div class="mh-label">Tu misión</div><div class="mh-mission">'+(m? m.icon+' '+m.name : '🧠 Rescatar tu mente del ruido')+'</div></div>'+
+          '<button class="mh-change" id="mhChange">'+(m?'Cambiar':'Elegir')+'</button>'+
+        '</div>'+
+        '<div class="mh-today">'+today+'</div>'+
+        routeGridHtml(false, m?m.week:0)+
+      '</div>';
+    var go = document.getElementById("mhGo");
+    if(go) go.addEventListener("click", function(){ window.location.href = go.getAttribute("data-file"); });
+    var wk = document.getElementById("mhWeek");
+    if(wk) wk.addEventListener("click", function(){ openWeekSheet(parseInt(wk.getAttribute("data-week"),10)); });
+    document.getElementById("mhChange").addEventListener("click", openMissionSheet);
+    host.querySelectorAll(".route-row").forEach(function(r){
+      r.addEventListener("click", function(){
+        if(r.getAttribute("data-status")==="locked"){ showToast("Se desbloquea al terminar la semana anterior", "🔒"); return; }
+        openWeekSheet(parseInt(r.getAttribute("data-week"),10));
+      });
+    });
+  }
+
+  function openMissionSheet(){
+    var list = document.getElementById("missionSheetList");
+    list.innerHTML = missionListHtml(state.mission);
+    list.querySelectorAll(".mission-opt").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        state.mission = btn.getAttribute("data-mission");
+        saveState();
+        closeSheet();
+        renderMissionHero();
+        showToast("Misión actualizada", "🧭");
+      });
+    });
+    openSheet(document.getElementById("sheetMission"));
+  }
+
   function renderMap(){
+    renderMissionHero();
     var done = state.completedWeeks.length;
     document.getElementById("mapProgressFill").style.width = (done/8*100)+"%";
     document.getElementById("mapProgressLabel").textContent = done+"/8 semanas";
@@ -2772,10 +3086,11 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     applyAccent(state.accent);
     if(!state.onboarded){
       document.getElementById("onboard").classList.remove("hidden","leaving");
-      ob = { step:0, nickname:state.nickname||"", icon:state.icon||"🧠", color:state.accent||"#8B5CFF" };
+      ob = { step:0, nickname:state.nickname||"", icon:state.icon||"🧠", color:state.accent||"#8B5CFF", mission:state.mission||"" };
       renderObStep();
     } else {
       document.getElementById("onboard").classList.add("hidden");
+      noise.stop();
       checkBadges();
       renderAll();
     }
@@ -2803,7 +3118,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
       saveState(true);
       applyAccent(state.accent);
       document.getElementById("onboard").classList.remove("hidden","leaving");
-      ob = { step:0, nickname:"", icon:"🧠", color:"#8B5CFF" };
+      ob = { step:0, nickname:"", icon:"🧠", color:"#8B5CFF", mission:"" };
       renderObStep();
       showToast("Datos reiniciados", "🔄");
     });
