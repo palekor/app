@@ -552,6 +552,12 @@
 .road div i{ display:block; height:10px; border-radius:5px; margin-bottom:5px; background:linear-gradient(90deg,var(--accent),var(--pop-pink)); opacity:.35; }
 .road div:last-child i{ background:var(--pop-lime); opacity:1; }
 .plan-big{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.circles{ position:relative; width:250px; height:236px; margin:12px auto 4px; max-width:100%; }
+.circles .c{ position:absolute; width:150px; height:150px; border-radius:50%; mix-blend-mode:screen; display:flex; padding:20px; font-size:10.5px; font-weight:800; line-height:1.2; color:#fff; }
+.circles .c1{ left:0; top:0; background:rgba(139,92,255,.55); align-items:flex-start; justify-content:flex-start; }
+.circles .c2{ right:0; top:0; background:rgba(255,92,157,.55); align-items:flex-start; justify-content:flex-end; text-align:right; }
+.circles .c3{ left:50px; bottom:0; background:rgba(40,224,200,.5); align-items:flex-end; justify-content:center; text-align:center; }
+.circles .core{ position:absolute; left:50%; top:52%; transform:translate(-50%,-50%); width:76px; text-align:center; font-family:'Fredoka',sans-serif; font-size:12px; font-weight:600; color:#140F26; background:var(--pop-lime); border-radius:12px; padding:6px 4px; overflow-wrap:anywhere; box-shadow:0 6px 18px -6px var(--pop-lime); }
 </style>
 </head>
 <body>
@@ -642,6 +648,17 @@
         <div class="chip-label">¿Con cuál pieza arrancas?</div>
         <div class="chips" id="firstChips"><span class="card-text muted" style="font-size:12.5px;">Escribe tus piezas primero.</span></div>
         <div class="engine" id="engine"></div>
+      </div>
+
+      <div class="card" style="--d:0ms;">
+        <div class="card-label">Tus 3 círculos</div>
+        <div class="card-title">¿Es la habilidad correcta?</div>
+        <div class="card-text muted">Jim Collins, en <i>Good to Great</i>, encontró que las grandes empresas se enfocan donde se cruzan tres círculos. Para ti:</div>
+        <div class="circles" id="circles"><div class="c c1">Me apasiona</div><div class="c c2">Puedo ser muy bueno</div><div class="c c3">Le sirve a otros</div><div class="core" id="circleCore">?</div></div>
+        <div class="chip-label">❤️ ¿Te apasiona de verdad?</div><div class="chips" id="cc1"></div>
+        <div class="chip-label">🏆 ¿Puedes llegar a ser muy bueno si practicas?</div><div class="chips" id="cc2"></div>
+        <div class="chip-label">🤝 ¿Le sirve a otras personas?</div><div class="chips" id="cc3"></div>
+        <div class="feedback" id="circleFb" aria-live="polite"></div>
       </div>
 
       <div class="card" style="--d:0ms;">
@@ -978,14 +995,14 @@
     var r = sessionRec("w2s1");
     return r && r.project ? { name:r.project, parts:r.parts||[], first:r.first||"" } : null;
   }
-  function multiChips(containerId, values, initial, onChange){
-    var c = $(containerId), picked = (initial||[]).slice();
+  function multiChips(containerId, values, initial, onChange, max){
+    var c = $(containerId), picked = (initial||[]).slice(0, max || 99);
     function draw(){
       c.innerHTML = values.map(function(v){ return '<button class="chip-btn'+(picked.indexOf(v)!==-1?' selected':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</button>'; }).join("");
       c.querySelectorAll(".chip-btn").forEach(function(b){
         b.addEventListener("click", function(){
           var v = b.getAttribute("data-v"), i = picked.indexOf(v);
-          if(i===-1) picked.push(v); else picked.splice(i,1);
+          if(i===-1){ if(max && picked.length >= max){ showToast("Máximo "+max+": quita una para cambiarla", "✋"); return; } picked.push(v); } else picked.splice(i,1);
           draw(); onChange(picked.slice());
         });
       });
@@ -1018,9 +1035,10 @@
     { id:"project", label:"Elige tu habilidad" },
     { id:"parts", label:"Divídela en al menos 3 piezas" },
     { id:"first", label:"Elige la pieza con la que arrancas" },
+    { id:"circles", label:"Revisa tus 3 círculos" },
     { id:"why", label:"Di por qué la elegiste" }
   ]);
-  var quizSummary = null, proj = "", chipProj = "", first = "", why = "";
+  var quizSummary = null, proj = "", chipProj = "", first = "", why = "", circ = {};
   var prev = existing || {};
   runMC("quizMount", ITEMS, { label:"Reto" }, function(s){ quizSummary = s; reqs.set("quiz"); reveal("engineWrap"); });
 
@@ -1038,6 +1056,7 @@
       '<div class="engine-core"><div class="'+(proj?'':'empty')+'">'+(proj?esc(proj):'Tu habilidad')+'</div></div>'+
       (ps.length ? ps.map(function(p){ return '<div class="engine-part'+(p===first?' first':'')+'">'+(p===first?'▶ ':'')+esc(p)+'</div>'; }).join("") : '<div class="card-text muted" style="font-size:12px;">Tus piezas aparecen aquí</div>');
     reqs.set("project", !!proj);
+    if($("circleCore")) drawCircles();
     reqs.set("parts", ps.length >= 3);
     reqs.set("first", !!first);
   }
@@ -1059,6 +1078,17 @@
   first = prev.first || "";
   [0,1,2,3].forEach(function(i){ $("part"+i).addEventListener("input", function(){ drawFirst(); update(); }); });
   drawFirst(); update();
+  function drawCircles(){
+    var all = circ.c1 && circ.c2 && circ.c3, yes = ["c1","c2","c3"].filter(function(k){ return circ[k]==="Sí"; }).length;
+    $("circleCore").textContent = yes===3 ? (proj || "Tu habilidad") : "?";
+    $("circleCore").style.opacity = yes===3 ? 1 : .45;
+    var fb = $("circleFb");
+    if(!all){ fb.textContent = ""; fb.className = "feedback"; }
+    else if(yes===3){ fb.textContent = "🦔 Está en el centro de los tres círculos. Collins lo llama tu concepto del erizo: aquí vale la pena poner toda tu energía."; fb.className = "feedback good"; }
+    else { fb.textContent = "Te falta un círculo. Puedes seguir, pero pregúntate cómo llenarlo… o elige otra habilidad."; fb.className = "feedback bad"; }
+    reqs.set("circles", !!all);
+  }
+  ["c1","c2","c3"].forEach(function(k){ bindChips("c"+k, ["Sí","Todavía no"], prev.circles ? prev.circles[k] : "", function(v){ circ[k] = v; drawCircles(); }); });
   bindChips("whyChips", ["Me apasiona","La necesito","Siempre la he querido","Quiero sorprender a alguien"], prev.why, function(v){ why = v; reqs.set("why"); });
   if(existing){ $("reflectionText").value = existing.reflection || ""; }
 
@@ -1066,7 +1096,7 @@
     if($("btnSave").disabled) return;
     var ps = parts();
     writeSharedState(function(st){ st.smartProject = { name:proj, parts:ps, first:first }; });
-    finishSession({ quiz:quizSummary, project:proj, parts:ps, first:first, why:why, reflection:$("reflectionText").value.trim() });
+    finishSession({ quiz:quizSummary, project:proj, parts:ps, first:first, circles:circ, why:why, reflection:$("reflectionText").value.trim() });
   });
 })();
 </script>

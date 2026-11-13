@@ -552,6 +552,12 @@
 .road div i{ display:block; height:10px; border-radius:5px; margin-bottom:5px; background:linear-gradient(90deg,var(--accent),var(--pop-pink)); opacity:.35; }
 .road div:last-child i{ background:var(--pop-lime); opacity:1; }
 .plan-big{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.circles{ position:relative; width:250px; height:236px; margin:12px auto 4px; max-width:100%; }
+.circles .c{ position:absolute; width:150px; height:150px; border-radius:50%; mix-blend-mode:screen; display:flex; padding:20px; font-size:10.5px; font-weight:800; line-height:1.2; color:#fff; }
+.circles .c1{ left:0; top:0; background:rgba(139,92,255,.55); align-items:flex-start; justify-content:flex-start; }
+.circles .c2{ right:0; top:0; background:rgba(255,92,157,.55); align-items:flex-start; justify-content:flex-end; text-align:right; }
+.circles .c3{ left:50px; bottom:0; background:rgba(40,224,200,.5); align-items:flex-end; justify-content:center; text-align:center; }
+.circles .core{ position:absolute; left:50%; top:52%; transform:translate(-50%,-50%); width:76px; text-align:center; font-family:'Fredoka',sans-serif; font-size:12px; font-weight:600; color:#140F26; background:var(--pop-lime); border-radius:12px; padding:6px 4px; overflow-wrap:anywhere; box-shadow:0 6px 18px -6px var(--pop-lime); }
 </style>
 </head>
 <body>
@@ -990,14 +996,14 @@
     var r = sessionRec("w2s1");
     return r && r.project ? { name:r.project, parts:r.parts||[], first:r.first||"" } : null;
   }
-  function multiChips(containerId, values, initial, onChange){
-    var c = $(containerId), picked = (initial||[]).slice();
+  function multiChips(containerId, values, initial, onChange, max){
+    var c = $(containerId), picked = (initial||[]).slice(0, max || 99);
     function draw(){
       c.innerHTML = values.map(function(v){ return '<button class="chip-btn'+(picked.indexOf(v)!==-1?' selected':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</button>'; }).join("");
       c.querySelectorAll(".chip-btn").forEach(function(b){
         b.addEventListener("click", function(){
           var v = b.getAttribute("data-v"), i = picked.indexOf(v);
-          if(i===-1) picked.push(v); else picked.splice(i,1);
+          if(i===-1){ if(max && picked.length >= max){ showToast("Máximo "+max+": quita una para cambiarla", "✋"); return; } picked.push(v); } else picked.splice(i,1);
           draw(); onChange(picked.slice());
         });
       });
@@ -1020,7 +1026,10 @@
       why:"El tiempo que sobra casi nunca aparece, y robarle horas al sueño le quita a tu cerebro el momento en que guarda lo aprendido." },
     { tag:"Piensa como maratonista", prompt:"Tienes 15 minutos. ¿Qué entrenas?",
       options:["Una sola pieza de mi mapa, con atención total","Un poco de todo para avanzar en todo","Lo que ya me sale bien, para sentirme seguro"], correct:0,
-      why:"Práctica deliberada: una pieza, en el borde de lo que puedes. Repetir lo fácil se siente bien pero no te mueve." }
+      why:"Práctica deliberada: una pieza, en el borde de lo que puedes. Repetir lo fácil se siente bien pero no te mueve." },
+    { tag:"Piensa como maratonista", prompt:"Jim Collins llama «efecto volante» a…",
+      options:["Empujones pequeños y constantes que acumulan impulso hasta que todo gira casi solo","Un gran esfuerzo de un solo día","Cambiar de plan cuando no ves resultados"], correct:0,
+      why:"Tus 15 minutos diarios son empujones a un volante pesado. Al principio cuesta; después gira solo. En la Semana 7 diseñas el tuyo completo." }
   ];
   var CATS = [
     { k:"sleep",  ic:"😴", name:"Sueño",            v:8,   c:"#6A5F9C" },
@@ -1032,7 +1041,7 @@
     { k:"sport",  ic:"⚽", name:"Deporte y juego",  v:1,   c:"#C6FF4D" }
   ];
   var reqs = Reqs([
-    { id:"quiz", label:"Resuelve los 4 retos del maratonista" },
+    { id:"quiz", label:"Resuelve los 5 retos del maratonista" },
     { id:"day", label:"Arma tu día de 24 horas exactas" },
     { id:"fuel", label:"Elige de dónde sacas tu combustible y cuántos minutos" },
     { id:"plan", label:"Elige al menos 3 días de entrenamiento" }
