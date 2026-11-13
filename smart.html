@@ -480,6 +480,33 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 .ob-insignia .color-opt.selected::after{ font-size:15px; }
 .ob-brief{ background:rgba(33,26,59,.92); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:20px; text-shadow:none; box-shadow:var(--chunky); }
 
+/* ---- Ritual semanal ---- */
+.ritual-card{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:22px; box-shadow:var(--chunky); opacity:0; animation:nodeIn .45s .08s cubic-bezier(.2,.8,.2,1) forwards; }
+.rit-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.rit-label{ font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--pop-yellow); }
+.rit-title{ font-family:'Fredoka',sans-serif; font-size:18px; font-weight:600; margin-top:2px; }
+.rit-today{ flex-shrink:0; font-size:11px; font-weight:800; padding:5px 10px; border-radius:100px; background:rgba(255,210,63,.14); color:var(--pop-yellow); border:1px solid rgba(255,210,63,.4); }
+.rit-status{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+.rit-pill{ padding:10px; border-radius:14px; background:var(--surface-2); font-size:12px; font-weight:700; color:var(--muted); line-height:1.4; }
+.rit-pill b{ display:block; color:var(--text); font-size:13px; }
+.rit-pill.done b{ color:var(--pop-lime); }
+.rit-prio{ margin:0 0 12px; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; }
+.rit-prio li{ font-size:13px; padding:8px 11px; border-radius:10px; background:var(--ink); border:1px solid var(--line); }
+.rit-btns{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.rit-btns .btn{ font-size:13.5px; padding-left:8px; padding-right:8px; }
+.rit-q{ font-size:13px; font-weight:800; margin:14px 0 6px; }
+.rit-opts{ display:flex; flex-wrap:wrap; gap:7px; }
+.rit-opt{ padding:8px 13px; border-radius:100px; background:var(--surface-2); border:1.5px solid var(--line); color:var(--text); font-size:13px; font-weight:700; }
+.rit-opt.on{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.rit-row{ display:grid; grid-template-columns:1fr 78px; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; background:var(--surface-2); margin-top:8px; }
+.rit-row span{ font-size:13px; font-weight:800; }
+.rit-row span i{ font-style:normal; color:var(--muted); font-weight:700; }
+.rit-row span em{ font-style:normal; }
+.rit-row input{ width:100%; text-align:center; padding:8px; border-radius:10px; border:1.5px solid var(--line); background:var(--bg); color:var(--text); font-size:15px; font-family:inherit; }
+.rit-check{ display:flex; gap:10px; align-items:center; padding:9px 11px; border-radius:10px; background:var(--surface-2); margin-top:6px; font-size:13px; }
+.rit-check input{ width:18px; height:18px; accent-color:var(--pop-lime); }
+.rit-msg{ font-size:12.5px; font-weight:700; margin-top:8px; min-height:16px; }
+
 /* ---- Inicio: tarjeta de misión ---- */
 .mission-hero{ position:relative; overflow:hidden; background:linear-gradient(160deg,var(--surface-2),var(--surface) 70%); border:1px solid var(--line); border-radius:var(--radius); padding:18px 16px 16px; margin-bottom:22px; box-shadow:var(--chunky); opacity:0; animation:nodeIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
 .mission-hero::before{ content:""; position:absolute; width:220px; height:220px; right:-80px; top:-90px; border-radius:50%; background:radial-gradient(circle,var(--accent-soft),transparent 70%); pointer-events:none; }
@@ -544,6 +571,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   <!-- ============ VIEW: MAPA ============ -->
   <main class="view active" id="view-mapa">
     <div id="missionHero"></div>
+    <div id="ritualCard"></div>
     <div class="section-title">El camino</div>
     <div class="section-sub">Cada semana se desbloquea cuando terminas la anterior. Tú marcas el ritmo, no el calendario.</div>
     <div class="hint-slot" data-tab="mapa"></div>
@@ -969,6 +997,15 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   </div>
 </div>
 
+<!-- ============ SHEET: RITUAL SEMANAL ============ -->
+<div class="sheet" id="sheetRitual">
+  <button class="sheet-close" data-close>×</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="ritualTitle">Ritual semanal</div>
+  <div class="sheet-sub" id="ritualSub"></div>
+  <div id="ritualBody"></div>
+</div>
+
 <!-- ============ SHEET: MISIÓN ============ -->
 <div class="sheet" id="sheetMission">
   <button class="sheet-close" data-close>×</button>
@@ -1015,12 +1052,12 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
         { id:"w2s3", title:"Lo que haces sin pensar", subtitle:"Pieza III · El piloto automático", file:"semana2-sesion3.html" },
         { id:"w2s4", title:"El maratón empieza hoy", subtitle:"Pieza IV · El combustible", file:"semana2-sesion4.html" }
       ] },
-    { num:3, icon:"✨", title:"Entrena tu curiosidad", tag:"Magic, Luck, Data, Preparedness & Questioning",
+    { num:3, icon:"🧭", title:"La expedición", tag:"Curiosidad, suerte preparada, datos y tu primer lanzamiento",
       sessions:[
-        { id:"w3s1", title:"Encuentra la magia", subtitle:"Magic", file:null },
-        { id:"w3s2", title:"La suerte se prepara", subtitle:"Luck + Preparedness", file:null },
-        { id:"w3s3", title:"Sigue el dato", subtitle:"Data + Questioning", file:null },
-        { id:"w3s4", title:"Conecta los puntos", subtitle:"Spelling + Conectar los puntos", file:null }
+        { id:"w3s1", title:"Encuentra la magia", subtitle:"Hallazgo I · Curiosidad", file:"semana3-sesion1.html" },
+        { id:"w3s2", title:"La suerte se prepara", subtitle:"Hallazgo II · Preparación y oportunidad", file:"semana3-sesion2.html" },
+        { id:"w3s3", title:"Sigue el dato", subtitle:"Hallazgo III · Datos y preguntas", file:"semana3-sesion3.html" },
+        { id:"w3s4", title:"Prepara, lanza, apunta", subtitle:"Hallazgo IV · Tu primer lanzamiento", file:"semana3-sesion4.html" }
       ] },
     { num:4, icon:"🧭", title:"Siempre hay salida", tag:"El Método SALIDA: percepción, enfoque, palabras, preguntas y señales",
       sessions:[
@@ -1043,8 +1080,20 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
         { id:"w6s3", title:"El riego", subtitle:"Sello III · Repaso espaciado", file:"semana6-sesion3.html" },
         { id:"w6s4", title:"La paciencia del jardinero", subtitle:"Sello IV · Disciplina", file:"semana6-sesion4.html" }
       ] },
-    { num:7, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] },
-    { num:8, icon:"🚧", title:"Próximamente", tag:"Contenido en desarrollo", pending:true, sessions:[] }
+    { num:7, icon:"⚙️", title:"Tu sistema operativo", tag:"Visión, marcador, rocas y el efecto volante",
+      sessions:[
+        { id:"w7s1", title:"La visión", subtitle:"Módulo I · Tu visión en una página", file:"semana7-sesion1.html" },
+        { id:"w7s2", title:"Tu marcador", subtitle:"Módulo II · Mide lo que importa", file:"semana7-sesion2.html" },
+        { id:"w7s3", title:"Tus 3 rocas", subtitle:"Módulo III · Prioridades de 90 días", file:"semana7-sesion3.html" },
+        { id:"w7s4", title:"El volante", subtitle:"Módulo IV · Impulso y ritual semanal", file:"semana7-sesion4.html" }
+      ] },
+    { num:8, icon:"👑", title:"Despierta al gigante", tag:"Decidir, levantarse, las personas y tu visión",
+      sessions:[
+        { id:"w8s1", title:"El poder de decidir", subtitle:"Sello I · Lo que esperamos de ti", file:"semana8-sesion1.html" },
+        { id:"w8s2", title:"Si algo sale mal", subtitle:"Sello II · Resiliencia", file:"semana8-sesion2.html" },
+        { id:"w8s3", title:"Las personas", subtitle:"Sello III · Carnegie en práctica", file:"semana8-sesion3.html" },
+        { id:"w8s4", title:"Y si…", subtitle:"Sello IV · El gigante", file:"semana8-sesion4.html" }
+      ] }
   ];
 
   var PARTS = [
@@ -1228,13 +1277,15 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   // Las páginas de sesión escriben weeklySessions en la misma clave. Antes de guardar,
   // se toma siempre la versión guardada para no borrar sesiones completadas en otra página.
   // replace=true solo al importar, restaurar o reiniciar.
-  function saveState(replace){
+  function saveState(replace, ownKeys){
     try{
       if(!replace){
         var raw = localStorage.getItem(STORAGE_KEY);
         if(raw){
           var cur = JSON.parse(raw);
           if(cur && cur.weeklySessions && typeof cur.weeklySessions==="object") state.weeklySessions = cur.weeklySessions;
+          // Datos del programa (smart*) que escriben las páginas de sesión: se conservan salvo que esta página los acabe de cambiar.
+          if(cur) Object.keys(cur).forEach(function(k){ if(k.indexOf("smart")===0 && !(ownKeys && ownKeys.indexOf(k)!==-1)) state[k] = cur[k]; });
         }
       }
       lastRaw = JSON.stringify(state);
@@ -1377,7 +1428,7 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   var MISSIONS = [
     { id:"enfoque",    icon:"🎯", name:"Enfocarme sin perderme",       week:1, hint:"Semana 1 · Descubre tu cerebro" },
     { id:"arrancar",   icon:"⚡", name:"Empezar sin postergar",         week:2, hint:"Semana 2 · Construye tu nave" },
-    { id:"curiosidad", icon:"✨", name:"Aprender con ganas, no a la fuerza", week:3, hint:"Semana 3 · Entrena tu curiosidad" },
+    { id:"curiosidad", icon:"✨", name:"Aprender con ganas, no a la fuerza", week:3, hint:"Semana 3 · La expedición" },
     { id:"salida",     icon:"🧭", name:"Nunca quedarme atascado",       week:4, hint:"Semana 4 · Siempre hay salida" },
     { id:"claridad",   icon:"💎", name:"Pensar y hablar con claridad",  week:5, hint:"Semana 5 · Piensa como un genio" }
   ];
@@ -1786,8 +1837,125 @@ button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
     openSheet(document.getElementById("sheetMission"));
   }
 
+  /* ---------- Ritual semanal: lunes de misión · viernes de marcador ---------- */
+  function refreshSmartKeys(){
+    try{ var cur = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); Object.keys(cur).forEach(function(k){ if(k.indexOf("smart")===0) state[k] = cur[k]; }); }catch(e){}
+  }
+  function weekStartKey(d){ d = new Date(d || Date.now()); var day = (d.getDay()+6)%7; d.setDate(d.getDate()-day); return dateKey(d); }
+  function ritualThisWeek(){
+    var wk = weekStartKey(), log = (state.smartRitual && state.smartRitual.log) || [], sc = state.smartScoreLog || [];
+    var mon = null, fri = null;
+    log.forEach(function(e){ if(e.type==="lunes" && e.date && weekStartKey(e.date+"T12:00:00")===wk) mon = e; });
+    sc.forEach(function(e){ if(e.date && weekStartKey(e.date+"T12:00:00")===wk) fri = e; });
+    return { mon:mon, fri:fri };
+  }
+  var DEFAULT_SCORE = [{ name:"Minutos de práctica", unit:"min", goal:75 }, { name:"Días que practiqué", unit:"días", goal:5 }];
+  function renderRitual(){
+    var host = document.getElementById("ritualCard");
+    if(!host) return;
+    var ws = state.weeklySessions || {};
+    var active = (ws.w2s1 && ws.w2s1.completed) || state.smartProject;
+    if(!active){ host.innerHTML = ""; return; }
+    var r = ritualThisWeek(), day = new Date().getDay();
+    var badge = (day===1 || day===0) ? "Hoy: lunes de misión" : (day===5 || day===6) ? "Hoy: viernes de marcador" : "";
+    var prio = r.mon && r.mon.answers && r.mon.answers.priorities ? r.mon.answers.priorities.filter(function(x){ return x; }) : [];
+    var fri = "";
+    if(r.fri){ var g = r.fri.values.filter(function(v){ return +v.actual >= +v.goal; }).length; fri = g + " verde" + (g===1?"":"s") + " · " + (r.fri.values.length-g) + " rojo" + ((r.fri.values.length-g)===1?"":"s"); }
+    host.innerHTML =
+      '<div class="ritual-card">'+
+        '<div class="rit-top"><div><div class="rit-label">Ritual semanal</div><div class="rit-title">Planea el lunes, mide el viernes</div></div>'+(badge?'<div class="rit-today">'+badge+'</div>':'')+'</div>'+
+        '<div class="rit-status">'+
+          '<div class="rit-pill'+(r.mon?' done':'')+'"><b>'+(r.mon?'✓ Lunes hecho':'📝 Lunes pendiente')+'</b>'+(r.mon?'Tus 3 prioridades':'5 preguntas, 3 minutos')+'</div>'+
+          '<div class="rit-pill'+(r.fri?' done':'')+'"><b>'+(r.fri?'✓ Viernes hecho':'📊 Viernes pendiente')+'</b>'+(r.fri?fri:'Tu marcador de la semana')+'</div>'+
+        '</div>'+
+        (prio.length ? '<ul class="rit-prio">'+prio.map(function(x,i){ return '<li>'+(i+1)+'. '+escapeHtml(x)+'</li>'; }).join("")+'</ul>' : '')+
+        '<div class="rit-btns"><button class="btn '+(r.mon?'btn-outline':'btn-primary')+'" id="ritMon">Lunes de misión</button><button class="btn '+(r.fri||!r.mon?'btn-outline':'btn-primary')+'" id="ritFri">Viernes de marcador</button></div>'+
+      '</div>';
+    document.getElementById("ritMon").addEventListener("click", openMonday);
+    document.getElementById("ritFri").addEventListener("click", openFriday);
+  }
+  function optsHtml(id, values, cur){ return '<div class="rit-opts" id="'+id+'">'+values.map(function(v){ return '<button class="rit-opt'+(v===cur?' on':'')+'" data-v="'+escapeHtml(v)+'">'+escapeHtml(v)+'</button>'; }).join("")+'</div>'; }
+  function bindOpts(id, cb){ var c = document.getElementById(id); c.querySelectorAll(".rit-opt").forEach(function(b){ b.addEventListener("click", function(){ c.querySelectorAll(".rit-opt").forEach(function(x){ x.classList.remove("on"); }); b.classList.add("on"); cb(b.getAttribute("data-v")); }); }); }
+  function wc(t){ return String(t||"").trim().split(/\s+/).filter(Boolean).length; }
+  function openMonday(){
+    refreshSmartKeys();
+    var r = ritualThisWeek(), a = (r.mon && r.mon.answers) || {}, P = state.smartProject || {}, people = a.people || "";
+    document.getElementById("ritualTitle").textContent = "📝 Lunes de misión";
+    document.getElementById("ritualSub").textContent = "Cinco preguntas para empezar la semana con dirección.";
+    var pr = a.priorities || ["","",""];
+    document.getElementById("ritualBody").innerHTML =
+      '<div class="rit-q">1. ¿En qué puedo llegar a ser excepcionalmente bueno?</div><div class="field"><input id="rm1" value="'+escapeHtml(a.best || P.name || "")+'" placeholder="Tu habilidad"></div>'+
+      '<div class="rit-q">2. ¿Qué voy a ofrecer o mostrar esta semana?</div><div class="field"><input id="rm2" value="'+escapeHtml(a.offer||"")+'" placeholder="Ej.: mi presentación grabada"></div>'+
+      '<div class="rit-q">3. ¿A cuántas personas les voy a mostrar o enseñar algo?</div>'+optsHtml("rm3",["1","2","3","5 o más"],people)+
+      '<div class="rit-q">4. Mis 3 prioridades de la semana (mis rocas primero)</div>'+
+      [0,1,2].map(function(i){ return '<div class="field" style="margin-bottom:8px;"><input id="rm4'+i+'" value="'+escapeHtml(pr[i]||"")+'" placeholder="Prioridad '+(i+1)+'"></div>'; }).join("")+
+      '<div class="rit-q">5. ¿Qué creencia o conducta cambio para ser más efectivo?</div><div class="field"><input id="rm5" value="'+escapeHtml(a.change||"")+'" placeholder="Ej.: dejar de decir «no tengo tiempo»"></div>'+
+      '<div class="rit-msg" id="rmMsg"></div>'+
+      '<button class="btn btn-primary btn-block" id="rmSave">Guardar mi lunes</button>';
+    bindOpts("rm3", function(v){ people = v; });
+    document.getElementById("rmSave").addEventListener("click", function(){
+      var ans = { best:val("rm1"), offer:val("rm2"), people:people, priorities:[val("rm40"),val("rm41"),val("rm42")], change:val("rm5") };
+      if(!ans.best || wc(ans.offer) < 2 || !people || ans.priorities.some(function(x){ return wc(x) < 2; }) || wc(ans.change) < 2){
+        var m = document.getElementById("rmMsg"); m.style.color = "var(--pop-pink)"; m.textContent = "Responde las 5 preguntas: es tu brújula de la semana."; return;
+      }
+      refreshSmartKeys();
+      state.smartRitual = state.smartRitual || {}; state.smartRitual.log = state.smartRitual.log || [];
+      var wk = weekStartKey();
+      state.smartRitual.log = state.smartRitual.log.filter(function(e){ return !(e.type==="lunes" && e.date && weekStartKey(e.date+"T12:00:00")===wk); });
+      state.smartRitual.log.push({ type:"lunes", date:todayKey(), answers:ans });
+      saveState(false, ["smartRitual"]); closeSheet(); renderRitual(); showToast("Semana con dirección", "📝");
+    });
+    openSheet(document.getElementById("sheetRitual"));
+  }
+  function val(id){ return document.getElementById(id).value.trim(); }
+  function openFriday(){
+    refreshSmartKeys();
+    var r = ritualThisWeek(), card = (state.smartScorecard && state.smartScorecard.length) ? state.smartScorecard : DEFAULT_SCORE;
+    var prev = r.fri ? r.fri.values.reduce(function(o,v){ o[v.name] = v; return o; }, {}) : {};
+    var prio = r.mon && r.mon.answers ? r.mon.answers.priorities.filter(function(x){ return x; }) : [];
+    document.getElementById("ritualTitle").textContent = "📊 Viernes de marcador";
+    document.getElementById("ritualSub").textContent = "Lo que se mide se puede mejorar. Con honestidad: nadie más lo ve.";
+    document.getElementById("ritualBody").innerHTML =
+      card.map(function(c, i){
+        var pv = prev[c.name] || {};
+        return '<div class="rit-row"><span>'+escapeHtml(c.name)+' <i>/ '+c.goal+'</i> <em id="rfS'+i+'"></em></span><input type="number" min="0" inputmode="numeric" id="rf'+i+'" value="'+(pv.actual!=null?pv.actual:"")+'" placeholder="'+escapeHtml(c.unit||"")+'"></div>'+
+          '<div class="field" id="rfFixW'+i+'" style="margin:6px 0 0;display:none;"><input id="rfFix'+i+'" value="'+escapeHtml(pv.fix||"")+'" placeholder="¿Qué cambias la próxima semana?"></div>';
+      }).join("")+
+      (prio.length ? '<div class="rit-q">¿Cumpliste tus prioridades del lunes?</div>'+prio.map(function(x,i){ return '<label class="rit-check"><input type="checkbox" id="rfP'+i+'"'+(r.fri && r.fri.priorities && r.fri.priorities[i] ? ' checked' : '')+'> '+escapeHtml(x)+'</label>'; }).join("") : '')+
+      '<div class="rit-msg" id="rfMsg"></div>'+
+      '<button class="btn btn-primary btn-block" id="rfSave" style="margin-top:14px;">Guardar mi viernes</button>';
+    function paint(){
+      card.forEach(function(c, i){
+        var v = val("rf"+i), s = document.getElementById("rfS"+i), w = document.getElementById("rfFixW"+i);
+        if(v === ""){ s.textContent = ""; w.style.display = "none"; return; }
+        var green = +v >= +c.goal;
+        s.textContent = green ? "● verde" : "● rojo"; s.style.color = green ? "var(--pop-lime)" : "var(--pop-pink)";
+        w.style.display = green ? "none" : "block";
+      });
+    }
+    card.forEach(function(c, i){ document.getElementById("rf"+i).addEventListener("input", paint); });
+    paint();
+    document.getElementById("rfSave").addEventListener("click", function(){
+      var ok = true, values = card.map(function(c, i){
+        var v = val("rf"+i), fix = val("rfFix"+i);
+        if(v === "" || (+v < +c.goal && wc(fix) < 2)) ok = false;
+        return { name:c.name, goal:c.goal, actual:+v, fix: +v < +c.goal ? fix : "" };
+      });
+      if(!ok){ var m = document.getElementById("rfMsg"); m.style.color = "var(--pop-pink)"; m.textContent = "Llena cada número y, en los rojos, escribe qué vas a cambiar."; return; }
+      refreshSmartKeys();
+      var wk = weekStartKey();
+      state.smartScoreLog = (state.smartScoreLog || []).filter(function(e){ return !(e.date && weekStartKey(e.date+"T12:00:00")===wk); });
+      state.smartScoreLog.push({ date:todayKey(), values:values, priorities:prio.map(function(_,i){ return document.getElementById("rfP"+i).checked; }) });
+      saveState(false, ["smartScoreLog"]); closeSheet(); renderRitual();
+      var g = values.filter(function(v){ return v.actual >= v.goal; }).length;
+      showToast(g === values.length ? "Todo en verde. ¡Así gira el volante!" : "Marcador guardado. El lunes ajustas.", "📊");
+    });
+    openSheet(document.getElementById("sheetRitual"));
+  }
+
   function renderMap(){
     renderMissionHero();
+    renderRitual();
     var done = state.completedWeeks.length;
     document.getElementById("mapProgressFill").style.width = (done/8*100)+"%";
     document.getElementById("mapProgressLabel").textContent = done+"/8 semanas";
